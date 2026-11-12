@@ -3,13 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Swar Harmonium - Pro Riyaz Studio</title>
+  
+  <!-- SEO Meta Tags for Main Page -->
+  <title>TaraJ Music | Free Virtual Indian Instruments & Riyaz Tools</title>
+  <meta name="description" content="Play virtual Indian musical instruments online free. TaraJ Music offers an online harmonium, virtual bansuri, tabla rhythm generator, and riyaz metronome.">
+  <meta name="keywords" content="virtual tabla online, play harmonium online free, virtual bansuri online, online dholak beats, virtual indian musical instruments, classical riyaz tools online, online metronome, real tabla sound online, online sarangi, free online music practice tools">
+  <meta property="og:title" content="TaraJ Music - Online Indian Classical Instruments">
+  <meta property="og:description" content="Your complete online studio for practicing Harmonium, Flute, Tabla beats, and Metronome.">
+  <meta property="og:url" content="https://tarajmusic.com/">
+  <meta property="og:type" content="website">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
@@ -24,7 +33,6 @@
           fontFamily: {
             title: ['Cinzel', 'serif'],
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            serif: ['"Rozha One"', 'serif'],
           }
         }
       }
@@ -45,6 +53,7 @@
       color: #261405; text-shadow: 0 1px 1px rgba(255,255,255,0.4);
       box-shadow: 0 3px 8px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.6);
     }
+    /* Keys Layout - Fully Blank */
     .white-key {
       background: linear-gradient(to bottom, #fcfbf7 0%, #f1ecdf 88%, #dfd6c5 100%);
       box-shadow: inset 1px 0 0 #ffffff, inset -1px 0 0 #ccc3b0, inset 0 -8px 0 rgba(0,0,0,0.12), 0 4px 6px rgba(0,0,0,0.5);
@@ -73,32 +82,31 @@
 </head>
 <body class="text-amber-100 flex flex-col min-h-screen justify-between antialiased selection:bg-amber-800">
 
-  <!-- Identical Unified Rang-Biranga Header -->
-  <header class="w-full bg-[#05080E] border-b-2 border-cyan-500/40 px-6 py-3.5 sticky top-0 z-50 shadow-2xl">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-      <a href="/" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-400 flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
-          <i class="fa-solid fa-music text-zinc-950 text-xl"></i>
+  <header class="w-full bg-[#1e0e07]/90 backdrop-blur border-b border-wood-600/40 px-4 py-3 sticky top-0 z-50 shadow-xl">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-700 to-amber-500 flex items-center justify-center shadow-lg border border-amber-400/30">
+          <i class="fa-solid fa-music text-amber-950 text-lg"></i>
         </div>
         <div>
-          <span class="font-serif tracking-wider text-lg sm:text-xl font-bold text-cyan-400 block leading-tight">TaraJ Music</span>
-          <span class="text-xs text-zinc-400 font-sans hidden sm:block">Indian Classical Practice Studio</span>
+          <div class="flex items-center gap-2"><h1 class="font-title tracking-wider text-lg sm:text-xl font-bold text-amber-200">Swar Harmonium</h1></div>
+          <p class="text-xs text-amber-400/70 font-sans hidden sm:block">Acoustic Harmonium & Classical Music Practice</p>
         </div>
-      </a>
-      
-      <!-- Colorful Floating Nav Buttons -->
-      <nav class="flex items-center gap-2.5 sm:gap-3 text-sm">
-        <a href="/" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Harmonium</a>
-        <a href="/metronome" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black shadow-lg shadow-amber-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Metronome</a>
-        <a href="/flute" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-600 text-slate-950 font-black shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Online Flute</a>
-        <a href="/melody-maker" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black shadow-lg shadow-rose-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Melody Maker</a>
-      </nav>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-4">
+        <div id="audioStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-red-950/60 border border-red-800/60 text-red-300 font-medium cursor-pointer" title="Click to Initialize Audio">
+          <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
+          <span id="audioStatusText">Tap to Enable Sound</span>
+        </div>
+      </div>
     </div>
   </header>
 
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col gap-4">
+    <!-- DASHBOARD -->
     <section class="wood-texture rounded-2xl p-4 sm:p-5 border border-wood-600/50 shadow-2xl">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+        <!-- ROOT SCALE -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-1.5 shadow-inner">
           <div class="flex items-center justify-between text-xs text-amber-300/80 font-semibold tracking-wide">
             <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-wood-brass"></i> Root Scale (Sur)</span>
@@ -122,6 +130,7 @@
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-400"><i class="fa-solid fa-chevron-down text-xs"></i></div>
           </div>
         </div>
+        <!-- TANPURA -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-2 shadow-inner">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 text-xs text-amber-300/80 font-semibold"><i class="fa-solid fa-compact-disc text-wood-brass"></i><span>Tanpura (Sa-Pa)</span></div>
@@ -132,6 +141,7 @@
             <input id="tanpuraVol" type="range" min="0" max="100" value="70" class="w-full">
           </div>
         </div>
+        <!-- METRONOME -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-2 shadow-inner">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 text-xs text-amber-300/80 font-semibold"><i class="fa-solid fa-stopwatch text-wood-brass"></i><span>Metronome</span></div>
@@ -145,6 +155,7 @@
             <span id="bpmDisplay" class="text-[11px] text-amber-300 font-mono font-bold w-14 text-right">96 BPM</span>
           </div>
         </div>
+        <!-- RECORDER -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-2 shadow-inner">
           <div class="flex items-center justify-between text-xs text-amber-300/80 font-semibold">
             <span class="flex items-center gap-1.5"><i class="fa-solid fa-microphone text-wood-brass"></i> Riyaz Recorder</span>
@@ -180,6 +191,7 @@
       </div>
     </section>
 
+    <!-- KEYBOARD CONTROLS (NEW) -->
     <section class="bg-wood-900/60 rounded-xl p-3 sm:p-4 border border-wood-700/50 shadow-inner flex flex-col sm:flex-row gap-4 items-center justify-between">
       <div class="flex items-center gap-2 w-full sm:w-1/2">
         <span class="text-amber-300/80 text-xs font-semibold whitespace-nowrap"><i class="fa-solid fa-arrows-left-right mr-1"></i> Position:</span>
@@ -192,6 +204,7 @@
       </div>
     </section>
 
+    <!-- HARMONIUM INSTRUMENT BODY -->
     <section class="relative bg-gradient-to-b from-[#3a1d0f] via-[#241209] to-[#140a05] rounded-3xl p-4 sm:p-7 border-4 border-[#522915] shadow-2xl overflow-hidden">
       <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-700 via-amber-400 to-amber-700 opacity-30"></div>
       
@@ -217,9 +230,12 @@
         </div>
       </div>
 
+      <!-- KEYBOARD BED CONTAINER -->
       <div class="relative bg-[#0d0705] p-2.5 sm:p-4 rounded-2xl shadow-inner border-2 border-wood-800">
         <div id="keyboardScrollContainer" class="overflow-x-auto hide-scrollbar touch-pan-x pb-2 select-none">
-          <div id="harmoniumKeyboard" class="relative flex min-w-max h-[260px] sm:h-[300px] select-none pl-1 pr-4"></div>
+          <div id="harmoniumKeyboard" class="relative flex min-w-max h-[260px] sm:h-[300px] select-none pl-1 pr-4">
+            <!-- Dynamic Keys Generated via JS -->
+          </div>
         </div>
         <div class="flex items-center justify-between pt-2 px-1 text-[11px] text-amber-400/60 font-medium">
           <span class="flex items-center gap-1.5"><i class="fa-solid fa-hand-pointer text-amber-500"></i> Touch or click keys. Multi-touch supported.</span>
@@ -234,6 +250,7 @@
       </div>
     </section>
 
+    <!-- GUIDE -->
     <section class="bg-wood-900/40 rounded-xl p-4 border border-wood-700/40 text-xs">
       <h3 class="font-semibold text-amber-300 mb-2 flex items-center gap-2">
         <i class="fa-solid fa-book-open-reader text-wood-brass"></i><span>Quick Note Reference Guide</span>
@@ -261,7 +278,19 @@
     </section>
   </main>
 
-  <footer class="w-full text-center py-3 text-[11px] text-amber-500/60 border-t border-wood-800">
+  <!-- Main Page SEO Text Content -->
+  <section class="max-w-7xl mx-auto px-6 py-12 text-slate-400 text-sm border-t border-slate-800/80 mt-10 bg-[#120b08]">
+    <h2 class="text-amber-400 font-bold text-xl mb-3">Your Free Virtual Indian Musical Instruments Studio</h2>
+    <p class="mb-4">Welcome to TaraJ Music, the ultimate platform to <strong>play musical instruments online free</strong>. Whether you are a beginner or a professional, our <strong>virtual indian musical instruments</strong> provide a realistic experience right in your browser. From a full-featured <strong>online harmonium simulator</strong> to a highly responsive <strong>virtual flute online (bansuri)</strong>, we bring traditional sounds to your digital workspace without any downloads.</p>
+    
+    <h3 class="text-amber-300 font-bold text-lg mb-2">Percussion & Rhythm Generators</h3>
+    <p class="mb-4">Practice your timing with our advanced <strong>online tabla rhythm generator</strong> and <strong>virtual dholak simulator</strong>. We offer high-quality <strong>real tabla sound online</strong> and <strong>free online tabla loops</strong> for classical singing and kathak (including teen taal and keherwa). Need folk beats? Explore our <strong>haryanvi dholak beats online</strong>, marriage dholak rhythms, and desi dholak loops. For precise tempo training, our <strong>online metronome</strong>, <strong>online tabla bol player</strong>, and bpm counter serve as perfect <strong>classical riyaz tools online</strong>.</p>
+    
+    <h3 class="text-amber-300 font-bold text-lg mb-2">Strings, Keys & Wind Instruments</h3>
+    <p class="mb-4">Beyond percussion, TaraJ Music is expanding to include traditional strings like the <strong>virtual sitar online</strong>, <strong>online sarangi player</strong>, and <strong>digital shruti box</strong>. You can <strong>play harmonium online free</strong> with your computer keyboard or dive into our <strong>classical flute online practice</strong> tools. From <strong>online vocal practice tools</strong> to a complete <strong>virtual orchestra online simulator</strong>, TaraJ Music is your all-in-one browser-based music studio.</p>
+  </section>
+
+  <footer class="w-full text-center py-3 text-[11px] text-amber-500/60 border-t border-wood-800 bg-[#1a0d07]">
     Designed for Indian Classical Vocalists & Instrumentalists • Tuned Desi Synth Engine
   </footer>
 
@@ -274,14 +303,19 @@
         this.ctx = null;
         this.masterGain = null;
         this.activeVoices = new Map(); 
+        
         this.reedType = 'male'; 
         this.bellowPressure = 0.8;
         this.rootPitchOffset = 0; 
+        
         this.isTanpuraRunning = false;
         this.tanpuraInterval = null;
         this.tanpuraGain = null;
+
         this.bpm = 96;
         this.isMetronomeRunning = false;
+        
+        // Setup Recorder
         this.mediaRecorder = null;
         this.audioChunks = [];
       }
@@ -291,38 +325,57 @@
           if (this.ctx.state === 'suspended') this.ctx.resume();
           return;
         }
+
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         this.ctx = new AudioContext();
+
         this.masterGain = this.ctx.createGain();
         this.masterGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
+
+        // Acoustic Harmonium Box EQ
         this.cabinetFilter = this.ctx.createBiquadFilter();
         this.cabinetFilter.type = 'lowpass';
-        this.cabinetFilter.frequency.setValueAtTime(2800, this.ctx.currentTime);
+        this.cabinetFilter.frequency.setValueAtTime(2800, this.ctx.currentTime); // Cut harsh high frequencies
+
         this.cabinetFilter.connect(this.masterGain);
         this.masterGain.connect(this.ctx.destination);
+
         this.tanpuraGain = this.ctx.createGain();
         this.tanpuraGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
         this.tanpuraGain.connect(this.cabinetFilter);
+
         this.metronomeGain = this.ctx.createGain();
         this.metronomeGain.gain.setValueAtTime(0.9, this.ctx.currentTime);
         this.metronomeGain.connect(this.masterGain);
+
         this.destNode = this.ctx.createMediaStreamDestination();
         this.masterGain.connect(this.destNode);
+
+        const badge = document.getElementById('audioStatusBadge');
+        badge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-emerald-950/80 border border-emerald-700 text-emerald-300 font-medium cursor-pointer';
+        document.getElementById('audioStatusText').textContent = 'Audio Ready';
+        badge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
       }
 
+      // CUSTOM TUNED DESI SYNTHESIZER FOR HARMONIUM
       startNote(noteFreq, noteId) {
         this.initAudio();
         if (this.activeVoices.has(noteId)) return;
+
         const now = this.ctx.currentTime;
+        
+        // 1. Envelope: Simulates air bellow pumping (not instant like a piano)
         const voiceGain = this.ctx.createGain();
         voiceGain.gain.setValueAtTime(0.0001, now);
         voiceGain.gain.linearRampToValueAtTime(0.7 * this.bellowPressure, now + 0.05);
 
+        // 2. Body Resonance Filter (gives it the wooden box feel)
         const formant = this.ctx.createBiquadFilter();
         formant.type = 'lowpass';
         formant.frequency.setValueAtTime(3000, now);
         formant.Q.value = 1.0;
 
+        // 3. Multi-Oscillator Design (Simulating Brass Reeds)
         const osc1 = this.ctx.createOscillator();
         osc1.type = 'sawtooth';
         osc1.frequency.value = noteFreq;
@@ -330,28 +383,31 @@
         const osc2 = this.ctx.createOscillator();
         osc2.type = 'sawtooth';
         osc2.frequency.value = noteFreq;
-        osc2.detune.value = 12;
+        osc2.detune.value = 12; // 12 cents detune creates the harmonium "vibe"
 
         const osc3 = this.ctx.createOscillator();
-        osc3.type = 'square';
+        osc3.type = 'square'; // Adds nasal brightness
+        
         if (this.reedType === 'male') {
-            osc3.frequency.value = noteFreq / 2;
+            osc3.frequency.value = noteFreq / 2; // Bass octave
         } else if (this.reedType === 'female') {
-            osc3.frequency.value = noteFreq * 2;
+            osc3.frequency.value = noteFreq * 2; // High octave
         } else {
-            osc3.frequency.value = noteFreq / 2;
-            osc2.detune.value = 18;
+            osc3.frequency.value = noteFreq / 2; // Double uses bass too
+            osc2.detune.value = 18; // More chorus for double
         }
 
         const mix1 = this.ctx.createGain(); mix1.gain.value = 0.5;
         const mix2 = this.ctx.createGain(); mix2.gain.value = 0.4;
-        const mix3 = this.ctx.createGain(); mix3.gain.value = 0.2;
+        const mix3 = this.ctx.createGain(); mix3.gain.value = 0.2; // Square wave kept quiet so it doesn't sound electronic
 
         osc1.connect(mix1); osc2.connect(mix2); osc3.connect(mix3);
         mix1.connect(formant); mix2.connect(formant); mix3.connect(formant);
         formant.connect(voiceGain);
         voiceGain.connect(this.cabinetFilter);
+        
         osc1.start(now); osc2.start(now); osc3.start(now);
+
         this.activeVoices.set(noteId, { voiceGain, oscList: [osc1, osc2, osc3] });
       }
 
@@ -359,28 +415,35 @@
         if (!this.activeVoices.has(noteId)) return;
         const { voiceGain, oscList } = this.activeVoices.get(noteId);
         const now = this.ctx.currentTime;
+
+        // Air release fade out
         const releaseTime = 0.15;
         voiceGain.gain.cancelScheduledValues(now);
         voiceGain.gain.setValueAtTime(voiceGain.gain.value, now);
         voiceGain.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
+
         setTimeout(() => {
           oscList.forEach(osc => { try { osc.stop(); osc.disconnect(); } catch (e) {} });
           voiceGain.disconnect();
         }, releaseTime * 1000 + 50);
+
         this.activeVoices.delete(noteId);
       }
       
       stopAllNotes() { this.activeVoices.forEach((_, noteId) => this.stopNote(noteId)); }
 
+      // TANPURA
       startTanpura() {
         this.initAudio();
         this.isTanpuraRunning = true;
-        const rootBaseHz = getFrequencyFromSemitone(this.rootPitchOffset + (3 - 4) * 12); 
+        const rootBaseHz = getPitchFrequency(this.rootPitchOffset, 3); 
         const paHz = rootBaseHz * Math.pow(2, 7/12); 
         const highSaHz = rootBaseHz * 2; 
+
         const strings = [
           { freq: paHz, delay: 0 }, { freq: highSaHz, delay: 1.1 }, { freq: highSaHz, delay: 2.2 }, { freq: rootBaseHz, delay: 3.3 }
         ];
+
         this.tanpuraInterval = setInterval(() => {
           if (!this.isTanpuraRunning) return;
           strings.forEach(str => this.triggerTanpuraPluck(str.freq, this.ctx.currentTime + str.delay));
@@ -393,15 +456,19 @@
         const osc = this.ctx.createOscillator();
         const pluckGain = this.ctx.createGain();
         const jawariFilter = this.ctx.createBiquadFilter();
+
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(freq, triggerTime);
+
         jawariFilter.type = 'bandpass';
         jawariFilter.frequency.setValueAtTime(freq * 3.5, triggerTime);
         jawariFilter.frequency.exponentialRampToValueAtTime(freq * 1.5, triggerTime + 1.8);
         jawariFilter.Q.setValueAtTime(4.0, triggerTime);
+
         pluckGain.gain.setValueAtTime(0.0001, triggerTime);
         pluckGain.gain.linearRampToValueAtTime(0.35, triggerTime + 0.04);
         pluckGain.gain.exponentialRampToValueAtTime(0.0001, triggerTime + 2.8);
+
         osc.connect(jawariFilter);
         jawariFilter.connect(pluckGain);
         pluckGain.connect(this.tanpuraGain);
@@ -409,6 +476,7 @@
       }
       stopTanpura() { this.isTanpuraRunning = false; clearInterval(this.tanpuraInterval); }
 
+      // METRONOME
       startMetronome() {
         this.initAudio();
         this.isMetronomeRunning = true;
@@ -437,6 +505,7 @@
       }
       stopMetronome() { this.isMetronomeRunning = false; clearTimeout(this.metronomeTimer); resetBeatIndicator(); }
 
+      // RECORDER
       startRecording() {
         this.initAudio();
         this.audioChunks = [];
@@ -464,16 +533,21 @@
     }
 
     const engine = new SurSangamEngine();
+
     function getFrequencyFromSemitone(semitone) { return 261.625565 * Math.pow(2, semitone / 12); }
+    function getPitchFrequency(rootOffset, octave) { return getFrequencyFromSemitone(rootOffset + (octave - 4) * 12); }
 
     const START_OCTAVE = 3; 
-    const TOTAL_KEYS = 48;
+    const TOTAL_KEYS = 48; // 4 FULL OCTAVES
+
+    // Global Key Width Variable (controlled by slider)
     let currentKeyWidth = 46;
 
     function buildHarmoniumKeys() {
       const container = document.getElementById('harmoniumKeyboard');
       container.innerHTML = '';
       const keyDataList = [];
+      let currentWhiteIndex = 0;
 
       for (let i = 0; i < TOTAL_KEYS; i++) {
         const octave = START_OCTAVE + Math.floor(i / 12);
@@ -481,16 +555,18 @@
         const isBlack = [1, 3, 6, 8, 10].includes(pitch);
         keyDataList.push({
           id: `key_${i}`, index: i, octave, pitchInOctave: pitch, isBlack,
-          frequency: getFrequencyFromSemitone(engine.rootPitchOffset + (octave - 4) * 12 + pitch)
+          frequency: getFrequencyFromSemitone((octave - 4) * 12 + pitch)
         });
       }
 
+      // Calculate relative black key width based on white key width (approx 60% of white key)
       const blackKeyWidth = currentKeyWidth * 0.6; 
+
       keyDataList.filter(k => !k.isBlack).forEach(key => {
         const el = document.createElement('div');
         el.className = 'white-key relative flex flex-col justify-end items-center pb-3 rounded-b-md select-none cursor-pointer flex-shrink-0';
         el.style.width = `${currentKeyWidth}px`; el.style.height = '100%';
-        el.dataset.noteId = key.id;
+        el.dataset.noteId = key.id; el.innerHTML = ``;
         bindKeyEvents(el, key); container.appendChild(el);
       });
 
@@ -498,13 +574,17 @@
         const el = document.createElement('div');
         el.className = 'black-key absolute z-10 flex flex-col justify-end items-center pb-2 rounded-b-md select-none cursor-pointer';
         el.style.width = `${blackKeyWidth}px`; el.style.height = '62%';
+        
         const octaveBase = (key.octave - START_OCTAVE) * 7;
         let p = key.pitchInOctave, inside = 0;
         if(p===1) inside=1; else if(p===3) inside=2; else if(p===6) inside=4; else if(p===8) inside=5; else if(p===10) inside=6;
+        
+        // Offset black key to sit between white keys
         el.style.left = `${((octaveBase + inside) * currentKeyWidth) - (blackKeyWidth / 2)}px`;
-        el.dataset.noteId = key.id;
+        el.dataset.noteId = key.id; el.innerHTML = ``;
         bindKeyEvents(el, key); container.appendChild(el);
       });
+      
       updatePosition();
     }
     
@@ -513,17 +593,22 @@
         const posSlider = document.getElementById('positionSlider');
         if (scrollContainer && posSlider) {
             const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-            scrollContainer.scrollLeft = (posSlider.value / 100) * maxScroll;
+            const scrollValue = (posSlider.value / 100) * maxScroll;
+            scrollContainer.scrollLeft = scrollValue;
         }
     }
 
+    // Key Width Slider Event Listener
     document.getElementById('keyWidthSlider').addEventListener('input', (e) => {
         currentKeyWidth = parseInt(e.target.value, 10);
         document.getElementById('keyWidthDisplay').textContent = `${currentKeyWidth} px`;
         buildHarmoniumKeys();
     });
 
-    document.getElementById('positionSlider').addEventListener('input', updatePosition);
+    // Position Slider Event Listener
+    document.getElementById('positionSlider').addEventListener('input', () => {
+        updatePosition();
+    });
 
     let isPointerDown = false;
     function bindKeyEvents(el, data) {
@@ -554,6 +639,7 @@
 
     const K_MAP = { 'KeyA':0, 'KeyW':1, 'KeyS':2, 'KeyE':3, 'KeyD':4, 'KeyF':5, 'KeyT':6, 'KeyG':7, 'KeyY':8, 'KeyH':9, 'KeyU':10, 'KeyJ':11, 'KeyK':12 };
     const pKeys = new Set();
+
     window.addEventListener('keydown', (e) => {
       if (e.repeat || pKeys.has(e.code) || !K_MAP.hasOwnProperty(e.code)) return;
       e.preventDefault(); pKeys.add(e.code);
@@ -568,10 +654,10 @@
       }
     });
 
+    // Controls bindings
     document.getElementById('scaleSelect').addEventListener('change', (e) => {
       engine.rootPitchOffset = parseInt(e.target.value, 10);
       document.getElementById('currentPitchHz').textContent = `Sa = ${NOTE_NAMES_WESTERN[engine.rootPitchOffset]}`;
-      buildHarmoniumKeys();
       if (engine.isTanpuraRunning) { engine.stopTanpura(); engine.startTanpura(); }
     });
     document.getElementById('tanpuraToggleBtn').addEventListener('click', (e) => {
@@ -579,6 +665,7 @@
       else { engine.stopTanpura(); e.currentTarget.innerHTML = `<i class="fa-solid fa-play text-[10px] mr-1"></i>On`; e.currentTarget.classList.replace('bg-amber-600','bg-amber-900/60'); }
     });
     document.getElementById('tanpuraVol').addEventListener('input', (e) => {
+      document.getElementById('tanpuraVolDisplay').textContent = `${e.target.value}%`;
       if (engine.tanpuraGain) engine.tanpuraGain.gain.value = e.target.value / 100;
     });
     document.getElementById('metronomeToggleBtn').addEventListener('click', (e) => {
@@ -607,7 +694,10 @@
     }));
     document.getElementById('bellowPressure').addEventListener('input', e => engine.bellowPressure = e.target.value / 100);
 
+    ['click', 'touchstart'].forEach(evt => window.addEventListener(evt, () => engine.initAudio(), { once: true }));
+    
     window.addEventListener('DOMContentLoaded', () => {
+        // Set default values based on screen size on load
         if (window.innerWidth <= 640) {
             currentKeyWidth = 55;
             document.getElementById('keyWidthSlider').value = 55;
@@ -618,3 +708,4 @@
   </script>
 </body>
 </html>
+```[cite: 17]
