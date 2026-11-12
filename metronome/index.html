@@ -65,8 +65,21 @@
 </head>
 <body class="bg-[#080C14] text-slate-100 min-h-screen font-sans flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
+  <!-- Header Navigation Bar Added -->
+  <header class="bg-zinc-900 border-b border-zinc-800 py-3 px-6 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <a href="/" class="text-xl font-bold text-amber-400 font-serif">TaraJ Music</a>
+      <nav class="flex flex-wrap items-center gap-2 text-sm">
+        <a href="/" class="px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-200 hover:bg-amber-500 hover:text-black transition">Harmonium</a>
+        <a href="/metronome" class="px-3 py-1.5 rounded-full bg-amber-500 text-black font-medium">Metronome</a>
+        <a href="/flute" class="px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-200 hover:bg-amber-500 hover:text-black transition">Online Flute</a>
+        <a href="/melody-maker" class="px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-200 hover:bg-amber-500 hover:text-black transition">Melody Maker</a>
+      </nav>
+    </div>
+  </header>
+
   <!-- Top Navigation & Branding -->
-  <header class="border-b border-slate-800/80 bg-[#0B101D]/80 backdrop-blur-md px-6 py-4 sticky top-0 z-30">
+  <div class="border-b border-slate-800/80 bg-[#0B101D]/80 backdrop-blur-md px-6 py-4">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-amber-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
@@ -104,7 +117,7 @@
         </button>
       </div>
     </div>
-  </header>
+  </div>
 
   <!-- Main Workspace -->
   <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 flex flex-col gap-6">
@@ -452,7 +465,6 @@
         soundMode = 'wood';
         document.getElementById('soundModeText').textContent = "Tabla / Wood Tick";
       }
-      // Audition sound
       playTick(true);
     }
 
@@ -506,7 +518,6 @@
         dot.innerHTML = `<span>${beatNum}</span>`;
         dotWrapper.appendChild(dot);
 
-        // Sub-label for Sam
         if (isSam) {
           const samLabel = document.createElement('span');
           samLabel.className = 'text-[9px] font-extrabold tracking-wider text-amber-400 uppercase';
@@ -530,7 +541,6 @@
       const displayBeatNumber = beatIdx + 1;
       const isSam = (beatIdx === 0);
 
-      // Central Display
       const counterEl = document.getElementById('beatCounter');
       const fractionEl = document.getElementById('beatFraction');
       const samBadgeEl = document.getElementById('samIndicatorBadge');
@@ -553,7 +563,6 @@
         pulseRingEl.classList.add('opacity-0', 'scale-75');
       }, 120);
 
-      // Dots state update
       for (let i = 0; i < totalMatras; i++) {
         const dot = document.getElementById(`dot-${i}`);
         if (!dot) continue;
@@ -582,7 +591,6 @@
       if (num < 1 || num > 16) return;
       totalMatras = num;
 
-      // Reset beat to 0 if out of range
       if (currentBeat >= totalMatras) {
         currentBeat = 0;
       }
@@ -601,13 +609,11 @@
       playTick(isSam);
       updateVisualBeatState(currentBeat);
 
-      // Advance to next beat with continuous infinite wrap
       currentBeat = (currentBeat + 1) % totalMatras;
     }
 
     // Play/Stop toggle with high-precision scheduling
     function togglePlay() {
-      // Unlock AudioContext on user interaction
       getAudioContext();
 
       isPlaying = !isPlaying;
@@ -626,10 +632,8 @@
         statusLabel.textContent = 'Running';
         statusLabel.className = 'text-emerald-400 font-semibold';
 
-        // Play initial tick immediately
         tick();
 
-        // Continuous Infinite Loop
         const intervalMs = (60 / bpm) * 1000;
         timerId = setInterval(tick, intervalMs);
       } else {
@@ -646,7 +650,6 @@
         statusLabel.textContent = 'Stopped';
         statusLabel.className = 'text-slate-400';
 
-        // Reset to beat 0 ready state
         currentBeat = 0;
         updateVisualBeatState(0);
       }
@@ -662,7 +665,6 @@
       document.getElementById('bpmDisplay').textContent = bpm;
       document.getElementById('bpmSlider').value = bpm;
 
-      // Update Laya Category Badge
       const layaBadge = document.getElementById('layaLabel');
       if (bpm < 80) {
         layaBadge.textContent = 'Vilambit Laya (Slow)';
@@ -675,7 +677,6 @@
         layaBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20';
       }
 
-      // If already playing, seamlessly reschedule the infinite loop without pause
       if (isPlaying) {
         clearInterval(timerId);
         const intervalMs = (60 / bpm) * 1000;
@@ -687,13 +688,11 @@
       setBpm(bpm + delta);
     }
 
-    // Preset Helper
     function setTaalPreset(matras, label, targetBpm) {
       selectMatra(matras);
       if (targetBpm) setBpm(targetBpm);
     }
 
-    // Tap Tempo Feature
     let tapTimes = [];
     function tapTempo() {
       const now = performance.now();
@@ -706,7 +705,6 @@
         for (let i = 1; i < tapTimes.length; i++) {
           intervals.push(tapTimes[i] - tapTimes[i - 1]);
         }
-        // If gap between taps was greater than 2.5 seconds, reset
         if (intervals[intervals.length - 1] > 2500) {
           tapTimes = [now];
           return;
@@ -719,7 +717,6 @@
       }
     }
 
-    // Keyboard Shortcuts (Space to play/pause, Arrow keys for tempo)
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
@@ -731,7 +728,6 @@
       }
     });
 
-    // Initial Setup
     window.addEventListener('DOMContentLoaded', () => {
       renderMatraButtons();
       renderVisualIndicators();
