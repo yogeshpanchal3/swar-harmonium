@@ -1,1 +1,742 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ताल चक्र | Indian Classical & Modern Matra Metronome</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
 
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Rozha One"', 'serif'],
+            devanagari: ['"Yatra One"', 'cursive']
+          },
+          colors: {
+            brand: {
+              emerald: '#10B981',
+              accent: '#F59E0B',
+              coral: '#F43F5E',
+              dark: '#0B0F17',
+              panel: '#131B29',
+              subtle: '#1E293B',
+              border: '#334155'
+            }
+          },
+          animation: {
+            'ping-once': 'ping 0.25s cubic-bezier(0, 0, 0.2, 1)',
+            'pulse-fast': 'pulse 0.4s cubic-bezier(0.4, 0, 0.6, 1)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar and Dial Styling */
+    ::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    .glow-emerald {
+      box-shadow: 0 0 25px -3px rgba(16, 185, 129, 0.6);
+    }
+    .glow-sam {
+      box-shadow: 0 0 35px 2px rgba(245, 158, 11, 0.7);
+    }
+  </style>
+</head>
+<body class="bg-[#080C14] text-slate-100 min-h-screen font-sans flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Navigation & Branding -->
+  <header class="border-b border-slate-800/80 bg-[#0B101D]/80 backdrop-blur-md px-6 py-4 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-amber-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+          <i class="ph-bold ph-waveform"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-300 bg-clip-text text-transparent">
+              ताल चक्र
+            </h1>
+            <span class="text-xs uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+              Taal Metronome
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">1 to 16 Matra Rhythm & Beat Generator with Sam Accent</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Taala Quick Presets -->
+        <div class="hidden md:flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+          <span class="px-2 text-slate-400 font-medium">Quick Taal:</span>
+          <button onclick="setTaalPreset(4, 'Teental (Dhadha / 4 Matra)', 128)" class="preset-btn px-2.5 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition text-xs font-semibold">4 Keherwa</button>
+          <button onclick="setTaalPreset(6, 'Dadra Taal', 120)" class="preset-btn px-2.5 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition text-xs font-semibold">6 Dadra</button>
+          <button onclick="setTaalPreset(7, 'Roopak Taal', 116)" class="preset-btn px-2.5 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition text-xs font-semibold">7 Roopak</button>
+          <button onclick="setTaalPreset(8, 'Keherwa Taal', 130)" class="preset-btn px-2.5 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition text-xs font-semibold">8 Keherwa</button>
+          <button onclick="setTaalPreset(10, 'Jhaptal', 120)" class="preset-btn px-2.5 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition text-xs font-semibold">10 Jhaptal</button>
+          <button onclick="setTaalPreset(12, 'Ektaal / Chautal', 112)" class="preset-btn px-2.5 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition text-xs font-semibold">12 Ektaal</button>
+          <button onclick="setTaalPreset(16, 'Teentaal', 128)" class="preset-btn px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition text-xs font-semibold">16 Teentaal</button>
+        </div>
+
+        <button id="soundModeBtn" onclick="toggleSoundMode()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/90 hover:bg-slate-700/80 text-xs font-medium rounded-xl border border-slate-700 text-slate-200 transition">
+          <i class="ph-fill ph-bell-simple text-amber-400 text-sm"></i>
+          <span id="soundModeText">Tabla / Wood Tick</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 flex flex-col gap-6">
+
+    <!-- Active Beat Display & Radial Stage -->
+    <div class="relative bg-gradient-to-b from-[#111927] to-[#0D131F] rounded-3xl border border-slate-800 p-6 md:p-8 flex flex-col items-center justify-center shadow-2xl overflow-hidden min-h-[330px]">
+      <!-- Background subtle atmospheric radial blur -->
+      <div class="absolute -top-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Active Beat Display Badge -->
+      <div class="flex items-center gap-2 mb-3">
+        <span id="samIndicatorBadge" class="hidden px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-widest animate-pulse">
+          ★ सम (Beat 1 - Downbeat Accent)
+        </span>
+        <span id="runningStatusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-slate-500" id="liveDot"></span>
+          <span id="statusLabel">Ready</span>
+        </span>
+      </div>
+
+      <!-- Massive Central Beat Number & Wave visualizer -->
+      <div class="flex flex-col items-center justify-center my-1 select-none">
+        <div class="relative flex items-center justify-center">
+          <!-- Pulse wave ring -->
+          <div id="pulseRing" class="absolute w-44 h-44 rounded-full border-2 border-emerald-500/30 scale-75 opacity-0 transition-all duration-300 pointer-events-none"></div>
+
+          <!-- The Active Beat Number -->
+          <div id="beatCounter" class="text-8xl md:text-9xl font-black tracking-tighter text-slate-200 transition-all duration-100 transform tabular-nums drop-shadow-lg">
+            1
+          </div>
+        </div>
+
+        <div class="mt-2 text-center">
+          <div class="text-sm font-semibold tracking-wider uppercase text-slate-400 flex items-center justify-center gap-2">
+            <span>Matra</span>
+            <span id="beatFraction" class="text-emerald-400 font-mono text-base font-bold">1 / 16</span>
+          </div>
+          <p id="taalInfoText" class="text-xs text-slate-500 mt-0.5">Teentaal (16 Matra Cycle)</p>
+        </div>
+      </div>
+
+      <!-- Dynamic Visual Dots / Indicators Container (1 to 16) -->
+      <div class="w-full max-w-4xl mt-6 pt-5 border-t border-slate-800/80">
+        <div class="flex items-center justify-between mb-2 px-1">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Matra Visual Indicators (<span id="totalMatraCountLabel">16</span> Beats)
+          </span>
+          <span class="text-xs text-slate-500 flex items-center gap-2">
+            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Sam (Accent)</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Active</span>
+            <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-700"></span> Inactive</span>
+          </span>
+        </div>
+
+        <!-- Grid of dynamic indicators -->
+        <div id="indicatorsContainer" class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 py-2">
+          <!-- Generated via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls Row: Play/Stop & Tempo / BPM Controls -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+      
+      <!-- Primary Playback Action -->
+      <div class="md:col-span-4 bg-[#111927] border border-slate-800 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Metronome Engine</span>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-emerald-400 border border-slate-700 font-mono font-medium">Infinite Loop</span>
+        </div>
+
+        <div class="flex flex-col items-center justify-center py-2">
+          <button id="togglePlayBtn" onclick="togglePlay()" class="w-full py-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] text-slate-950 font-black text-xl flex items-center justify-center gap-3 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer">
+            <i id="playIcon" class="ph-fill ph-play text-2xl"></i>
+            <span id="playBtnLabel">Start Metronome</span>
+          </button>
+        </div>
+
+        <div class="text-xs text-slate-500 text-center mt-3 flex items-center justify-center gap-1.5">
+          <i class="ph-bold ph-infinity text-emerald-400"></i>
+          <span>Continuous playback until you press Stop</span>
+        </div>
+      </div>
+
+      <!-- BPM (Tempo) Controller -->
+      <div class="md:col-span-8 bg-[#111927] border border-slate-800 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">BPM (Tempo Controller)</span>
+            <p class="text-xs text-slate-500">Speed / Laya (Vilambit, Madhya, Drut)</p>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <span id="layaLabel" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
+              Madhya Laya (Medium)
+            </span>
+            <div class="flex items-baseline gap-1 bg-slate-900 px-3.5 py-1.5 rounded-xl border border-slate-700">
+              <span id="bpmDisplay" class="text-2xl font-black text-emerald-400 font-mono">128</span>
+              <span class="text-xs text-slate-400 font-medium">BPM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slider & Plus/Minus Controllers -->
+        <div class="py-4">
+          <div class="flex items-center gap-4">
+            <button onclick="adjustBpm(-5)" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 border border-slate-700 flex items-center justify-center font-bold text-sm transition" title="-5 BPM">
+              -5
+            </button>
+            <button onclick="adjustBpm(-1)" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 border border-slate-700 flex items-center justify-center font-bold text-lg transition" title="-1 BPM">
+              <i class="ph-bold ph-minus"></i>
+            </button>
+            
+            <div class="flex-1 relative flex items-center">
+              <input 
+                id="bpmSlider" 
+                type="range" 
+                min="40" 
+                max="280" 
+                value="128" 
+                oninput="setBpm(this.value)" 
+                class="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500 focus:outline-none"
+              >
+            </div>
+
+            <button onclick="adjustBpm(1)" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 border border-slate-700 flex items-center justify-center font-bold text-lg transition" title="+1 BPM">
+              <i class="ph-bold ph-plus"></i>
+            </button>
+            <button onclick="adjustBpm(5)" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 border border-slate-700 flex items-center justify-center font-bold text-sm transition" title="+5 BPM">
+              +5
+            </button>
+          </div>
+
+          <!-- Common tempo shortcuts -->
+          <div class="flex items-center justify-between text-xs text-slate-400 mt-3 pt-3 border-t border-slate-800/60">
+            <span class="text-slate-500">Quick Tempo:</span>
+            <div class="flex items-center gap-2">
+              <button onclick="setBpm(60)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">60 (Vilambit)</button>
+              <button onclick="setBpm(90)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">90 (Drut-Vilambit)</button>
+              <button onclick="setBpm(120)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">120 (Standard)</button>
+              <button onclick="setBpm(134)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">134 (Default)</button>
+              <button onclick="setBpm(160)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">160 (Drut)</button>
+              <button onclick="setBpm(200)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">200 (Ati-Drut)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <span>Range: 40 - 280 BPM</span>
+          <button onclick="tapTempo()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 font-semibold flex items-center gap-1.5 transition">
+            <i class="ph-bold ph-hand-tap text-emerald-400"></i>
+            <span>Tap Tempo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16 Matra / Beats Interactive Selector -->
+    <div class="bg-[#111927] border border-slate-800 rounded-3xl p-6 shadow-xl">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+              <i class="ph-bold ph-squares-four text-emerald-400"></i>
+              16 Matra / Beats Selector
+            </h2>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">
+              Select 1 to 16
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Click any button below to set total cycle beats. Visual dots and audio loop update immediately.
+          </p>
+        </div>
+        
+        <div class="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800 self-start sm:self-auto">
+          Current: <span id="currentMatraBadge" class="text-emerald-400 font-bold">16 Matra</span> Cycle
+        </div>
+      </div>
+
+      <!-- 1 to 16 Matra Buttons Grid -->
+      <div id="matraButtonsGrid" class="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-16 gap-2">
+        <!-- Generates 1 to 16 dynamically with Indian Taal associations -->
+      </div>
+      
+      <!-- Educational info tags for selected Matra -->
+      <div class="mt-4 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 text-slate-400">
+          <i class="ph-bold ph-info text-amber-400"></i>
+          <span id="selectedMatraDescription">
+            <strong>16 Matras:</strong> Teentaal (4 + 4 + 4 + 4 vibhags) - The king of Hindustani taals.
+          </span>
+        </div>
+        <div class="flex items-center gap-4 text-slate-500">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> Selected Matra</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800 inline-block"></span> Click to Select</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Info -->
+  <footer class="border-t border-slate-900 bg-[#070A11] px-6 py-4 text-xs text-slate-500 text-center">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-emerald-400 font-semibold">Web Audio API Native Synth</span>
+        <span>•</span>
+        <span>Pitch: 880Hz Sam Accent, 440Hz Normal Beat</span>
+      </div>
+      <div>Designed for Riyaz, Classical Vocal, Instrumental & Modern Practice</div>
+    </div>
+  </footer>
+
+  <!-- Script: Precision Web Audio API & Interactive Logic -->
+  <script>
+    // State
+    let totalMatras = 16;
+    let currentBeat = 0; // 0-indexed internally (0 = beat 1)
+    let bpm = 128;
+    let isPlaying = false;
+    let timerId = null;
+    let soundMode = 'wood'; // 'wood' or 'beep'
+
+    // Web Audio API context
+    let audioCtx = null;
+
+    // Taal Descriptions Map
+    const TAAL_DESCRIPTIONS = {
+      1: "1 Matra: Single Beat Pulser (One-shot pulse)",
+      2: "2 Matra: Dwi-matra / 2/4 Marching pulse",
+      3: "3 Matra: Dadra Half / 3/4 Waltz Laya",
+      4: "4 Matra: Keherwa Theka (4 beats) / 4/4 Basic meter",
+      5: "5 Matra: Jhaptal Half / Khanda Jaati (5/4 meter)",
+      6: "6 Matra: Dadra Taal (3 + 3 vibhag)",
+      7: "7 Matra: Roopak Taal (3 + 2 + 2 vibhag)",
+      8: "8 Matra: Keherwa / Bhajani Taal (4 + 4 vibhag)",
+      9: "9 Matra: Matta Taal / Sankirna (9 beats)",
+      10: "10 Matra: Jhaptal / Sooltaal (2 + 3 + 2 + 3 vibhag)",
+      11: "11 Matra: Char Taal Ki Sawari / Rudra Taal variant",
+      12: "12 Matra: Ektaal & Chautal (2 x 6 vibhag)",
+      13: "13 Matra: Jai Taal (Hindustani classical rare)",
+      14: "14 Matra: Deepchandi / Dhamar Taal (3 + 4 + 3 + 4)",
+      15: "15 Matra: Pancham Sawari (3 + 4 + 4 + 4)",
+      16: "16 Matra: Teentaal (4 + 4 + 4 + 4) - Premier Classical Taal"
+    };
+
+    // Initialize Audio Context on demand
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // High Quality Sound Synthesis via Web Audio API
+    function playTick(isSam) {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+
+        if (soundMode === 'beep') {
+          // Modern Studio DAW Click
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          // Fast pitch drop creates the punchy click transient
+          osc.frequency.setValueAtTime(isSam ? 2000 : 1000, now);
+          osc.frequency.exponentialRampToValueAtTime(isSam ? 100 : 50, now + 0.04);
+
+          const peakVol = isSam ? 1.0 : 0.6;
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(peakVol, now + 0.001);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else {
+          // Crisp Woodblock / Tabla Rim (Tak/Na) Sound
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'triangle';
+          const startFreq = isSam ? 900 : 600;
+          const endFreq = isSam ? 300 : 200;
+
+          osc.frequency.setValueAtTime(startFreq, now);
+          osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.03);
+
+          // Snappy volume envelope
+          const peakGain = isSam ? 1.0 : 0.5;
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(peakGain, now + 0.001);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+          // Add a very short noise burst for a crisp attack
+          const bufferSize = ctx.sampleRate * 0.01;
+          const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+          }
+          const noise = ctx.createBufferSource();
+          noise.buffer = noiseBuffer;
+          
+          const noiseFilter = ctx.createBiquadFilter();
+          noiseFilter.type = 'highpass';
+          noiseFilter.frequency.value = isSam ? 4000 : 3000;
+          
+          const noiseGain = ctx.createGain();
+          noiseGain.gain.setValueAtTime(isSam ? 0.6 : 0.3, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+
+          noise.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(ctx.destination);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          noise.start(now);
+          osc.start(now);
+          osc.stop(now + 0.15);
+        }
+      } catch (err) {
+        console.error("Audio trigger failed:", err);
+      }
+    }
+
+    // Toggle Sound Modes
+    function toggleSoundMode() {
+      if (soundMode === 'wood') {
+        soundMode = 'beep';
+        document.getElementById('soundModeText').textContent = "Electronic Pitch";
+      } else {
+        soundMode = 'wood';
+        document.getElementById('soundModeText').textContent = "Tabla / Wood Tick";
+      }
+      // Audition sound
+      playTick(true);
+    }
+
+    // Render 1-16 Matra Selector Buttons
+    function renderMatraButtons() {
+      const container = document.getElementById('matraButtonsGrid');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 16; i++) {
+        const btn = document.createElement('button');
+        btn.id = `matra-btn-${i}`;
+        const isSelected = (i === totalMatras);
+
+        btn.className = `py-3 px-1 rounded-2xl font-bold flex flex-col items-center justify-center transition-all cursor-pointer ${
+          isSelected 
+            ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30 scale-105 border-2 border-emerald-300' 
+            : 'bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700'
+        }`;
+
+        btn.onclick = () => selectMatra(i);
+        btn.innerHTML = `
+          <span class="text-base sm:text-lg font-black">${i}</span>
+          <span class="text-[9px] uppercase tracking-tighter opacity-80 font-medium">Matra</span>
+        `;
+        container.appendChild(btn);
+      }
+    }
+
+    // Render Visual Indicators (Dots) matching current totalMatras
+    function renderVisualIndicators() {
+      const container = document.getElementById('indicatorsContainer');
+      container.innerHTML = '';
+      document.getElementById('totalMatraCountLabel').textContent = totalMatras;
+
+      for (let i = 0; i < totalMatras; i++) {
+        const beatNum = i + 1;
+        const isSam = (i === 0);
+
+        const dotWrapper = document.createElement('div');
+        dotWrapper.id = `indicator-slot-${i}`;
+        dotWrapper.className = 'flex flex-col items-center gap-1.5 transition-all';
+
+        const dot = document.createElement('div');
+        dot.id = `dot-${i}`;
+        dot.className = `w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-150 border ${
+          isSam 
+            ? 'bg-amber-500/10 border-amber-500/40 text-amber-300' 
+            : 'bg-slate-900 border-slate-800 text-slate-400'
+        }`;
+        
+        dot.innerHTML = `<span>${beatNum}</span>`;
+        dotWrapper.appendChild(dot);
+
+        // Sub-label for Sam
+        if (isSam) {
+          const samLabel = document.createElement('span');
+          samLabel.className = 'text-[9px] font-extrabold tracking-wider text-amber-400 uppercase';
+          samLabel.textContent = 'सम';
+          dotWrapper.appendChild(samLabel);
+        } else {
+          const emptySpacer = document.createElement('span');
+          emptySpacer.className = 'text-[9px] opacity-0';
+          emptySpacer.textContent = '.';
+          dotWrapper.appendChild(emptySpacer);
+        }
+
+        container.appendChild(dotWrapper);
+      }
+
+      updateVisualBeatState(currentBeat);
+    }
+
+    // Update active highlight on dots and central numbers
+    function updateVisualBeatState(beatIdx) {
+      const displayBeatNumber = beatIdx + 1;
+      const isSam = (beatIdx === 0);
+
+      // Central Display
+      const counterEl = document.getElementById('beatCounter');
+      const fractionEl = document.getElementById('beatFraction');
+      const samBadgeEl = document.getElementById('samIndicatorBadge');
+      const pulseRingEl = document.getElementById('pulseRing');
+
+      counterEl.textContent = displayBeatNumber;
+      fractionEl.textContent = `${displayBeatNumber} / ${totalMatras}`;
+
+      if (isSam) {
+        counterEl.className = 'text-8xl md:text-9xl font-black tracking-tighter text-amber-400 scale-105 transition-all duration-100 tabular-nums glow-sam';
+        samBadgeEl.classList.remove('hidden');
+        pulseRingEl.className = 'absolute w-48 h-48 rounded-full border-4 border-amber-400/60 scale-125 opacity-80 transition-all duration-200 pointer-events-none';
+      } else {
+        counterEl.className = 'text-8xl md:text-9xl font-black tracking-tighter text-emerald-400 scale-100 transition-all duration-100 tabular-nums glow-emerald';
+        samBadgeEl.classList.add('hidden');
+        pulseRingEl.className = 'absolute w-44 h-44 rounded-full border-2 border-emerald-500/40 scale-110 opacity-60 transition-all duration-150 pointer-events-none';
+      }
+
+      setTimeout(() => {
+        pulseRingEl.classList.add('opacity-0', 'scale-75');
+      }, 120);
+
+      // Dots state update
+      for (let i = 0; i < totalMatras; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (!dot) continue;
+
+        const isCurrent = (i === beatIdx);
+        const isSamBeat = (i === 0);
+
+        if (isCurrent) {
+          if (isSamBeat) {
+            dot.className = 'w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-black text-xs sm:text-sm transition-all duration-100 bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/50 scale-110 border-2 border-amber-200 ring-2 ring-amber-400/50';
+          } else {
+            dot.className = 'w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-black text-xs sm:text-sm transition-all duration-100 bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-400/50 scale-110 border-2 border-emerald-200 ring-2 ring-emerald-400/50';
+          }
+        } else {
+          if (isSamBeat) {
+            dot.className = 'w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-150 bg-amber-500/15 border-amber-500/40 text-amber-300';
+          } else {
+            dot.className = 'w-8 h-8 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center font-medium text-xs sm:text-sm transition-all duration-150 bg-slate-900/90 border-slate-800 text-slate-500 hover:text-slate-300';
+          }
+        }
+      }
+    }
+
+    // Select Matra (1 to 16)
+    function selectMatra(num) {
+      if (num < 1 || num > 16) return;
+      totalMatras = num;
+
+      // Reset beat to 0 if out of range
+      if (currentBeat >= totalMatras) {
+        currentBeat = 0;
+      }
+
+      document.getElementById('currentMatraBadge').textContent = `${totalMatras} Matra`;
+      document.getElementById('selectedMatraDescription').innerHTML = `<strong>${totalMatras} Matras:</strong> ${TAAL_DESCRIPTIONS[totalMatras] || "Custom rhythmic cycle"}`;
+      document.getElementById('taalInfoText').textContent = TAAL_DESCRIPTIONS[totalMatras] || `${totalMatras} Matra Cycle`;
+
+      renderMatraButtons();
+      renderVisualIndicators();
+    }
+
+    // Step Metronome Cycle
+    function tick() {
+      const isSam = (currentBeat === 0);
+      playTick(isSam);
+      updateVisualBeatState(currentBeat);
+
+      // Advance to next beat with continuous infinite wrap
+      currentBeat = (currentBeat + 1) % totalMatras;
+    }
+
+    // Play/Stop toggle with high-precision scheduling
+    function togglePlay() {
+      // Unlock AudioContext on user interaction
+      getAudioContext();
+
+      isPlaying = !isPlaying;
+      const playBtn = document.getElementById('togglePlayBtn');
+      const playIcon = document.getElementById('playIcon');
+      const playLabel = document.getElementById('playBtnLabel');
+      const liveDot = document.getElementById('liveDot');
+      const statusLabel = document.getElementById('statusLabel');
+
+      if (isPlaying) {
+        playBtn.className = 'w-full py-5 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-400 hover:to-red-500 active:scale-[0.98] text-white font-black text-xl flex items-center justify-center gap-3 shadow-lg shadow-rose-500/30 transition-all cursor-pointer';
+        playIcon.className = 'ph-fill ph-stop text-2xl';
+        playLabel.textContent = 'Stop Metronome';
+
+        liveDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
+        statusLabel.textContent = 'Running';
+        statusLabel.className = 'text-emerald-400 font-semibold';
+
+        // Play initial tick immediately
+        tick();
+
+        // Continuous Infinite Loop
+        const intervalMs = (60 / bpm) * 1000;
+        timerId = setInterval(tick, intervalMs);
+      } else {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+
+        playBtn.className = 'w-full py-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-[0.98] text-slate-950 font-black text-xl flex items-center justify-center gap-3 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer';
+        playIcon.className = 'ph-fill ph-play text-2xl';
+        playLabel.textContent = 'Start Metronome';
+
+        liveDot.className = 'w-2 h-2 rounded-full bg-slate-500';
+        statusLabel.textContent = 'Stopped';
+        statusLabel.className = 'text-slate-400';
+
+        // Reset to beat 0 ready state
+        currentBeat = 0;
+        updateVisualBeatState(0);
+      }
+    }
+
+    // BPM Controller
+    function setBpm(val) {
+      let num = parseInt(val, 10);
+      if (isNaN(num)) num = 128;
+      num = Math.min(280, Math.max(40, num));
+      bpm = num;
+
+      document.getElementById('bpmDisplay').textContent = bpm;
+      document.getElementById('bpmSlider').value = bpm;
+
+      // Update Laya Category Badge
+      const layaBadge = document.getElementById('layaLabel');
+      if (bpm < 80) {
+        layaBadge.textContent = 'Vilambit Laya (Slow)';
+        layaBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20';
+      } else if (bpm <= 150) {
+        layaBadge.textContent = 'Madhya Laya (Medium)';
+        layaBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20';
+      } else {
+        layaBadge.textContent = 'Drut Laya (Fast)';
+        layaBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20';
+      }
+
+      // If already playing, seamlessly reschedule the infinite loop without pause
+      if (isPlaying) {
+        clearInterval(timerId);
+        const intervalMs = (60 / bpm) * 1000;
+        timerId = setInterval(tick, intervalMs);
+      }
+    }
+
+    function adjustBpm(delta) {
+      setBpm(bpm + delta);
+    }
+
+    // Preset Helper
+    function setTaalPreset(matras, label, targetBpm) {
+      selectMatra(matras);
+      if (targetBpm) setBpm(targetBpm);
+    }
+
+    // Tap Tempo Feature
+    let tapTimes = [];
+    function tapTempo() {
+      const now = performance.now();
+      tapTimes.push(now);
+
+      if (tapTimes.length > 5) tapTimes.shift();
+
+      if (tapTimes.length > 1) {
+        let intervals = [];
+        for (let i = 1; i < tapTimes.length; i++) {
+          intervals.push(tapTimes[i] - tapTimes[i - 1]);
+        }
+        // If gap between taps was greater than 2.5 seconds, reset
+        if (intervals[intervals.length - 1] > 2500) {
+          tapTimes = [now];
+          return;
+        }
+        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const calculatedBpm = Math.round(60000 / avgInterval);
+        if (calculatedBpm >= 40 && calculatedBpm <= 280) {
+          setBpm(calculatedBpm);
+        }
+      }
+    }
+
+    // Keyboard Shortcuts (Space to play/pause, Arrow keys for tempo)
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === 'ArrowRight' || e.code === 'ArrowUp') {
+        adjustBpm(1);
+      } else if (e.code === 'ArrowLeft' || e.code === 'ArrowDown') {
+        adjustBpm(-1);
+      }
+    });
+
+    // Initial Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      renderMatraButtons();
+      renderVisualIndicators();
+      setBpm(128);
+    });
+  </script>
+</body>
+</html>
