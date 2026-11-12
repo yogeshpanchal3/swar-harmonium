@@ -17,10 +17,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons CDN -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&family=Yatra+One&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -30,7 +32,8 @@
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
             serif: ['"Rozha One"', 'serif'],
-            devanagari: ['"Yatra One"', 'cursive']
+            devanagari: ['"Yatra One"', 'cursive'],
+            title: ['Cinzel', 'serif']
           },
           colors: {
             brand: {
@@ -74,15 +77,25 @@
 </head>
 <body class="bg-[#080C14] text-slate-100 min-h-screen font-sans flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
-  <!-- Header Navigation Bar Added -->
-  <header class="bg-zinc-900 border-b border-zinc-800 py-3 px-6 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      <a href="/" class="text-xl font-bold text-amber-400 font-serif">TaraJ Music</a>
-      <nav class="flex flex-wrap items-center gap-2 text-sm">
-        <a href="/" class="px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-200 hover:bg-amber-500 hover:text-black transition">Harmonium</a>
-        <a href="/metronome" class="px-3 py-1.5 rounded-full bg-amber-500 text-black font-medium">Metronome</a>
-        <a href="/flute" class="px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-200 hover:bg-amber-500 hover:text-black transition">Online Flute</a>
-        <a href="/melody-maker" class="px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-200 hover:bg-amber-500 hover:text-black transition">Melody Maker</a>
+  <!-- Identical Unified Rang-Biranga Header (Matching Harmonium) -->
+  <header class="w-full bg-[#05080E] border-b-2 border-cyan-500/40 px-6 py-3.5 sticky top-0 z-50 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-400 flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
+          <i class="fa-solid fa-music text-zinc-950 text-xl"></i>
+        </div>
+        <div>
+          <span class="font-serif tracking-wider text-lg sm:text-xl font-bold text-cyan-400 block leading-tight">TaraJ Music</span>
+          <span class="text-xs text-zinc-400 font-sans hidden sm:block">Indian Classical Practice Studio</span>
+        </div>
+      </a>
+      
+      <!-- Colorful Floating Nav Buttons -->
+      <nav class="flex items-center gap-2.5 sm:gap-3 text-sm">
+        <a href="/" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Harmonium</a>
+        <a href="/metronome" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black shadow-lg shadow-amber-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Metronome</a>
+        <a href="/flute" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-600 text-slate-950 font-black shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Online Flute</a>
+        <a href="/melody-maker" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black shadow-lg shadow-rose-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Melody Maker</a>
       </nav>
     </div>
   </header>
@@ -401,12 +414,10 @@
         const now = ctx.currentTime;
 
         if (soundMode === 'beep') {
-          // Modern Studio DAW Click
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
 
           osc.type = 'sine';
-          // Fast pitch drop creates the punchy click transient
           osc.frequency.setValueAtTime(isSam ? 2000 : 1000, now);
           osc.frequency.exponentialRampToValueAtTime(isSam ? 100 : 50, now + 0.04);
 
@@ -421,7 +432,6 @@
           osc.start(now);
           osc.stop(now + 0.06);
         } else {
-          // Crisp Woodblock / Tabla Rim (Tak/Na) Sound
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
 
@@ -432,13 +442,11 @@
           osc.frequency.setValueAtTime(startFreq, now);
           osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.03);
 
-          // Snappy volume envelope
           const peakGain = isSam ? 1.0 : 0.5;
           gain.gain.setValueAtTime(0, now);
           gain.gain.linearRampToValueAtTime(peakGain, now + 0.001);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
 
-          // Add a very short noise burst for a crisp attack
           const bufferSize = ctx.sampleRate * 0.01;
           const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
           const output = noiseBuffer.getChannelData(0);
@@ -472,7 +480,6 @@
       }
     }
 
-    // Toggle Sound Modes
     function toggleSoundMode() {
       if (soundMode === 'wood') {
         soundMode = 'beep';
@@ -484,7 +491,6 @@
       playTick(true);
     }
 
-    // Render 1-16 Matra Selector Buttons
     function renderMatraButtons() {
       const container = document.getElementById('matraButtonsGrid');
       container.innerHTML = '';
@@ -509,7 +515,6 @@
       }
     }
 
-    // Render Visual Indicators (Dots) matching current totalMatras
     function renderVisualIndicators() {
       const container = document.getElementById('indicatorsContainer');
       container.innerHTML = '';
@@ -552,7 +557,6 @@
       updateVisualBeatState(currentBeat);
     }
 
-    // Update active highlight on dots and central numbers
     function updateVisualBeatState(beatIdx) {
       const displayBeatNumber = beatIdx + 1;
       const isSam = (beatIdx === 0);
@@ -602,7 +606,6 @@
       }
     }
 
-    // Select Matra (1 to 16)
     function selectMatra(num) {
       if (num < 1 || num > 16) return;
       totalMatras = num;
@@ -619,19 +622,15 @@
       renderVisualIndicators();
     }
 
-    // Step Metronome Cycle
     function tick() {
       const isSam = (currentBeat === 0);
       playTick(isSam);
       updateVisualBeatState(currentBeat);
-
       currentBeat = (currentBeat + 1) % totalMatras;
     }
 
-    // Play/Stop toggle with high-precision scheduling
     function togglePlay() {
       getAudioContext();
-
       isPlaying = !isPlaying;
       const playBtn = document.getElementById('togglePlayBtn');
       const playIcon = document.getElementById('playIcon');
@@ -671,7 +670,6 @@
       }
     }
 
-    // BPM Controller
     function setBpm(val) {
       let num = parseInt(val, 10);
       if (isNaN(num)) num = 128;
