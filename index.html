@@ -73,17 +73,27 @@
 </head>
 <body class="text-amber-100 flex flex-col min-h-screen justify-between antialiased selection:bg-amber-800">
 
+  <!-- Header Navigation Bar Added -->
   <header class="w-full bg-[#1e0e07]/90 backdrop-blur border-b border-wood-600/40 px-4 py-3 sticky top-0 z-50 shadow-xl">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-700 to-amber-500 flex items-center justify-center shadow-lg border border-amber-400/30">
           <i class="fa-solid fa-music text-amber-950 text-lg"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2"><h1 class="font-title tracking-wider text-lg sm:text-xl font-bold text-amber-200">Swar Harmonium</h1></div>
+          <div class="flex items-center gap-2"><h1 class="font-title tracking-wider text-lg sm:text-xl font-bold text-amber-200">TaraJ Music</h1></div>
           <p class="text-xs text-amber-400/70 font-sans hidden sm:block">Acoustic Harmonium & Classical Music Practice</p>
         </div>
       </div>
+      
+      <!-- Navigation Links -->
+      <nav class="flex flex-wrap items-center gap-2 text-sm">
+        <a href="/" class="px-3 py-1.5 rounded-full bg-amber-700 text-amber-100 font-medium shadow">Harmonium</a>
+        <a href="/metronome" class="px-3 py-1.5 rounded-full bg-wood-800/80 text-amber-300/80 hover:bg-amber-700/50 hover:text-amber-100 transition">Metronome</a>
+        <a href="/flute" class="px-3 py-1.5 rounded-full bg-wood-800/80 text-amber-300/80 hover:bg-amber-700/50 hover:text-amber-100 transition">Online Flute</a>
+        <a href="/melody-maker" class="px-3 py-1.5 rounded-full bg-wood-800/80 text-amber-300/80 hover:bg-amber-700/50 hover:text-amber-100 transition">Melody Maker</a>
+      </nav>
+
       <div class="flex items-center gap-2 sm:gap-4">
         <div id="audioStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-red-950/60 border border-red-800/60 text-red-300 font-medium cursor-pointer" title="Click to Initialize Audio">
           <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
@@ -182,7 +192,7 @@
       </div>
     </section>
 
-    <!-- KEYBOARD CONTROLS (NEW) -->
+    <!-- KEYBOARD CONTROLS -->
     <section class="bg-wood-900/60 rounded-xl p-3 sm:p-4 border border-wood-700/50 shadow-inner flex flex-col sm:flex-row gap-4 items-center justify-between">
       <div class="flex items-center gap-2 w-full sm:w-1/2">
         <span class="text-amber-300/80 text-xs font-semibold whitespace-nowrap"><i class="fa-solid fa-arrows-left-right mr-1"></i> Position:</span>
@@ -294,7 +304,6 @@
         this.bpm = 96;
         this.isMetronomeRunning = false;
         
-        // Setup Recorder
         this.mediaRecorder = null;
         this.audioChunks = [];
       }
@@ -311,10 +320,9 @@
         this.masterGain = this.ctx.createGain();
         this.masterGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
 
-        // Acoustic Harmonium Box EQ
         this.cabinetFilter = this.ctx.createBiquadFilter();
         this.cabinetFilter.type = 'lowpass';
-        this.cabinetFilter.frequency.setValueAtTime(2800, this.ctx.currentTime); // Cut harsh high frequencies
+        this.cabinetFilter.frequency.setValueAtTime(2800, this.ctx.currentTime);
 
         this.cabinetFilter.connect(this.masterGain);
         this.masterGain.connect(this.ctx.destination);
@@ -336,25 +344,21 @@
         badge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
       }
 
-      // CUSTOM TUNED DESI SYNTHESIZER FOR HARMONIUM
       startNote(noteFreq, noteId) {
         this.initAudio();
         if (this.activeVoices.has(noteId)) return;
 
         const now = this.ctx.currentTime;
         
-        // 1. Envelope: Simulates air bellow pumping (not instant like a piano)
         const voiceGain = this.ctx.createGain();
         voiceGain.gain.setValueAtTime(0.0001, now);
         voiceGain.gain.linearRampToValueAtTime(0.7 * this.bellowPressure, now + 0.05);
 
-        // 2. Body Resonance Filter (gives it the wooden box feel)
         const formant = this.ctx.createBiquadFilter();
         formant.type = 'lowpass';
         formant.frequency.setValueAtTime(3000, now);
         formant.Q.value = 1.0;
 
-        // 3. Multi-Oscillator Design (Simulating Brass Reeds)
         const osc1 = this.ctx.createOscillator();
         osc1.type = 'sawtooth';
         osc1.frequency.value = noteFreq;
@@ -362,23 +366,23 @@
         const osc2 = this.ctx.createOscillator();
         osc2.type = 'sawtooth';
         osc2.frequency.value = noteFreq;
-        osc2.detune.value = 12; // 12 cents detune creates the harmonium "vibe"
+        osc2.detune.value = 12;
 
         const osc3 = this.ctx.createOscillator();
-        osc3.type = 'square'; // Adds nasal brightness
+        osc3.type = 'square';
         
         if (this.reedType === 'male') {
-            osc3.frequency.value = noteFreq / 2; // Bass octave
+            osc3.frequency.value = noteFreq / 2;
         } else if (this.reedType === 'female') {
-            osc3.frequency.value = noteFreq * 2; // High octave
+            osc3.frequency.value = noteFreq * 2;
         } else {
-            osc3.frequency.value = noteFreq / 2; // Double uses bass too
-            osc2.detune.value = 18; // More chorus for double
+            osc3.frequency.value = noteFreq / 2;
+            osc2.detune.value = 18;
         }
 
         const mix1 = this.ctx.createGain(); mix1.gain.value = 0.5;
         const mix2 = this.ctx.createGain(); mix2.gain.value = 0.4;
-        const mix3 = this.ctx.createGain(); mix3.gain.value = 0.2; // Square wave kept quiet so it doesn't sound electronic
+        const mix3 = this.ctx.createGain(); mix3.gain.value = 0.2;
 
         osc1.connect(mix1); osc2.connect(mix2); osc3.connect(mix3);
         mix1.connect(formant); mix2.connect(formant); mix3.connect(formant);
@@ -395,7 +399,6 @@
         const { voiceGain, oscList } = this.activeVoices.get(noteId);
         const now = this.ctx.currentTime;
 
-        // Air release fade out
         const releaseTime = 0.15;
         voiceGain.gain.cancelScheduledValues(now);
         voiceGain.gain.setValueAtTime(voiceGain.gain.value, now);
@@ -411,7 +414,6 @@
       
       stopAllNotes() { this.activeVoices.forEach((_, noteId) => this.stopNote(noteId)); }
 
-      // TANPURA
       startTanpura() {
         this.initAudio();
         this.isTanpuraRunning = true;
@@ -455,7 +457,6 @@
       }
       stopTanpura() { this.isTanpuraRunning = false; clearInterval(this.tanpuraInterval); }
 
-      // METRONOME
       startMetronome() {
         this.initAudio();
         this.isMetronomeRunning = true;
@@ -484,7 +485,6 @@
       }
       stopMetronome() { this.isMetronomeRunning = false; clearTimeout(this.metronomeTimer); resetBeatIndicator(); }
 
-      // RECORDER
       startRecording() {
         this.initAudio();
         this.audioChunks = [];
@@ -517,16 +517,14 @@
     function getPitchFrequency(rootOffset, octave) { return getFrequencyFromSemitone(rootOffset + (octave - 4) * 12); }
 
     const START_OCTAVE = 3; 
-    const TOTAL_KEYS = 48; // 4 FULL OCTAVES
+    const TOTAL_KEYS = 48;
 
-    // Global Key Width Variable (controlled by slider)
     let currentKeyWidth = 46;
 
     function buildHarmoniumKeys() {
       const container = document.getElementById('harmoniumKeyboard');
       container.innerHTML = '';
       const keyDataList = [];
-      let currentWhiteIndex = 0;
 
       for (let i = 0; i < TOTAL_KEYS; i++) {
         const octave = START_OCTAVE + Math.floor(i / 12);
@@ -538,7 +536,6 @@
         });
       }
 
-      // Calculate relative black key width based on white key width (approx 60% of white key)
       const blackKeyWidth = currentKeyWidth * 0.6; 
 
       keyDataList.filter(k => !k.isBlack).forEach(key => {
@@ -558,7 +555,6 @@
         let p = key.pitchInOctave, inside = 0;
         if(p===1) inside=1; else if(p===3) inside=2; else if(p===6) inside=4; else if(p===8) inside=5; else if(p===10) inside=6;
         
-        // Offset black key to sit between white keys
         el.style.left = `${((octaveBase + inside) * currentKeyWidth) - (blackKeyWidth / 2)}px`;
         el.dataset.noteId = key.id; el.innerHTML = ``;
         bindKeyEvents(el, key); container.appendChild(el);
@@ -577,14 +573,12 @@
         }
     }
 
-    // Key Width Slider Event Listener
     document.getElementById('keyWidthSlider').addEventListener('input', (e) => {
         currentKeyWidth = parseInt(e.target.value, 10);
         document.getElementById('keyWidthDisplay').textContent = `${currentKeyWidth} px`;
         buildHarmoniumKeys();
     });
 
-    // Position Slider Event Listener
     document.getElementById('positionSlider').addEventListener('input', () => {
         updatePosition();
     });
@@ -633,7 +627,6 @@
       }
     });
 
-    // Controls bindings
     document.getElementById('scaleSelect').addEventListener('change', (e) => {
       engine.rootPitchOffset = parseInt(e.target.value, 10);
       document.getElementById('currentPitchHz').textContent = `Sa = ${NOTE_NAMES_WESTERN[engine.rootPitchOffset]}`;
@@ -644,7 +637,6 @@
       else { engine.stopTanpura(); e.currentTarget.innerHTML = `<i class="fa-solid fa-play text-[10px] mr-1"></i>On`; e.currentTarget.classList.replace('bg-amber-600','bg-amber-900/60'); }
     });
     document.getElementById('tanpuraVol').addEventListener('input', (e) => {
-      document.getElementById('tanpuraVolDisplay').textContent = `${e.target.value}%`;
       if (engine.tanpuraGain) engine.tanpuraGain.gain.value = e.target.value / 100;
     });
     document.getElementById('metronomeToggleBtn').addEventListener('click', (e) => {
@@ -676,7 +668,6 @@
     ['click', 'touchstart'].forEach(evt => window.addEventListener(evt, () => engine.initAudio(), { once: true }));
     
     window.addEventListener('DOMContentLoaded', () => {
-        // Set default values based on screen size on load
         if (window.innerWidth <= 640) {
             currentKeyWidth = 55;
             document.getElementById('keyWidthSlider').value = 55;
