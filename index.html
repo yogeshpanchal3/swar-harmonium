@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Swar Harmonium - Harmonium Practice</title>
+  <title>Swar Harmonium - Pro Riyaz Studio</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts for Indian classical aesthetic and sleek UI -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,14 +17,8 @@
         extend: {
           colors: {
             wood: {
-              900: '#1a0d07',
-              800: '#2b160c',
-              700: '#3e2012',
-              600: '#5c321b',
-              500: '#7b4426',
-              accent: '#d97736',
-              brass: '#e5b869',
-              gold: '#ffd166',
+              900: '#1a0d07', 800: '#2b160c', 700: '#3e2012', 600: '#5c321b', 500: '#7b4426',
+              accent: '#d97736', brass: '#e5b869', gold: '#ffd166',
             }
           },
           fontFamily: {
@@ -36,148 +30,81 @@
     }
   </script>
   <style>
-    /* Custom Wood Grain Gradients & Keyboard Finishes */
     body {
       background-color: #120b08;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(123, 68, 38, 0.25) 0%, transparent 75%),
-        linear-gradient(to bottom, #1b0f0a 0%, #0d0705 100%);
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
+      background-image: radial-gradient(circle at 50% 0%, rgba(123, 68, 38, 0.25) 0%, transparent 75%), linear-gradient(to bottom, #1b0f0a 0%, #0d0705 100%);
+      user-select: none; -webkit-user-select: none; touch-action: manipulation;
     }
-
     .wood-texture {
       background: linear-gradient(135deg, #2e170d 0%, #1c0d07 50%, #29140b 100%);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 6px rgba(0,0,0,0.8);
     }
-
     .brass-badge {
       background: linear-gradient(145deg, #f0c371, #be8b32, #ffdf8f);
-      color: #261405;
-      text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+      color: #261405; text-shadow: 0 1px 1px rgba(255,255,255,0.4);
       box-shadow: 0 3px 8px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.6);
     }
-
-    /* Key Styling - Blank & Clean */
+    /* Keys Layout - Fully Blank */
     .white-key {
       background: linear-gradient(to bottom, #fcfbf7 0%, #f1ecdf 88%, #dfd6c5 100%);
-      box-shadow: 
-        inset 1px 0 0 #ffffff,
-        inset -1px 0 0 #ccc3b0,
-        inset 0 -8px 0 rgba(0,0,0,0.12),
-        0 4px 6px rgba(0,0,0,0.5);
-      border-bottom: 5px solid #b5a892;
-      transition: all 0.05s ease;
+      box-shadow: inset 1px 0 0 #ffffff, inset -1px 0 0 #ccc3b0, inset 0 -8px 0 rgba(0,0,0,0.12), 0 4px 6px rgba(0,0,0,0.5);
+      border-bottom: 5px solid #b5a892; transition: all 0.05s ease;
     }
     .white-key.active, .white-key:active {
       background: linear-gradient(to bottom, #ede7db 0%, #e2dac9 85%, #d1c5af 100%);
-      border-bottom-width: 2px;
-      transform: translateY(3px);
+      border-bottom-width: 2px; transform: translateY(3px);
       box-shadow: 0 1px 2px rgba(0,0,0,0.7), inset 0 2px 4px rgba(0,0,0,0.2);
     }
-
     .black-key {
       background: linear-gradient(to bottom, #2d2a29 0%, #151414 70%, #0a0909 100%);
-      box-shadow: 
-        inset 1px 1px 0 rgba(255,255,255,0.18),
-        inset -1px 0 0 rgba(0,0,0,0.8),
-        inset 0 -5px 0 rgba(255,255,255,0.08),
-        0 6px 10px rgba(0,0,0,0.9);
-      border-bottom: 6px solid #000;
-      transition: all 0.05s ease;
+      box-shadow: inset 1px 1px 0 rgba(255,255,255,0.18), inset -1px 0 0 rgba(0,0,0,0.8), inset 0 -5px 0 rgba(255,255,255,0.08), 0 6px 10px rgba(0,0,0,0.9);
+      border-bottom: 6px solid #000; transition: all 0.05s ease;
     }
     .black-key.active, .black-key:active {
       background: linear-gradient(to bottom, #1e1c1b 0%, #0a0909 85%, #000 100%);
-      border-bottom-width: 2px;
-      transform: translateY(3px);
+      border-bottom-width: 2px; transform: translateY(3px);
       box-shadow: 0 2px 4px rgba(0,0,0,0.9), inset 0 2px 3px rgba(0,0,0,0.6);
     }
-
-    /* Bellows pulse animation */
-    @keyframes bellowsBreath {
-      0%, 100% { transform: scaleX(1); opacity: 0.9; }
-      50% { transform: scaleX(1.015); opacity: 1; }
-    }
-    .bellows-animated {
-      animation: bellowsBreath 4s ease-in-out infinite;
-    }
-
-    /* Custom range sliders */
-    input[type=range] {
-      -webkit-appearance: none;
-      background: rgba(0,0,0,0.4);
-      height: 6px;
-      border-radius: 9999px;
-      border: 1px solid rgba(229, 184, 105, 0.2);
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 18px;
-      width: 18px;
-      border-radius: 50%;
-      background: #e5b869;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.6);
-      border: 2px solid #2b160c;
-    }
-    
-    /* Scrollbar styling for key container */
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    input[type=range] { -webkit-appearance: none; background: rgba(0,0,0,0.4); height: 6px; border-radius: 9999px; border: 1px solid rgba(229, 184, 105, 0.2); }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #e5b869; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.6); border: 2px solid #2b160c; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="text-amber-100 flex flex-col min-h-screen justify-between antialiased selection:bg-amber-800">
 
-  <!-- TOP APP BAR -->
   <header class="w-full bg-[#1e0e07]/90 backdrop-blur border-b border-wood-600/40 px-4 py-3 sticky top-0 z-50 shadow-xl">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
-      
-      <!-- Brand Logo & Title -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-700 to-amber-500 flex items-center justify-center shadow-lg border border-amber-400/30">
           <i class="fa-solid fa-music text-amber-950 text-lg"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-title tracking-wider text-lg sm:text-xl font-bold text-amber-200">Swar Harmonium</h1>
-          </div>
+          <div class="flex items-center gap-2"><h1 class="font-title tracking-wider text-lg sm:text-xl font-bold text-amber-200">Swar Harmonium</h1></div>
           <p class="text-xs text-amber-400/70 font-sans hidden sm:block">Acoustic Harmonium & Classical Music Practice</p>
         </div>
       </div>
-
-      <!-- Quick Controls / Toggles -->
       <div class="flex items-center gap-2 sm:gap-4">
-        <!-- Audio Engine Status / Wake lock indicator -->
         <div id="audioStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-red-950/60 border border-red-800/60 text-red-300 font-medium cursor-pointer" title="Click to Initialize Audio">
           <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
           <span id="audioStatusText">Tap to Enable Sound</span>
         </div>
       </div>
-
     </div>
   </header>
 
-  <!-- MAIN RIYAZ WORKSPACE -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col gap-4">
-
-    <!-- MASTER CONTROL DASHBOARD (Top Control Bar) -->
+    <!-- DASHBOARD -->
     <section class="wood-texture rounded-2xl p-4 sm:p-5 border border-wood-600/50 shadow-2xl">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-
-        <!-- 1. ROOT SCALE SELECTOR -->
+        <!-- ROOT SCALE -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-1.5 shadow-inner">
           <div class="flex items-center justify-between text-xs text-amber-300/80 font-semibold tracking-wide">
-            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-wood-brass"></i> Root Scale (Sur / Pitch)</span>
-            <span id="currentPitchHz" class="text-[10px] text-amber-400 font-mono">Sa = C (261.6 Hz)</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-wood-brass"></i> Root Scale (Sur)</span>
+            <span id="currentPitchHz" class="text-[10px] text-amber-400 font-mono">Sa = C</span>
           </div>
           <div class="relative">
-            <select id="scaleSelect" class="w-full bg-wood-800 text-amber-100 font-semibold text-sm rounded-lg px-3 py-2 border border-wood-600 focus:outline-none focus:border-amber-400 transition cursor-pointer appearance-none">
+            <select id="scaleSelect" class="w-full bg-wood-800 text-amber-100 font-semibold text-sm rounded-lg px-3 py-2 border border-wood-600 focus:outline-none focus:border-amber-400 cursor-pointer appearance-none">
               <option value="0" selected>C (1 Safed)</option>
               <option value="1">C# (1 Kali)</option>
               <option value="2">D (2 Safed)</option>
@@ -191,44 +118,27 @@
               <option value="10">A# (5 Kali)</option>
               <option value="11">B (7 Safed)</option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-400">
-              <i class="fa-solid fa-chevron-down text-xs"></i>
-            </div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-400"><i class="fa-solid fa-chevron-down text-xs"></i></div>
           </div>
         </div>
-
-        <!-- 2. TANPURA DRONE -->
+        <!-- TANPURA -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-2 shadow-inner">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 text-xs text-amber-300/80 font-semibold">
-              <i class="fa-solid fa-compact-disc text-wood-brass"></i>
-              <span>Tanpura Drone (Sa-Pa)</span>
-            </div>
-            <button id="tanpuraToggleBtn" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/80 hover:bg-amber-700/40 transition flex items-center gap-1.5 shadow">
-              <i class="fa-solid fa-play text-[10px]"></i>
-              <span>Drone On</span>
-            </button>
+            <div class="flex items-center gap-1.5 text-xs text-amber-300/80 font-semibold"><i class="fa-solid fa-compact-disc text-wood-brass"></i><span>Tanpura (Sa-Pa)</span></div>
+            <button id="tanpuraToggleBtn" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/80 hover:bg-amber-700/40 transition shadow"><i class="fa-solid fa-play text-[10px] mr-1"></i>On</button>
           </div>
           <div class="flex items-center gap-2 pt-0.5">
             <i class="fa-solid fa-volume-low text-xs text-amber-400/60"></i>
             <input id="tanpuraVol" type="range" min="0" max="100" value="70" class="w-full">
-            <span id="tanpuraVolDisplay" class="text-[11px] text-amber-300 font-mono w-7 text-right">70%</span>
           </div>
         </div>
-
-        <!-- 3. METRONOME (TAAL / TEMPO) -->
+        <!-- METRONOME -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-2 shadow-inner">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 text-xs text-amber-300/80 font-semibold">
-              <i class="fa-solid fa-stopwatch text-wood-brass"></i>
-              <span>Metronome / Laya</span>
-            </div>
+            <div class="flex items-center gap-1.5 text-xs text-amber-300/80 font-semibold"><i class="fa-solid fa-stopwatch text-wood-brass"></i><span>Metronome</span></div>
             <div class="flex items-center gap-2">
-              <div id="beatVisualIndicator" class="w-3.5 h-3.5 rounded-full bg-wood-700 border border-wood-500 transition-colors duration-75"></div>
-              <button id="metronomeToggleBtn" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/80 hover:bg-amber-700/40 transition flex items-center gap-1.5 shadow">
-                <i class="fa-solid fa-play text-[10px]"></i>
-                <span>Start</span>
-              </button>
+              <div id="beatVisualIndicator" class="w-3.5 h-3.5 rounded-full bg-wood-700 border border-wood-500"></div>
+              <button id="metronomeToggleBtn" class="px-3 py-1 text-xs font-bold rounded-full bg-amber-900/60 text-amber-300 border border-amber-700/80 hover:bg-amber-700/40 transition shadow"><i class="fa-solid fa-play text-[10px] mr-1"></i>Start</button>
             </div>
           </div>
           <div class="flex items-center gap-2 pt-0.5">
@@ -236,31 +146,20 @@
             <span id="bpmDisplay" class="text-[11px] text-amber-300 font-mono font-bold w-14 text-right">96 BPM</span>
           </div>
         </div>
-
-        <!-- 4. RIYAZ AUDIO RECORDER -->
+        <!-- RECORDER -->
         <div class="bg-wood-900/80 p-3.5 rounded-xl border border-wood-700/60 flex flex-col gap-2 shadow-inner">
           <div class="flex items-center justify-between text-xs text-amber-300/80 font-semibold">
             <span class="flex items-center gap-1.5"><i class="fa-solid fa-microphone text-wood-brass"></i> Riyaz Recorder</span>
             <span id="recordingTimer" class="font-mono text-[11px] text-amber-400">00:00</span>
           </div>
           <div class="flex items-center gap-2 pt-0.5">
-            <button id="recordBtn" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-lg bg-red-900/40 hover:bg-red-800/60 border border-red-700/70 text-red-200 transition flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-circle text-red-500 text-[10px]"></i>
-              <span id="recordBtnText">Record</span>
-            </button>
-            <button id="playRecordingBtn" disabled class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-lg bg-wood-800 border border-wood-600 text-stone-500 cursor-not-allowed transition flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-play text-[10px]"></i>
-              <span>Play</span>
-            </button>
-            <a id="downloadRecordLink" class="hidden py-1.5 px-2.5 text-xs font-semibold rounded-lg bg-amber-900/40 border border-amber-700/60 text-amber-300 hover:bg-amber-800 transition flex items-center justify-center" title="Save Audio File">
-              <i class="fa-solid fa-download"></i>
-            </a>
+            <button id="recordBtn" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-lg bg-red-900/40 border border-red-700/70 text-red-200 transition"><i class="fa-solid fa-circle text-red-500 text-[10px] mr-1"></i><span id="recordBtnText">Record</span></button>
+            <button id="playRecordingBtn" disabled class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-lg bg-wood-800 border border-wood-600 text-stone-500 cursor-not-allowed transition"><i class="fa-solid fa-play text-[10px] mr-1"></i>Play</button>
+            <a id="downloadRecordLink" class="hidden py-1.5 px-2.5 text-xs rounded-lg bg-amber-900/40 border border-amber-700/60 text-amber-300"><i class="fa-solid fa-download"></i></a>
           </div>
         </div>
-
       </div>
 
-      <!-- ACOUSTIC REED / BELLOWS MODIFIER BAR -->
       <div class="mt-4 pt-3 border-t border-wood-700/50 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
@@ -271,42 +170,44 @@
               <button data-reed="double" class="reed-btn px-2.5 py-1 rounded-md text-[11px] font-medium text-amber-300/70 hover:text-amber-200">Double Reed (Sur)</button>
             </div>
           </div>
-
           <div class="flex items-center gap-2">
             <span class="text-amber-400/70 font-medium">Bellow Pressure:</span>
             <input id="bellowPressure" type="range" min="30" max="100" value="80" class="w-24">
           </div>
         </div>
-
-        <!-- Currently Playing Note Display Box -->
         <div class="flex items-center gap-2 ml-auto">
           <span class="text-amber-400/60 text-[11px]">Active Note:</span>
-          <div id="activeNoteDisplay" class="px-3 py-1 rounded-lg bg-wood-900 border border-amber-600/50 text-amber-300 font-title text-base font-bold min-w-[130px] text-center shadow-inner tracking-wide">
-            —
-          </div>
+          <div id="activeNoteDisplay" class="px-3 py-1 rounded-lg bg-wood-900 border border-amber-600/50 text-amber-300 font-title text-base font-bold min-w-[130px] text-center shadow-inner tracking-wide">—</div>
         </div>
+      </div>
+    </section>
+
+    <!-- KEYBOARD CONTROLS (NEW) -->
+    <section class="bg-wood-900/60 rounded-xl p-3 sm:p-4 border border-wood-700/50 shadow-inner flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <div class="flex items-center gap-2 w-full sm:w-1/2">
+        <span class="text-amber-300/80 text-xs font-semibold whitespace-nowrap"><i class="fa-solid fa-arrows-left-right mr-1"></i> Position:</span>
+        <input id="positionSlider" type="range" min="0" max="100" value="30" class="w-full">
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-1/2">
+        <span class="text-amber-300/80 text-xs font-semibold whitespace-nowrap"><i class="fa-solid fa-text-width mr-1"></i> Key Width:</span>
+        <input id="keyWidthSlider" type="range" min="25" max="60" value="46" class="w-full">
+        <span id="keyWidthDisplay" class="text-amber-400 font-mono text-[10px] w-10 text-right">46 px</span>
       </div>
     </section>
 
     <!-- HARMONIUM INSTRUMENT BODY -->
     <section class="relative bg-gradient-to-b from-[#3a1d0f] via-[#241209] to-[#140a05] rounded-3xl p-4 sm:p-7 border-4 border-[#522915] shadow-2xl overflow-hidden">
-      
-      <!-- Real Harmonium Inlay & Ornamentation Details -->
       <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-amber-700 via-amber-400 to-amber-700 opacity-30"></div>
       
-      <!-- Top Decorative Brass Plate & Grille (Jali) -->
       <div class="flex items-center justify-between mb-4 px-2">
         <div class="flex items-center gap-3">
-          <!-- Traditional Brass Stop Knobs -->
           <div class="flex items-center gap-2 bg-wood-900/90 py-1.5 px-3 rounded-xl border border-wood-700">
             <span class="text-[10px] text-amber-300 uppercase tracking-widest font-bold">Stops:</span>
-            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold flex items-center justify-center">1</button>
-            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold flex items-center justify-center">2</button>
-            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold flex items-center justify-center">3</button>
-            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold flex items-center justify-center">4</button>
+            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold">1</button>
+            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold">2</button>
+            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold">3</button>
+            <button class="w-5 h-5 rounded-full brass-badge border border-amber-900 shadow text-[9px] font-bold">4</button>
           </div>
-
-          <!-- Bellows Status Indicator -->
           <div class="hidden sm:flex items-center gap-2 text-xs text-amber-400/80">
             <div class="w-16 h-3 bg-wood-900 rounded-full border border-wood-600 overflow-hidden p-0.5">
               <div id="bellowAirBar" class="h-full bg-gradient-to-r from-amber-600 to-amber-300 rounded-full w-full transition-all duration-300"></div>
@@ -314,7 +215,6 @@
             <span class="text-[10px] text-amber-300/70">Bellows Resonant</span>
           </div>
         </div>
-
         <div class="text-right">
           <span class="font-title tracking-widest text-xs sm:text-sm text-wood-brass font-bold">CALCUTTA STANDARD</span>
           <p class="text-[10px] text-amber-500/70 uppercase tracking-wider">4 OCTAVES (MANDRA • MADHYA • TAAR)</p>
@@ -323,22 +223,17 @@
 
       <!-- KEYBOARD BED CONTAINER -->
       <div class="relative bg-[#0d0705] p-2.5 sm:p-4 rounded-2xl shadow-inner border-2 border-wood-800">
-        <!-- Key Frame with Horizontal Scroll for Mobile Touch Responsiveness -->
         <div id="keyboardScrollContainer" class="overflow-x-auto hide-scrollbar touch-pan-x pb-2 select-none">
           <div id="harmoniumKeyboard" class="relative flex min-w-max h-[260px] sm:h-[300px] select-none pl-1 pr-4">
-            <!-- Dynamic Harmonium Keys Generated via JavaScript for Perfect Pitch Alignment -->
+            <!-- Dynamic Keys Generated via JS -->
           </div>
         </div>
-
-        <!-- Touch Hint for Mobile -->
         <div class="flex items-center justify-between pt-2 px-1 text-[11px] text-amber-400/60 font-medium">
           <span class="flex items-center gap-1.5"><i class="fa-solid fa-hand-pointer text-amber-500"></i> Touch or click keys. Multi-touch supported.</span>
-          <span class="hidden sm:inline-block"><i class="fa-solid fa-keyboard text-amber-500"></i> Computer Keyboard: Keys <span class="text-amber-200 font-mono">A S D F G H J K L</span></span>
-          <span class="sm:hidden text-amber-300">Swipe horizontal to view full keyboard ↔</span>
+          <span class="hidden sm:inline-block"><i class="fa-solid fa-keyboard text-amber-500"></i> Keyboard: <span class="text-amber-200 font-mono">A S D F G H J K L</span></span>
+          <span class="sm:hidden text-amber-300">Swipe ↔</span>
         </div>
       </div>
-
-      <!-- Bottom Bellow Handle Lip -->
       <div class="mt-4 flex items-center justify-center">
         <div class="w-48 h-3.5 rounded-full bg-wood-900 border border-wood-700 shadow-inner flex items-center justify-center">
           <div class="w-16 h-1 rounded-full bg-wood-600/60"></div>
@@ -346,60 +241,41 @@
       </div>
     </section>
 
-    <!-- CLASSICAL SARGAM CHEAT SHEET & RIYAZ GUIDE -->
+    <!-- GUIDE -->
     <section class="bg-wood-900/40 rounded-xl p-4 border border-wood-700/40 text-xs">
       <h3 class="font-semibold text-amber-300 mb-2 flex items-center gap-2">
-        <i class="fa-solid fa-book-open-reader text-wood-brass"></i>
-        <span>Quick Note Reference Guide</span>
+        <i class="fa-solid fa-book-open-reader text-wood-brass"></i><span>Quick Note Reference Guide</span>
       </h3>
       <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 text-center">
         <div class="bg-wood-800/60 p-2 rounded-lg border border-wood-700">
-          <div class="font-title text-base font-bold text-amber-200">1 Safed</div>
-          <div class="text-[10px] text-amber-400/70 font-mono">C Note</div>
+          <div class="font-title text-base font-bold text-amber-200">1 Safed</div><div class="text-[10px] text-amber-400/70 font-mono">C Note</div>
         </div>
         <div class="bg-wood-800/60 p-2 rounded-lg border border-wood-700">
-          <div class="font-title text-base font-bold text-amber-200">1 Kali</div>
-          <div class="text-[10px] text-amber-400/70 font-mono">C# Note</div>
+          <div class="font-title text-base font-bold text-amber-200">1 Kali</div><div class="text-[10px] text-amber-400/70 font-mono">C# Note</div>
         </div>
         <div class="bg-wood-800/60 p-2 rounded-lg border border-wood-700">
-          <div class="font-title text-base font-bold text-amber-200">2 Safed</div>
-          <div class="text-[10px] text-amber-400/70 font-mono">D Note</div>
+          <div class="font-title text-base font-bold text-amber-200">2 Safed</div><div class="text-[10px] text-amber-400/70 font-mono">D Note</div>
         </div>
         <div class="bg-wood-800/60 p-2 rounded-lg border border-wood-700">
-          <div class="font-title text-base font-bold text-amber-200">2 Kali</div>
-          <div class="text-[10px] text-amber-400/70 font-mono">D# Note</div>
+          <div class="font-title text-base font-bold text-amber-200">2 Kali</div><div class="text-[10px] text-amber-400/70 font-mono">D# Note</div>
         </div>
         <div class="bg-wood-800/60 p-2 rounded-lg border border-wood-700">
-          <div class="font-title text-base font-bold text-amber-200">3 Safed</div>
-          <div class="text-[10px] text-amber-400/70 font-mono">E Note</div>
+          <div class="font-title text-base font-bold text-amber-200">3 Safed</div><div class="text-[10px] text-amber-400/70 font-mono">E Note</div>
         </div>
         <div class="bg-wood-800/60 p-2 rounded-lg border border-wood-700">
-          <div class="font-title text-base font-bold text-amber-200">4 Safed</div>
-          <div class="text-[10px] text-amber-400/70 font-mono">F Note</div>
+          <div class="font-title text-base font-bold text-amber-200">4 Safed</div><div class="text-[10px] text-amber-400/70 font-mono">F Note</div>
         </div>
       </div>
     </section>
-
   </main>
 
-  <!-- FOOTER -->
   <footer class="w-full text-center py-3 text-[11px] text-amber-500/60 border-t border-wood-800">
-    Designed for Indian Classical Vocalists & Instrumentalists • Web Audio Synthesizer • Mobile Responsive
+    Designed for Indian Classical Vocalists & Instrumentalists • Tuned Desi Synth Engine
   </footer>
 
-  <!-- SCRIPT: ACOUSTIC AUDIO ENGINE & INTERACTIVITY -->
   <script>
-    /* ==========================================================================
-       HARMONIUM AUDIO ENGINE & SARGAM LOGIC
-       ========================================================================== */
-
     const NOTE_NAMES_WESTERN = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    
-    // Names for the Display HUD when you click a blank key
-    const NOTE_NAMES_INDIAN = [
-      "1 Safed", "1 Kali", "2 Safed", "2 Kali", "3 Safed", "4 Safed", 
-      "3 Kali", "5 Safed", "4 Kali", "6 Safed", "5 Kali", "7 Safed"
-    ];
+    const NOTE_NAMES_INDIAN = ["1 Safed", "1 Kali", "2 Safed", "2 Kali", "3 Safed", "4 Safed", "3 Kali", "5 Safed", "4 Kali", "6 Safed", "5 Kali", "7 Safed"];
 
     class SurSangamEngine {
       constructor() {
@@ -407,38 +283,25 @@
         this.masterGain = null;
         this.activeVoices = new Map(); 
         
-        // Timbre Settings
         this.reedType = 'male'; 
         this.bellowPressure = 0.8;
         this.rootPitchOffset = 0; 
         
-        // Tanpura Drone
         this.isTanpuraRunning = false;
         this.tanpuraInterval = null;
         this.tanpuraGain = null;
 
-        // Metronome
         this.bpm = 96;
         this.isMetronomeRunning = false;
-        this.metronomeTimer = null;
-        this.metronomeGain = null;
-        this.currentBeat = 0;
-
-        // Recorder
+        
+        // Setup Recorder
         this.mediaRecorder = null;
         this.audioChunks = [];
-        this.recordingBlob = null;
-        this.isRecording = false;
-        this.recordStartTime = 0;
-        this.recordTimerInterval = null;
-        this.playbackAudio = null;
       }
 
       initAudio() {
         if (this.ctx) {
-          if (this.ctx.state === 'suspended') {
-            this.ctx.resume();
-          }
+          if (this.ctx.state === 'suspended') this.ctx.resume();
           return;
         }
 
@@ -448,11 +311,10 @@
         this.masterGain = this.ctx.createGain();
         this.masterGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
 
+        // Acoustic Harmonium Box EQ
         this.cabinetFilter = this.ctx.createBiquadFilter();
         this.cabinetFilter.type = 'lowpass';
-        this.cabinetFilter.frequency.setValueAtTime(3600, this.ctx.currentTime); 
-
-        this.createWoodChamberVerb();
+        this.cabinetFilter.frequency.setValueAtTime(2800, this.ctx.currentTime); // Cut harsh high frequencies
 
         this.cabinetFilter.connect(this.masterGain);
         this.masterGain.connect(this.ctx.destination);
@@ -468,97 +330,64 @@
         this.destNode = this.ctx.createMediaStreamDestination();
         this.masterGain.connect(this.destNode);
 
-        updateAudioStatus(true);
+        const badge = document.getElementById('audioStatusBadge');
+        badge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-emerald-950/80 border border-emerald-700 text-emerald-300 font-medium cursor-pointer';
+        document.getElementById('audioStatusText').textContent = 'Audio Ready';
+        badge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
       }
 
-      createWoodChamberVerb() {
-        const rate = this.ctx.sampleRate;
-        const length = rate * 0.45; 
-        const impulse = this.ctx.createBuffer(2, length, rate);
-        const left = impulse.getChannelData(0);
-        const right = impulse.getChannelData(1);
-
-        for (let i = 0; i < length; i++) {
-          const decay = Math.exp(-i / (rate * 0.12));
-          left[i] = (Math.random() * 2 - 1) * decay * 0.25;
-          right[i] = (Math.random() * 2 - 1) * decay * 0.25;
-        }
-
-        this.woodConvolver = this.ctx.createConvolver();
-        this.woodConvolver.buffer = impulse;
-        
-        this.reverbWetGain = this.ctx.createGain();
-        this.reverbWetGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
-
-        this.woodConvolver.connect(this.reverbWetGain);
-        this.reverbWetGain.connect(this.masterGain);
-      }
-
+      // CUSTOM TUNED DESI SYNTHESIZER FOR HARMONIUM
       startNote(noteFreq, noteId) {
         this.initAudio();
         if (this.activeVoices.has(noteId)) return;
 
         const now = this.ctx.currentTime;
-        const voiceNodes = [];
-
+        
+        // 1. Envelope: Simulates air bellow pumping (not instant like a piano)
         const voiceGain = this.ctx.createGain();
-        const attackTime = 0.035;
         voiceGain.gain.setValueAtTime(0.0001, now);
-        voiceGain.gain.exponentialRampToValueAtTime(0.65 * this.bellowPressure, now + attackTime);
+        voiceGain.gain.linearRampToValueAtTime(0.7 * this.bellowPressure, now + 0.05);
 
-        const formantFilter = this.ctx.createBiquadFilter();
-        formantFilter.type = 'peaking';
-        formantFilter.frequency.setValueAtTime(1450, now);
-        formantFilter.Q.setValueAtTime(1.8, now);
-        formantFilter.gain.setValueAtTime(6, now);
+        // 2. Body Resonance Filter (gives it the wooden box feel)
+        const formant = this.ctx.createBiquadFilter();
+        formant.type = 'lowpass';
+        formant.frequency.setValueAtTime(3000, now);
+        formant.Q.value = 1.0;
 
-        let reedLayers = [];
+        // 3. Multi-Oscillator Design (Simulating Brass Reeds)
+        const osc1 = this.ctx.createOscillator();
+        osc1.type = 'sawtooth';
+        osc1.frequency.value = noteFreq;
+
+        const osc2 = this.ctx.createOscillator();
+        osc2.type = 'sawtooth';
+        osc2.frequency.value = noteFreq;
+        osc2.detune.value = 12; // 12 cents detune creates the harmonium "vibe"
+
+        const osc3 = this.ctx.createOscillator();
+        osc3.type = 'square'; // Adds nasal brightness
+        
         if (this.reedType === 'male') {
-          reedLayers = [
-            { mult: 0.5, type: 'sawtooth', detune: -2.5, gain: 0.55 },
-            { mult: 1.0, type: 'sawtooth', detune: 0, gain: 0.7 },
-            { mult: 1.0, type: 'square', detune: 3.2, gain: 0.35 }    
-          ];
+            osc3.frequency.value = noteFreq / 2; // Bass octave
         } else if (this.reedType === 'female') {
-          reedLayers = [
-            { mult: 1.0, type: 'sawtooth', detune: -1.5, gain: 0.7 },
-            { mult: 2.0, type: 'sawtooth', detune: 2.0, gain: 0.5 },
-            { mult: 1.0, type: 'triangle', detune: 0, gain: 0.4 }
-          ];
+            osc3.frequency.value = noteFreq * 2; // High octave
         } else {
-          reedLayers = [
-            { mult: 0.5, type: 'sawtooth', detune: -3.0, gain: 0.45 },
-            { mult: 1.0, type: 'sawtooth', detune: -3.8, gain: 0.65 },
-            { mult: 1.0, type: 'sawtooth', detune: +3.8, gain: 0.65 },
-            { mult: 2.0, type: 'square', detune: +1.5, gain: 0.25 }
-          ];
+            osc3.frequency.value = noteFreq / 2; // Double uses bass too
+            osc2.detune.value = 18; // More chorus for double
         }
 
-        const oscList = [];
-        reedLayers.forEach(layer => {
-          const osc = this.ctx.createOscillator();
-          const layerGain = this.ctx.createGain();
+        const mix1 = this.ctx.createGain(); mix1.gain.value = 0.5;
+        const mix2 = this.ctx.createGain(); mix2.gain.value = 0.4;
+        const mix3 = this.ctx.createGain(); mix3.gain.value = 0.2; // Square wave kept quiet so it doesn't sound electronic
 
-          osc.type = layer.type;
-          osc.frequency.setValueAtTime(noteFreq * layer.mult, now);
-          osc.detune.setValueAtTime(layer.detune, now);
-
-          layerGain.gain.setValueAtTime(layer.gain, now);
-
-          osc.connect(layerGain);
-          layerGain.connect(formantFilter);
-          osc.start(now);
-          oscList.push(osc);
-        });
-
-        formantFilter.connect(voiceGain);
+        osc1.connect(mix1); osc2.connect(mix2); osc3.connect(mix3);
+        mix1.connect(formant); mix2.connect(formant); mix3.connect(formant);
+        formant.connect(voiceGain);
         voiceGain.connect(this.cabinetFilter);
-        if (this.woodConvolver) {
-          voiceGain.connect(this.woodConvolver);
-        }
+        
+        osc1.start(now); osc2.start(now); osc3.start(now);
 
-        voiceNodes.push(voiceGain, formantFilter, ...oscList);
-        this.activeVoices.set(noteId, { voiceGain, oscList });
+        this.activeVoices.set(noteId, { voiceGain, oscList: [osc1, osc2, osc3] });
       }
 
       stopNote(noteId) {
@@ -566,25 +395,23 @@
         const { voiceGain, oscList } = this.activeVoices.get(noteId);
         const now = this.ctx.currentTime;
 
-        const releaseTime = 0.08;
+        // Air release fade out
+        const releaseTime = 0.15;
         voiceGain.gain.cancelScheduledValues(now);
         voiceGain.gain.setValueAtTime(voiceGain.gain.value, now);
         voiceGain.gain.exponentialRampToValueAtTime(0.0001, now + releaseTime);
 
         setTimeout(() => {
-          oscList.forEach(osc => {
-            try { osc.stop(); osc.disconnect(); } catch (e) {}
-          });
+          oscList.forEach(osc => { try { osc.stop(); osc.disconnect(); } catch (e) {} });
           voiceGain.disconnect();
         }, releaseTime * 1000 + 50);
 
         this.activeVoices.delete(noteId);
       }
+      
+      stopAllNotes() { this.activeVoices.forEach((_, noteId) => this.stopNote(noteId)); }
 
-      stopAllNotes() {
-        this.activeVoices.forEach((_, noteId) => this.stopNote(noteId));
-      }
-
+      // TANPURA
       startTanpura() {
         this.initAudio();
         this.isTanpuraRunning = true;
@@ -593,36 +420,24 @@
         const highSaHz = rootBaseHz * 2; 
 
         const strings = [
-          { freq: paHz, delay: 0 },
-          { freq: highSaHz, delay: 1.1 },
-          { freq: highSaHz, delay: 2.2 },
-          { freq: rootBaseHz, delay: 3.3 }
+          { freq: paHz, delay: 0 }, { freq: highSaHz, delay: 1.1 }, { freq: highSaHz, delay: 2.2 }, { freq: rootBaseHz, delay: 3.3 }
         ];
 
         this.tanpuraInterval = setInterval(() => {
           if (!this.isTanpuraRunning) return;
-          const now = this.ctx.currentTime;
-          strings.forEach(str => {
-            this.triggerTanpuraPluck(str.freq, now + str.delay);
-          });
+          strings.forEach(str => this.triggerTanpuraPluck(str.freq, this.ctx.currentTime + str.delay));
         }, 4400);
-
-        const now = this.ctx.currentTime;
-        strings.forEach(str => {
-          this.triggerTanpuraPluck(str.freq, now + str.delay);
-        });
+        strings.forEach(str => this.triggerTanpuraPluck(str.freq, this.ctx.currentTime + str.delay));
       }
 
       triggerTanpuraPluck(freq, triggerTime) {
         if (!this.ctx || !this.isTanpuraRunning) return;
-
         const osc = this.ctx.createOscillator();
         const pluckGain = this.ctx.createGain();
         const jawariFilter = this.ctx.createBiquadFilter();
 
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(freq, triggerTime);
-        osc.detune.setValueAtTime((Math.random() - 0.5) * 4, triggerTime);
 
         jawariFilter.type = 'bandpass';
         jawariFilter.frequency.setValueAtTime(freq * 3.5, triggerTime);
@@ -636,24 +451,15 @@
         osc.connect(jawariFilter);
         jawariFilter.connect(pluckGain);
         pluckGain.connect(this.tanpuraGain);
-
-        osc.start(triggerTime);
-        osc.stop(triggerTime + 2.9);
+        osc.start(triggerTime); osc.stop(triggerTime + 2.9);
       }
+      stopTanpura() { this.isTanpuraRunning = false; clearInterval(this.tanpuraInterval); }
 
-      stopTanpura() {
-        this.isTanpuraRunning = false;
-        if (this.tanpuraInterval) {
-          clearInterval(this.tanpuraInterval);
-          this.tanpuraInterval = null;
-        }
-      }
-
+      // METRONOME
       startMetronome() {
         this.initAudio();
         this.isMetronomeRunning = true;
         this.currentBeat = 0;
-
         const tick = () => {
           if (!this.isMetronomeRunning) return;
           this.playMetronomeClick(this.currentBeat % 4 === 0);
@@ -661,475 +467,222 @@
           this.currentBeat++;
           this.metronomeTimer = setTimeout(tick, (60 / this.bpm) * 1000);
         };
-
         tick();
       }
-
       playMetronomeClick(isSam) {
         if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-
         osc.type = 'sine';
         osc.frequency.setValueAtTime(isSam ? 1200 : 750, now);
         osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-
         gain.gain.setValueAtTime(isSam ? 0.7 : 0.4, now);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-
-        osc.connect(gain);
-        gain.connect(this.metronomeGain);
-
-        osc.start(now);
-        osc.stop(now + 0.05);
+        osc.connect(gain); gain.connect(this.metronomeGain);
+        osc.start(now); osc.stop(now + 0.05);
       }
+      stopMetronome() { this.isMetronomeRunning = false; clearTimeout(this.metronomeTimer); resetBeatIndicator(); }
 
-      stopMetronome() {
-        this.isMetronomeRunning = false;
-        if (this.metronomeTimer) {
-          clearTimeout(this.metronomeTimer);
-          this.metronomeTimer = null;
-        }
-        resetBeatIndicator();
-      }
-
+      // RECORDER
       startRecording() {
         this.initAudio();
         this.audioChunks = [];
-        const stream = this.destNode.stream;
-
-        try {
-          this.mediaRecorder = new MediaRecorder(stream);
-        } catch (e) {
-          console.warn("MediaRecorder fallback:", e);
-          return false;
-        }
-
-        this.mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) this.audioChunks.push(e.data);
-        };
-
+        try { this.mediaRecorder = new MediaRecorder(this.destNode.stream); } catch (e) { return false; }
+        this.mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) this.audioChunks.push(e.data); };
         this.mediaRecorder.onstop = () => {
-          this.recordingBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-          const audioUrl = URL.createObjectURL(this.recordingBlob);
-          this.playbackAudio = new Audio(audioUrl);
-          
-          const playBtn = document.getElementById('playRecordingBtn');
-          const dlLink = document.getElementById('downloadRecordLink');
-          playBtn.disabled = false;
-          playBtn.classList.remove('text-stone-500', 'cursor-not-allowed');
-          playBtn.classList.add('text-amber-200', 'bg-amber-900/60', 'hover:bg-amber-800');
-
-          dlLink.href = audioUrl;
-          dlLink.download = `Swar-Harmonium-Riyaz-${new Date().toISOString().slice(0,10)}.webm`;
-          dlLink.classList.remove('hidden');
+          const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(blob);
+          this.playbackAudio = new Audio(url);
+          const btn = document.getElementById('playRecordingBtn');
+          btn.disabled = false; btn.classList.replace('text-stone-500', 'text-amber-200'); btn.classList.add('bg-amber-900/60');
+          const a = document.getElementById('downloadRecordLink');
+          a.href = url; a.download = `Harmonium-Riyaz.webm`; a.classList.remove('hidden');
         };
-
         this.mediaRecorder.start();
-        this.isRecording = true;
-        this.recordStartTime = Date.now();
-        this.recordTimerInterval = setInterval(updateRecordTimerDisplay, 1000);
+        this.isRecording = true; this.recordStartTime = Date.now();
+        this.recordTimerInterval = setInterval(() => {
+          const secs = Math.floor((Date.now() - this.recordStartTime) / 1000);
+          document.getElementById('recordingTimer').textContent = `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+        }, 1000);
         return true;
       }
-
-      stopRecording() {
-        if (!this.mediaRecorder || !this.isRecording) return;
-        this.mediaRecorder.stop();
-        this.isRecording = false;
-        clearInterval(this.recordTimerInterval);
-      }
-
-      playRecordedAudio() {
-        if (this.playbackAudio) {
-          this.playbackAudio.currentTime = 0;
-          this.playbackAudio.play();
-        }
-      }
+      stopRecording() { if(this.mediaRecorder) this.mediaRecorder.stop(); this.isRecording = false; clearInterval(this.recordTimerInterval); }
+      playRecordedAudio() { if(this.playbackAudio) { this.playbackAudio.currentTime = 0; this.playbackAudio.play(); } }
     }
 
     const engine = new SurSangamEngine();
 
-    function getFrequencyFromSemitone(semitoneFromC4) {
-      return 261.625565 * Math.pow(2, semitoneFromC4 / 12);
-    }
+    function getFrequencyFromSemitone(semitone) { return 261.625565 * Math.pow(2, semitone / 12); }
+    function getPitchFrequency(rootOffset, octave) { return getFrequencyFromSemitone(rootOffset + (octave - 4) * 12); }
 
-    function getPitchFrequency(rootOffset, octave) {
-      const semitone = rootOffset + (octave - 4) * 12;
-      return getFrequencyFromSemitone(semitone);
-    }
-
-    /*
-      Increased keys to 48 (4 full octaves)
-      This spans 1288px width, completely filling the desktop empty black void
-    */
     const START_OCTAVE = 3; 
-    const TOTAL_KEYS = 48;  
+    const TOTAL_KEYS = 48; // 4 FULL OCTAVES
+
+    // Global Key Width Variable (controlled by slider)
+    let currentKeyWidth = 46;
 
     function buildHarmoniumKeys() {
       const container = document.getElementById('harmoniumKeyboard');
       container.innerHTML = '';
-
       const keyDataList = [];
       let currentWhiteIndex = 0;
 
       for (let i = 0; i < TOTAL_KEYS; i++) {
         const octave = START_OCTAVE + Math.floor(i / 12);
-        const pitchInOctave = i % 12; 
-        const isBlack = [1, 3, 6, 8, 10].includes(pitchInOctave);
-        const semitoneFromC4 = (octave - 4) * 12 + pitchInOctave;
-        const frequency = getFrequencyFromSemitone(semitoneFromC4);
-
+        const pitch = i % 12; 
+        const isBlack = [1, 3, 6, 8, 10].includes(pitch);
         keyDataList.push({
-          id: `key_${i}`,
-          index: i,
-          octave,
-          pitchInOctave,
-          isBlack,
-          frequency,
-          whiteIndex: isBlack ? -1 : currentWhiteIndex++
+          id: `key_${i}`, index: i, octave, pitchInOctave: pitch, isBlack,
+          frequency: getFrequencyFromSemitone((octave - 4) * 12 + pitch)
         });
       }
 
-      const whiteKeys = keyDataList.filter(k => !k.isBlack);
-      const blackKeys = keyDataList.filter(k => k.isBlack);
-      const whiteKeyWidth = 46; // px
+      // Calculate relative black key width based on white key width (approx 60% of white key)
+      const blackKeyWidth = currentKeyWidth * 0.6; 
 
-      whiteKeys.forEach((key) => {
-        const keyElem = document.createElement('div');
-        keyElem.className = 'white-key relative flex flex-col justify-end items-center pb-3 rounded-b-md select-none cursor-pointer flex-shrink-0';
-        keyElem.style.width = `${whiteKeyWidth}px`;
-        keyElem.style.height = '100%';
-        keyElem.dataset.noteId = key.id;
-        keyElem.dataset.freq = key.frequency;
-        keyElem.dataset.pitch = key.pitchInOctave;
-        keyElem.dataset.octave = key.octave;
-
-        // Kept completely blank
-        keyElem.innerHTML = ``;
-
-        bindKeyEvents(keyElem, key);
-        container.appendChild(keyElem);
+      keyDataList.filter(k => !k.isBlack).forEach(key => {
+        const el = document.createElement('div');
+        el.className = 'white-key relative flex flex-col justify-end items-center pb-3 rounded-b-md select-none cursor-pointer flex-shrink-0';
+        el.style.width = `${currentKeyWidth}px`; el.style.height = '100%';
+        el.dataset.noteId = key.id; el.innerHTML = ``;
+        bindKeyEvents(el, key); container.appendChild(el);
       });
 
-      blackKeys.forEach((key) => {
-        const keyElem = document.createElement('div');
-        keyElem.className = 'black-key absolute z-10 flex flex-col justify-end items-center pb-2 rounded-b-md select-none cursor-pointer';
-        keyElem.style.width = '28px';
-        keyElem.style.height = '62%';
-        keyElem.dataset.noteId = key.id;
-        keyElem.dataset.freq = key.frequency;
-        keyElem.dataset.pitch = key.pitchInOctave;
-        keyElem.dataset.octave = key.octave;
-
-        const precedingWhiteIndex = getPrecedingWhiteCount(key.pitchInOctave, key.octave);
-        const leftOffset = (precedingWhiteIndex * whiteKeyWidth) - 14;
-        keyElem.style.left = `${leftOffset + 4}px`;
-
-        // Kept completely blank
-        keyElem.innerHTML = ``;
-
-        bindKeyEvents(keyElem, key);
-        container.appendChild(keyElem);
+      keyDataList.filter(k => k.isBlack).forEach(key => {
+        const el = document.createElement('div');
+        el.className = 'black-key absolute z-10 flex flex-col justify-end items-center pb-2 rounded-b-md select-none cursor-pointer';
+        el.style.width = `${blackKeyWidth}px`; el.style.height = '62%';
+        
+        const octaveBase = (key.octave - START_OCTAVE) * 7;
+        let p = key.pitchInOctave, inside = 0;
+        if(p===1) inside=1; else if(p===3) inside=2; else if(p===6) inside=4; else if(p===8) inside=5; else if(p===10) inside=6;
+        
+        // Offset black key to sit between white keys
+        el.style.left = `${((octaveBase + inside) * currentKeyWidth) - (blackKeyWidth / 2)}px`;
+        el.dataset.noteId = key.id; el.innerHTML = ``;
+        bindKeyEvents(el, key); container.appendChild(el);
       });
-
-      // Automatically centers the screen on load
-      setTimeout(() => {
+      
+      updatePosition();
+    }
+    
+    function updatePosition() {
         const scrollContainer = document.getElementById('keyboardScrollContainer');
-        if (scrollContainer) {
-          scrollContainer.scrollLeft = 320;
+        const posSlider = document.getElementById('positionSlider');
+        if (scrollContainer && posSlider) {
+            const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+            const scrollValue = (posSlider.value / 100) * maxScroll;
+            scrollContainer.scrollLeft = scrollValue;
         }
-      }, 100);
     }
 
-    function getPrecedingWhiteCount(pitchInOctave, octave) {
-      const octaveBaseWhite = (octave - START_OCTAVE) * 7;
-      let insideOctaveWhite = 0;
-      if (pitchInOctave === 1) insideOctaveWhite = 1; 
-      else if (pitchInOctave === 3) insideOctaveWhite = 2; 
-      else if (pitchInOctave === 6) insideOctaveWhite = 4; 
-      else if (pitchInOctave === 8) insideOctaveWhite = 5; 
-      else if (pitchInOctave === 10) insideOctaveWhite = 6; 
-      return octaveBaseWhite + insideOctaveWhite;
-    }
+    // Key Width Slider Event Listener
+    document.getElementById('keyWidthSlider').addEventListener('input', (e) => {
+        currentKeyWidth = parseInt(e.target.value, 10);
+        document.getElementById('keyWidthDisplay').textContent = `${currentKeyWidth} px`;
+        buildHarmoniumKeys();
+    });
+
+    // Position Slider Event Listener
+    document.getElementById('positionSlider').addEventListener('input', () => {
+        updatePosition();
+    });
 
     let isPointerDown = false;
-    const activeTouches = new Map(); 
-
-    function bindKeyEvents(keyElem, keyData) {
-      keyElem.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        playKey(keyElem, keyData);
-      }, { passive: false });
-
-      keyElem.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        stopKey(keyElem, keyData);
-      });
-
-      keyElem.addEventListener('touchcancel', (e) => {
-        e.preventDefault();
-        stopKey(keyElem, keyData);
-      });
-
-      keyElem.addEventListener('mousedown', (e) => {
-        isPointerDown = true;
-        playKey(keyElem, keyData);
-      });
-
-      keyElem.addEventListener('mouseenter', (e) => {
-        if (isPointerDown) {
-          playKey(keyElem, keyData);
-        }
-      });
-
-      keyElem.addEventListener('mouseleave', (e) => {
-        if (isPointerDown) {
-          stopKey(keyElem, keyData);
-        }
-      });
-
-      keyElem.addEventListener('mouseup', (e) => {
-        stopKey(keyElem, keyData);
-      });
+    function bindKeyEvents(el, data) {
+      const play = (e) => { 
+        e.preventDefault(); el.classList.add('active'); 
+        engine.startNote(data.frequency, data.id); 
+        document.getElementById('activeNoteDisplay').textContent = `${NOTE_NAMES_INDIAN[data.pitchInOctave]} - ${NOTE_NAMES_WESTERN[data.pitchInOctave]}`; 
+        animateBellowPulse(); 
+      };
+      const stop = (e) => { e.preventDefault(); el.classList.remove('active'); engine.stopNote(data.id); };
+      el.addEventListener('touchstart', play, {passive: false}); el.addEventListener('touchend', stop); el.addEventListener('touchcancel', stop);
+      el.addEventListener('mousedown', (e) => { isPointerDown=true; play(e); });
+      el.addEventListener('mouseenter', (e) => { if(isPointerDown) play(e); });
+      el.addEventListener('mouseleave', (e) => { if(isPointerDown) stop(e); });
+      el.addEventListener('mouseup', stop);
     }
 
     window.addEventListener('mouseup', () => {
-      if (isPointerDown) {
-        isPointerDown = false;
-        engine.stopAllNotes();
-        document.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
-        document.getElementById('activeNoteDisplay').textContent = '—';
-      }
+      isPointerDown = false; engine.stopAllNotes();
+      document.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+      document.getElementById('activeNoteDisplay').textContent = '—';
     });
-
-    function playKey(keyElem, keyData) {
-      keyElem.classList.add('active');
-      engine.startNote(keyData.frequency, keyData.id);
-
-      // Display the note name on the HUD screen even if the keys are blank
-      const indianName = NOTE_NAMES_INDIAN[keyData.pitchInOctave];
-      const western = NOTE_NAMES_WESTERN[keyData.pitchInOctave];
-      document.getElementById('activeNoteDisplay').textContent = `${indianName} - ${western}`;
-
-      animateBellowPulse();
-    }
-
-    function stopKey(keyElem, keyData) {
-      keyElem.classList.remove('active');
-      engine.stopNote(keyData.id);
-    }
 
     function animateBellowPulse() {
       const bar = document.getElementById('bellowAirBar');
-      if (bar) {
-        bar.style.transform = 'scaleX(0.92)';
-        setTimeout(() => bar.style.transform = 'scaleX(1)', 150);
-      }
+      if (bar) { bar.style.transform = 'scaleX(0.92)'; setTimeout(() => bar.style.transform = 'scaleX(1)', 150); }
     }
 
-    const KEYBOARD_MAP = {
-      'KeyA': 0,  
-      'KeyW': 1,  
-      'KeyS': 2,  
-      'KeyE': 3,  
-      'KeyD': 4,  
-      'KeyF': 5,  
-      'KeyT': 6,  
-      'KeyG': 7,  
-      'KeyY': 8,  
-      'KeyH': 9,  
-      'KeyU': 10, 
-      'KeyJ': 11, 
-      'KeyK': 12  
-    };
-
-    const pressedPhysicalKeys = new Set();
+    const K_MAP = { 'KeyA':0, 'KeyW':1, 'KeyS':2, 'KeyE':3, 'KeyD':4, 'KeyF':5, 'KeyT':6, 'KeyG':7, 'KeyY':8, 'KeyH':9, 'KeyU':10, 'KeyJ':11, 'KeyK':12 };
+    const pKeys = new Set();
 
     window.addEventListener('keydown', (e) => {
-      if (e.repeat || pressedPhysicalKeys.has(e.code)) return;
-      if (KEYBOARD_MAP.hasOwnProperty(e.code)) {
-        e.preventDefault();
-        pressedPhysicalKeys.add(e.code);
-        const semitoneOffset = KEYBOARD_MAP[e.code];
-        const targetIndex = 12 + semitoneOffset;
-        const targetKeyElem = document.querySelector(`[data-note-id="key_${targetIndex}"]`);
-        if (targetKeyElem) {
-          const freq = parseFloat(targetKeyElem.dataset.freq);
-          const pitch = parseInt(targetKeyElem.dataset.pitch, 10);
-          const octave = parseInt(targetKeyElem.dataset.octave, 10);
-          playKey(targetKeyElem, { id: `key_${targetIndex}`, frequency: freq, pitchInOctave: pitch, octave });
-        }
-      }
+      if (e.repeat || pKeys.has(e.code) || !K_MAP.hasOwnProperty(e.code)) return;
+      e.preventDefault(); pKeys.add(e.code);
+      const target = document.querySelector(`[data-note-id="key_${12 + K_MAP[e.code]}"]`);
+      if (target) target.dispatchEvent(new MouseEvent('mousedown'));
     });
-
     window.addEventListener('keyup', (e) => {
-      if (KEYBOARD_MAP.hasOwnProperty(e.code)) {
-        pressedPhysicalKeys.delete(e.code);
-        const semitoneOffset = KEYBOARD_MAP[e.code];
-        const targetIndex = 12 + semitoneOffset;
-        const targetKeyElem = document.querySelector(`[data-note-id="key_${targetIndex}"]`);
-        if (targetKeyElem) {
-          stopKey(targetKeyElem, { id: `key_${targetIndex}` });
-        }
+      if (K_MAP.hasOwnProperty(e.code)) {
+        pKeys.delete(e.code);
+        const target = document.querySelector(`[data-note-id="key_${12 + K_MAP[e.code]}"]`);
+        if (target) { target.dispatchEvent(new MouseEvent('mouseup')); target.classList.remove('active'); engine.stopNote(`key_${12 + K_MAP[e.code]}`); }
       }
     });
 
-    const scaleSelect = document.getElementById('scaleSelect');
-    scaleSelect.addEventListener('change', (e) => {
-      const offset = parseInt(e.target.value, 10);
-      engine.rootPitchOffset = offset;
-      const rootWestern = NOTE_NAMES_WESTERN[offset];
-      const rootHz = getFrequencyFromSemitone(offset).toFixed(1);
-      document.getElementById('currentPitchHz').textContent = `Sa = ${rootWestern} (${rootHz} Hz)`;
-      
-      if (engine.isTanpuraRunning) {
-        engine.stopTanpura();
-        engine.startTanpura();
-      }
+    // Controls bindings
+    document.getElementById('scaleSelect').addEventListener('change', (e) => {
+      engine.rootPitchOffset = parseInt(e.target.value, 10);
+      document.getElementById('currentPitchHz').textContent = `Sa = ${NOTE_NAMES_WESTERN[engine.rootPitchOffset]}`;
+      if (engine.isTanpuraRunning) { engine.stopTanpura(); engine.startTanpura(); }
     });
-
-    const tanpuraToggleBtn = document.getElementById('tanpuraToggleBtn');
-    tanpuraToggleBtn.addEventListener('click', () => {
-      engine.initAudio();
-      if (!engine.isTanpuraRunning) {
-        engine.startTanpura();
-        tanpuraToggleBtn.innerHTML = `<i class="fa-solid fa-stop text-[10px]"></i><span>Drone Off</span>`;
-        tanpuraToggleBtn.classList.replace('bg-amber-900/60', 'bg-amber-600');
-        tanpuraToggleBtn.classList.add('text-white', 'shadow-amber-500/50');
-      } else {
-        engine.stopTanpura();
-        tanpuraToggleBtn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i><span>Drone On</span>`;
-        tanpuraToggleBtn.classList.replace('bg-amber-600', 'bg-amber-900/60');
-        tanpuraToggleBtn.classList.remove('text-white', 'shadow-amber-500/50');
-      }
+    document.getElementById('tanpuraToggleBtn').addEventListener('click', (e) => {
+      if (!engine.isTanpuraRunning) { engine.startTanpura(); e.currentTarget.innerHTML = `<i class="fa-solid fa-stop text-[10px] mr-1"></i>Off`; e.currentTarget.classList.replace('bg-amber-900/60','bg-amber-600'); }
+      else { engine.stopTanpura(); e.currentTarget.innerHTML = `<i class="fa-solid fa-play text-[10px] mr-1"></i>On`; e.currentTarget.classList.replace('bg-amber-600','bg-amber-900/60'); }
     });
-
-    const tanpuraVol = document.getElementById('tanpuraVol');
-    tanpuraVol.addEventListener('input', (e) => {
-      const vol = parseInt(e.target.value, 10);
-      document.getElementById('tanpuraVolDisplay').textContent = `${vol}%`;
-      if (engine.tanpuraGain && engine.ctx) {
-        engine.tanpuraGain.gain.setValueAtTime(vol / 100, engine.ctx.currentTime);
-      }
+    document.getElementById('tanpuraVol').addEventListener('input', (e) => {
+      document.getElementById('tanpuraVolDisplay').textContent = `${e.target.value}%`;
+      if (engine.tanpuraGain) engine.tanpuraGain.gain.value = e.target.value / 100;
     });
-
-    const metronomeToggleBtn = document.getElementById('metronomeToggleBtn');
-    const bpmSlider = document.getElementById('bpmSlider');
-    const bpmDisplay = document.getElementById('bpmDisplay');
-
-    metronomeToggleBtn.addEventListener('click', () => {
-      engine.initAudio();
-      if (!engine.isMetronomeRunning) {
-        engine.startMetronome();
-        metronomeToggleBtn.innerHTML = `<i class="fa-solid fa-pause text-[10px]"></i><span>Stop</span>`;
-        metronomeToggleBtn.classList.replace('bg-amber-900/60', 'bg-emerald-700');
-        metronomeToggleBtn.classList.add('text-white');
-      } else {
-        engine.stopMetronome();
-        metronomeToggleBtn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i><span>Start</span>`;
-        metronomeToggleBtn.classList.replace('bg-emerald-700', 'bg-amber-900/60');
-        metronomeToggleBtn.classList.remove('text-white');
-      }
+    document.getElementById('metronomeToggleBtn').addEventListener('click', (e) => {
+      if (!engine.isMetronomeRunning) { engine.startMetronome(); e.currentTarget.innerHTML = `<i class="fa-solid fa-stop text-[10px] mr-1"></i>Stop`; e.currentTarget.classList.replace('bg-amber-900/60','bg-emerald-700'); }
+      else { engine.stopMetronome(); e.currentTarget.innerHTML = `<i class="fa-solid fa-play text-[10px] mr-1"></i>Start`; e.currentTarget.classList.replace('bg-emerald-700','bg-amber-900/60'); }
     });
-
-    bpmSlider.addEventListener('input', (e) => {
-      const bpm = parseInt(e.target.value, 10);
-      engine.bpm = bpm;
-      bpmDisplay.textContent = `${bpm} BPM`;
-    });
-
+    document.getElementById('bpmSlider').addEventListener('input', (e) => { engine.bpm = e.target.value; document.getElementById('bpmDisplay').textContent = `${e.target.value} BPM`; });
+    
     function flashBeatIndicator(isSam) {
-      const beatElem = document.getElementById('beatVisualIndicator');
-      if (!beatElem) return;
-      if (isSam) {
-        beatElem.className = 'w-3.5 h-3.5 rounded-full bg-amber-400 border border-amber-200 shadow-lg shadow-amber-400/80 scale-125 transition-all';
-      } else {
-        beatElem.className = 'w-3.5 h-3.5 rounded-full bg-emerald-500 border border-emerald-300 scale-110 transition-all';
-      }
-      setTimeout(() => {
-        beatElem.className = 'w-3.5 h-3.5 rounded-full bg-wood-700 border border-wood-500 transition-all';
-      }, 90);
+      const b = document.getElementById('beatVisualIndicator');
+      b.className = isSam ? 'w-3.5 h-3.5 rounded-full bg-amber-400 scale-125 transition-all' : 'w-3.5 h-3.5 rounded-full bg-emerald-500 scale-110 transition-all';
+      setTimeout(() => b.className = 'w-3.5 h-3.5 rounded-full bg-wood-700 transition-all', 90);
     }
+    function resetBeatIndicator() { document.getElementById('beatVisualIndicator').className = 'w-3.5 h-3.5 rounded-full bg-wood-700 transition-colors'; }
 
-    function resetBeatIndicator() {
-      const beatElem = document.getElementById('beatVisualIndicator');
-      if (beatElem) {
-        beatElem.className = 'w-3.5 h-3.5 rounded-full bg-wood-700 border border-wood-500 transition-colors duration-75';
-      }
-    }
-
-    const recordBtn = document.getElementById('recordBtn');
-    const recordBtnText = document.getElementById('recordBtnText');
-    const playRecordingBtn = document.getElementById('playRecordingBtn');
-
-    recordBtn.addEventListener('click', () => {
-      engine.initAudio();
-      if (!engine.isRecording) {
-        const success = engine.startRecording();
-        if (success) {
-          recordBtnText.textContent = 'Stop';
-          recordBtn.classList.replace('bg-red-900/40', 'bg-red-600');
-          recordBtn.classList.add('animate-pulse');
-        }
-      } else {
-        engine.stopRecording();
-        recordBtnText.textContent = 'Record';
-        recordBtn.classList.replace('bg-red-600', 'bg-red-900/40');
-        recordBtn.classList.remove('animate-pulse');
-      }
+    const rBtn = document.getElementById('recordBtn');
+    rBtn.addEventListener('click', () => {
+      if (!engine.isRecording) { if(engine.startRecording()) { rBtn.innerHTML=`<i class="fa-solid fa-stop text-[10px] mr-1"></i>Stop`; rBtn.classList.replace('bg-red-900/40','bg-red-600'); } }
+      else { engine.stopRecording(); rBtn.innerHTML=`<i class="fa-solid fa-circle text-red-500 text-[10px] mr-1"></i>Record`; rBtn.classList.replace('bg-red-600','bg-red-900/40'); }
     });
+    document.getElementById('playRecordingBtn').addEventListener('click', () => engine.playRecordedAudio());
+    document.querySelectorAll('.reed-btn').forEach(btn => btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.reed-btn').forEach(b => b.className = 'reed-btn px-2.5 py-1 rounded-md text-[11px] font-medium text-amber-300/70');
+      e.currentTarget.className = 'reed-btn px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-700 text-amber-100 shadow';
+      engine.reedType = e.currentTarget.dataset.reed;
+    }));
+    document.getElementById('bellowPressure').addEventListener('input', e => engine.bellowPressure = e.target.value / 100);
 
-    playRecordingBtn.addEventListener('click', () => {
-      engine.playRecordedAudio();
-    });
-
-    function updateRecordTimerDisplay() {
-      if (!engine.isRecording) return;
-      const elapsed = Math.floor((Date.now() - engine.recordStartTime) / 1000);
-      const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
-      const secs = String(elapsed % 60).padStart(2, '0');
-      document.getElementById('recordingTimer').textContent = `${mins}:${secs}`;
-    }
-
-    document.querySelectorAll('.reed-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.reed-btn').forEach(b => {
-          b.className = 'reed-btn px-2.5 py-1 rounded-md text-[11px] font-medium text-amber-300/70 hover:text-amber-200';
-        });
-        const target = e.currentTarget;
-        target.className = 'reed-btn px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-700 text-amber-100 shadow';
-        engine.reedType = target.dataset.reed;
-      });
-    });
-
-    const bellowSlider = document.getElementById('bellowPressure');
-    bellowSlider.addEventListener('input', (e) => {
-      engine.bellowPressure = parseInt(e.target.value, 10) / 100;
-    });
-
-    function updateAudioStatus(isReady) {
-      const badge = document.getElementById('audioStatusBadge');
-      const text = document.getElementById('audioStatusText');
-      if (isReady) {
-        badge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-emerald-950/80 border border-emerald-700 text-emerald-300 font-medium';
-        text.textContent = 'Audio Ready';
-        badge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
-      }
-    }
-
-    document.getElementById('audioStatusBadge').addEventListener('click', () => {
-      engine.initAudio();
-    });
-
-    ['click', 'touchstart'].forEach(evt => {
-      window.addEventListener(evt, () => {
-        engine.initAudio();
-      }, { once: true });
-    });
-
+    ['click', 'touchstart'].forEach(evt => window.addEventListener(evt, () => engine.initAudio(), { once: true }));
+    
     window.addEventListener('DOMContentLoaded', () => {
-      buildHarmoniumKeys();
+        // Set default values based on screen size on load
+        if (window.innerWidth <= 640) {
+            currentKeyWidth = 55;
+            document.getElementById('keyWidthSlider').value = 55;
+            document.getElementById('keyWidthDisplay').textContent = "55 px";
+        }
+        buildHarmoniumKeys();
     });
   </script>
 </body>
