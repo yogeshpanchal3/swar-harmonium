@@ -9,7 +9,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
@@ -24,6 +24,7 @@
           fontFamily: {
             title: ['Cinzel', 'serif'],
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Rozha One"', 'serif'],
           }
         }
       }
@@ -72,16 +73,16 @@
 </head>
 <body class="text-amber-100 flex flex-col min-h-screen justify-between antialiased selection:bg-amber-800">
 
-  <!-- Rang-Biranga & Perfectly Fixed Floating Header -->
-  <header class="w-full bg-[#05080E] border-b-2 border-cyan-500/40 px-4 sm:px-8 py-3.5 sticky top-0 z-50 shadow-2xl">
+  <!-- Identical Unified Rang-Biranga Header -->
+  <header class="w-full bg-[#05080E] border-b-2 border-cyan-500/40 px-6 py-3.5 sticky top-0 z-50 shadow-2xl">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
       <a href="/" class="flex items-center gap-3 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-400 flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
-          <i class="fa-solid fa-music text-zinc-950 text-lg"></i>
+          <i class="fa-solid fa-music text-zinc-950 text-xl"></i>
         </div>
         <div>
-          <h1 class="font-title tracking-wider text-lg sm:text-xl font-bold text-cyan-400">TaraJ Music</h1>
-          <p class="text-xs text-zinc-400 font-sans hidden sm:block">Acoustic Harmonium & Classical Music Practice</p>
+          <span class="font-serif tracking-wider text-lg sm:text-xl font-bold text-cyan-400 block leading-tight">TaraJ Music</span>
+          <span class="text-xs text-zinc-400 font-sans hidden sm:block">Indian Classical Practice Studio</span>
         </div>
       </a>
       
@@ -92,13 +93,6 @@
         <a href="/flute" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-600 text-slate-950 font-black shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Online Flute</a>
         <a href="/melody-maker" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black shadow-lg shadow-rose-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105">Melody Maker</a>
       </nav>
-
-      <div class="hidden md:flex items-center gap-3">
-        <div id="audioStatusBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-red-950/80 border border-red-700 text-red-200 font-medium cursor-pointer hover:bg-red-900 transition-colors" title="Click to Initialize Audio">
-          <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
-          <span id="audioStatusText">Tap to Enable Sound</span>
-        </div>
-      </div>
     </div>
   </header>
 
@@ -314,11 +308,6 @@
         this.metronomeGain.connect(this.masterGain);
         this.destNode = this.ctx.createMediaStreamDestination();
         this.masterGain.connect(this.destNode);
-
-        const badge = document.getElementById('audioStatusBadge');
-        badge.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-emerald-950/80 border border-emerald-700 text-emerald-300 font-medium cursor-pointer hover:bg-emerald-900 transition-colors';
-        document.getElementById('audioStatusText').textContent = 'Audio Ready';
-        badge.querySelector('span').className = 'w-2 h-2 rounded-full bg-emerald-400';
       }
 
       startNote(noteFreq, noteId) {
@@ -618,8 +607,6 @@
     }));
     document.getElementById('bellowPressure').addEventListener('input', e => engine.bellowPressure = e.target.value / 100);
 
-    ['click', 'touchstart'].forEach(evt => window.addEventListener(evt, () => engine.initAudio(), { once: true }));
-    
     window.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth <= 640) {
             currentKeyWidth = 55;
