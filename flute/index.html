@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flute Online - Dark Studio</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* New Dark Studio Background */
+    body {
+      background-color: #0f172a; /* Deep slate base */
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(17, 24, 39, 1) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(30, 58, 138, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(153, 27, 27, 0.2) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(217, 119, 6, 0.15) 0px, transparent 50%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      color: #f8fafc;
+      position: relative;
+    }
+
+    /* Subtle glowing grid for the studio vibe */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Button active bounce */
+    .note-btn.active {
+      transform: translateY(-4px) scale(1.06);
+      box-shadow: 0 10px 25px -4px rgba(217, 119, 6, 0.6), 0 0 0 3px #FBBF24;
+      border-color: #FBBF24 !important;
+    }
+
+    /* Range slider custom styling */
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: #F59E0B;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      border: 2px solid #1e293b;
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    
+    .footer-panel {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased p-4 sm:p-6 lg:p-8">
+
+  <!-- Header Section -->
+  <header class="w-full max-w-5xl mx-auto text-center pt-8 pb-4">
+    <!-- Breadcrumb -->
+    <div class="text-left mb-6 text-sm text-slate-400 font-medium tracking-wide">
+        Home <span class="mx-2">&gt;</span> <span class="text-amber-400">Online Flute</span>
+    </div>
+
+    <!-- Main Title -->
+    <h1 class="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white tracking-tight mb-6 drop-shadow-md">
+      Flute Online
+    </h1>
+
+    <!-- Badges -->
+    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-8">
+      <span class="px-4 py-1.5 rounded-full bg-slate-800/60 border border-slate-700 shadow-sm text-xs font-semibold text-slate-200 tracking-wider flex items-center gap-2 backdrop-blur-sm">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+        FREE BROWSER INSTRUMENT
+      </span>
+      <span class="px-4 py-1.5 rounded-full bg-slate-800/60 border border-slate-700 shadow-sm text-xs font-semibold text-slate-200 tracking-wider flex items-center gap-2 backdrop-blur-sm">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+        CLICK / TOUCH / KEYBOARD
+      </span>
+      <span class="px-4 py-1.5 rounded-full bg-slate-800/60 border border-slate-700 shadow-sm text-xs font-semibold text-slate-200 tracking-wider flex items-center gap-2 backdrop-blur-sm">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+        NATURAL + CHROMATIC NOTES
+      </span>
+    </div>
+    
+    <div class="flex justify-between items-end border-b border-slate-700 pb-2 w-full text-xs font-medium text-slate-400">
+        <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+            PLAYABLE BAMBOO FLUTE
+        </div>
+        <div class="text-slate-500 hidden sm:block">
+            Click, tap, or press a key to play a flute-like note.
+        </div>
+    </div>
+  </header>
+
+  <!-- Main Instrument Stage -->
+  <main class="w-full max-w-5xl mx-auto flex-grow flex flex-col items-center justify-center my-8">
+    
+    <!-- Flute Visual Container -->
+    <div class="relative w-full max-w-4xl flex flex-col items-center">
+      
+      <!-- Flute SVG Illustration -->
+      <div class="w-full relative py-8 overflow-hidden flex items-center justify-center filter drop-shadow-2xl">
+        <svg id="fluteSvg" viewBox="0 0 1000 130" class="w-full max-w-4xl h-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bambooBody" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#E5AF6A" />
+              <stop offset="25%" stop-color="#F2C88D" />
+              <stop offset="50%" stop-color="#D89D58" />
+              <stop offset="85%" stop-color="#A86C2D" />
+              <stop offset="100%" stop-color="#4A2508" />
+            </linearGradient>
+
+            <radialGradient id="holeDepth" cx="45%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#050201" />
+              <stop offset="75%" stop-color="#1A0C03" />
+              <stop offset="100%" stop-color="#361B08" />
+            </radialGradient>
+
+            <linearGradient id="threadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#7A1D1A" />
+              <stop offset="50%" stop-color="#C22923" />
+              <stop offset="100%" stop-color="#4A100E" />
+            </linearGradient>
+
+            <linearGradient id="goldThreadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#997316" />
+              <stop offset="50%" stop-color="#E6BB3E" />
+              <stop offset="100%" stop-color="#664907" />
+            </linearGradient>
+          </defs>
+
+          <!-- Bamboo Stem Body -->
+          <g>
+            <!-- Shadow under flute -->
+            <rect x="25" y="55" width="950" height="46" rx="10" fill="#000" opacity="0.3" filter="blur(8px)" />
+            
+            <rect x="25" y="44" width="950" height="46" rx="10" fill="url(#bambooBody)" />
+            
+            <g opacity="0.5">
+              <line x1="160" y1="44" x2="160" y2="90" stroke="#5E3113" stroke-width="4" stroke-dasharray="2 3" />
+              <line x1="380" y1="44" x2="380" y2="90" stroke="#5E3113" stroke-width="3" stroke-dasharray="2 2" />
+              <line x1="680" y1="44" x2="680" y2="90" stroke="#5E3113" stroke-width="3" stroke-dasharray="2 2" />
+              <line x1="910" y1="44" x2="910" y2="90" stroke="#5E3113" stroke-width="4" stroke-dasharray="2 3" />
+            </g>
+
+            <rect x="35" y="43" width="14" height="48" rx="2" fill="url(#threadGrad)" />
+            <rect x="52" y="43" width="10" height="48" rx="2" fill="url(#threadGrad)" />
+            
+            <!-- Embouchure Blow Hole -->
+            <ellipse cx="120" cy="67" rx="12" ry="14" fill="url(#holeDepth)" stroke="#4A260C" stroke-width="1.5" />
+
+            <rect x="300" y="43" width="8" height="48" rx="1" fill="url(#threadGrad)" />
+            <rect x="310" y="43" width="3" height="48" fill="url(#goldThreadGrad)" />
+
+            <rect x="945" y="43" width="12" height="48" rx="2" fill="url(#threadGrad)" />
+            <rect x="960" y="43" width="6" height="48" fill="url(#threadGrad)" />
+
+            <rect x="30" y="46" width="940" height="4" fill="#FFFFFF" opacity="0.3" rx="2" />
+            <rect x="30" y="85" width="940" height="5" fill="#1C0D02" opacity="0.7" rx="2.5" />
+          </g>
+
+          <!-- Tone Finger Holes -->
+          <g id="fluteHoles">
+            <!-- (Holes generated via SVG) -->
+            <g id="holeVisual-0" class="transition-all duration-150">
+              <ellipse cx="380" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-0" cx="380" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-1" class="transition-all duration-150">
+              <ellipse cx="455" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-1" cx="455" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-2" class="transition-all duration-150">
+              <ellipse cx="530" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-2" cx="530" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-3" class="transition-all duration-150">
+              <ellipse cx="605" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-3" cx="605" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-4" class="transition-all duration-150">
+              <ellipse cx="680" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-4" cx="680" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-5" class="transition-all duration-150">
+              <ellipse cx="755" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-5" cx="755" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-6" class="transition-all duration-150">
+              <ellipse cx="830" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-6" cx="830" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+            <g id="holeVisual-7" class="transition-all duration-150">
+              <ellipse cx="905" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" />
+              <circle id="holeGlow-7" cx="905" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Interactive Note Buttons Grid -->
+      <div id="noteButtonsContainer" class="w-full flex justify-end pr-[4.5%] relative -mt-8 mb-4">
+          <div class="flex gap-4 sm:gap-6 md:gap-[2.2rem]">
+            <!-- Buttons injected via JS -->
+          </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Controls & Settings (Bottom Section) -->
+  <footer class="w-full max-w-5xl mx-auto space-y-4 footer-panel rounded-2xl p-6 mb-4 shadow-2xl">
+    <div class="flex flex-wrap items-center justify-between gap-6">
+      
+      <!-- Note Set Toggle -->
+      <div class="flex items-center gap-4">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:flex items-center gap-1">
+            NOTE SET
+        </span>
+        <div class="inline-flex rounded-full bg-slate-900/60 p-1 border border-slate-700">
+          <button id="toggleNatural" class="px-5 py-2 rounded-full bg-amber-500 text-slate-900 shadow-sm text-sm font-bold transition-all duration-200 focus:outline-none">
+            Natural notes
+          </button>
+          <button id="toggleSharps" class="px-5 py-2 rounded-full text-slate-300 hover:text-white text-sm font-medium transition-all duration-200 focus:outline-none">
+            Sharps and flats
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls Group (Volume & Vibrato) -->
+      <div class="flex items-center gap-6 sm:gap-8">
+          <!-- Volume Control -->
+          <div class="flex items-center gap-3">
+            <button id="muteBtn" class="text-slate-400 hover:text-amber-400 transition-colors focus:outline-none" title="Toggle Mute">
+              <svg id="volumeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+              </svg>
+            </button>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.75" class="w-20 sm:w-28 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer outline-none">
+          </div>
+
+          <!-- Vibrato Option -->
+          <div class="flex items-center">
+            <label for="vibratoToggle" class="inline-flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-300 hover:text-white select-none">
+              <input type="checkbox" id="vibratoToggle" checked class="w-4 h-4 rounded bg-slate-800 border-slate-600 text-amber-500 focus:ring-amber-500 cursor-pointer accent-amber-500">
+              <span class="hidden sm:inline">Gentle vibrato</span>
+              <span class="sm:hidden">Vibrato</span>
+            </label>
+          </div>
+      </div>
+
+    </div>
+
+    <!-- Status Bar -->
+    <div class="border-t border-slate-700/50 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+      
+      <div class="flex items-center gap-2 text-sm text-slate-300 bg-slate-900/50 px-4 py-1.5 rounded-full border border-slate-700">
+        <span class="relative flex h-2.5 w-2.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+        </span>
+        <span class="font-medium text-slate-400">Status:</span> 
+        <span id="activeNoteText" class="font-bold text-amber-400">Ready to play</span>
+      </div>
+
+      <div class="flex items-center gap-2 text-slate-400 text-[11px] sm:text-xs font-mono">
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+        <span>A=C &nbsp;S=D &nbsp;D=E &nbsp;F=F &nbsp;G=G &nbsp;H=A &nbsp;J=B &nbsp;K=C5</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Audio Synthesis & Interaction Script -->
+  <script>
+    const naturalNotes = [
+      { note: 'C',  sargam: 'Sa',  key: 'a', freq: 261.63 },
+      { note: 'D',  sargam: 'Re',  key: 's', freq: 293.66 },
+      { note: 'E',  sargam: 'Ga',  key: 'd', freq: 329.63 },
+      { note: 'F',  sargam: 'Ma',  key: 'f', freq: 349.23 },
+      { note: 'G',  sargam: 'Pa',  key: 'g', freq: 392.00 },
+      { note: 'A',  sargam: 'Dha', key: 'h', freq: 440.00 },
+      { note: 'B',  sargam: 'Ni',  key: 'j', freq: 493.88 },
+      { note: 'C5', sargam: "Sa'", key: 'k', freq: 523.25 }
+    ];
+
+    const chromaticNotes = [
+      { note: 'C',  sargam: 'Sa',    key: 'a', freq: 261.63 },
+      { note: 'C#', sargam: 're(k)', key: 'w', freq: 277.18 },
+      { note: 'D',  sargam: 'Re',    key: 's', freq: 293.66 },
+      { note: 'D#', sargam: 'ga(k)', key: 'e', freq: 311.13 },
+      { note: 'E',  sargam: 'Ga',    key: 'd', freq: 329.63 },
+      { note: 'F',  sargam: 'Ma',    key: 'f', freq: 349.23 },
+      { note: 'F#', sargam: 'Ma(t)', key: 't', freq: 369.99 },
+      { note: 'G',  sargam: 'Pa',    key: 'g', freq: 392.00 }
+    ];
+
+    let currentScaleMode = 'natural';
+    let activeNotes = naturalNotes;
+
+    let audioCtx = null;
+    let masterGain = null;
+    let activeVoices = {};
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(parseFloat(document.getElementById('volumeSlider').value), audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playFluteTone(freq) {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const vibratoEnabled = document.getElementById('vibratoToggle').checked;
+
+      const voiceGain = audioCtx.createGain();
+      voiceGain.gain.setValueAtTime(0.0001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.7, now + 0.05);
+
+      const osc1 = audioCtx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(freq, now);
+
+      const osc2 = audioCtx.createOscillator();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(freq * 2, now);
+      const osc2Gain = audioCtx.createGain();
+      osc2Gain.gain.setValueAtTime(0.18, now);
+      osc2.connect(osc2Gain);
+      osc2Gain.connect(voiceGain);
+
+      const bufferSize = audioCtx.sampleRate * 1;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(freq * 1.5, now);
+      noiseFilter.Q.setValueAtTime(4.0, now);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.04, now);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(voiceGain);
+
+      let lfo = null;
+      if (vibratoEnabled) {
+        lfo = audioCtx.createOscillator();
+        lfo.frequency.setValueAtTime(5.4, now);
+        const lfoGain = audioCtx.createGain();
+        lfoGain.gain.setValueAtTime(4.5, now);
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc1.frequency);
+        lfoGain.connect(osc2.frequency);
+        lfo.start(now);
+      }
+
+      osc1.connect(voiceGain);
+      voiceGain.connect(masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      noise.start(now);
+
+      return {
+        stop: function() {
+          const stopTime = audioCtx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.12);
+
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              noise.stop();
+              if (lfo) lfo.stop();
+              voiceGain.disconnect();
+            } catch (e) {}
+          }, 140);
+        }
+      };
+    }
+
+    function noteOn(index) {
+      if (index < 0 || index >= activeNotes.length) return;
+      const noteItem = activeNotes[index];
+      const identifier = 'note_' + index;
+
+      if (activeVoices[identifier]) return;
+
+      activeVoices[identifier] = playFluteTone(noteItem.freq);
+
+      const buttons = document.querySelectorAll('.note-btn');
+      if (buttons[index]) {
+        buttons[index].classList.add('active');
+        buttons[index].style.backgroundColor = '#1e293b'; /* Darker active background */
+        buttons[index].style.borderColor = '#F59E0B'; /* Amber border */
+      }
+
+      const glow = document.getElementById(`holeGlow-${index}`);
+      if (glow) {
+        glow.setAttribute('opacity', '0.8');
+      }
+
+      const activeText = document.getElementById('activeNoteText');
+      activeText.textContent = `${noteItem.note} (${noteItem.sargam}) • ${Math.round(noteItem.freq)} Hz`;
+    }
+
+    function noteOff(index) {
+      const identifier = 'note_' + index;
+      if (activeVoices[identifier]) {
+        activeVoices[identifier].stop();
+        delete activeVoices[identifier];
+      }
+
+      const buttons = document.querySelectorAll('.note-btn');
+      if (buttons[index]) {
+        buttons[index].classList.remove('active');
+        buttons[index].style.backgroundColor = '#334155'; /* Reset to slate-700 */
+        buttons[index].style.borderColor = '#0f172a';
+      }
+
+      const glow = document.getElementById(`holeGlow-${index}`);
+      if (glow) {
+        glow.setAttribute('opacity', '0');
+      }
+
+      if (Object.keys(activeVoices).length === 0) {
+        document.getElementById('activeNoteText').textContent = 'Ready to play';
+      }
+    }
+
+    function attachButtonListeners() {
+      const buttons = document.querySelectorAll('.note-btn');
+      buttons.forEach((btn) => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+
+        btn.addEventListener('mousedown', (e) => { e.preventDefault(); noteOn(idx); });
+        btn.addEventListener('mouseup', (e) => { e.preventDefault(); noteOff(idx); });
+        btn.addEventListener('mouseleave', (e) => { noteOff(idx); });
+
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); noteOn(idx); }, { passive: false });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); noteOff(idx); }, { passive: false });
+        btn.addEventListener('touchcancel', (e) => { e.preventDefault(); noteOff(idx); });
+      });
+    }
+
+    const keyIndexMap = {};
+    function updateKeyIndexMap() {
+      for (const k in keyIndexMap) delete keyIndexMap[k];
+      activeNotes.forEach((item, idx) => {
+        keyIndexMap[item.key.toLowerCase()] = idx;
+      });
+    }
+
+    const pressedKeys = new Set();
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      const key = e.key.toLowerCase();
+      if (keyIndexMap.hasOwnProperty(key) && !pressedKeys.has(key)) {
+        pressedKeys.add(key);
+        noteOn(keyIndexMap[key]);
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      const key = e.key.toLowerCase();
+      if (pressedKeys.has(key)) {
+        pressedKeys.delete(key);
+        if (keyIndexMap.hasOwnProperty(key)) {
+          noteOff(keyIndexMap[key]);
+        }
+      }
+    });
+
+    const volumeSlider = document.getElementById('volumeSlider');
+    let previousVolume = 0.75;
+
+    volumeSlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      if (masterGain && audioCtx) {
+        masterGain.gain.setValueAtTime(val, audioCtx.currentTime);
+      }
+    });
+
+    document.getElementById('muteBtn').addEventListener('click', () => {
+      if (parseFloat(volumeSlider.value) > 0) {
+        previousVolume = parseFloat(volumeSlider.value);
+        volumeSlider.value = 0;
+        if (masterGain && audioCtx) masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      } else {
+        volumeSlider.value = previousVolume || 0.75;
+        if (masterGain && audioCtx) masterGain.gain.setValueAtTime(volumeSlider.value, audioCtx.currentTime);
+      }
+    });
+
+    const toggleNatural = document.getElementById('toggleNatural');
+    const toggleSharps = document.getElementById('toggleSharps');
+
+    function renderButtons() {
+      const wrapper = document.querySelector('#noteButtonsContainer > div');
+      wrapper.innerHTML = '';
+
+      activeNotes.forEach((item, idx) => {
+        const btn = document.createElement('button');
+        btn.setAttribute('data-index', idx);
+        btn.setAttribute('data-key', item.key);
+        
+        // Dark theme button styling
+        btn.className = "note-btn flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white shadow-lg border-2 transition-all duration-150 cursor-pointer focus:outline-none";
+        btn.style.backgroundColor = '#334155'; /* slate-700 */
+        btn.style.borderColor = '#0f172a'; /* slate-900 border */
+        
+        btn.innerHTML = `
+          <span class="text-sm sm:text-base font-bold text-amber-400 leading-none">${item.note}</span>
+          <span class="text-[10px] sm:text-xs text-slate-300 font-medium my-0.5 leading-none">${item.sargam}</span>
+          <span class="text-[9px] font-mono font-bold bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-slate-400 mt-1">${item.key.toUpperCase()}</span>
+        `;
+        wrapper.appendChild(btn);
+      });
+
+      attachButtonListeners();
+      updateKeyIndexMap();
+    }
+
+    toggleNatural.addEventListener('click', () => {
+      if (currentScaleMode === 'natural') return;
+      currentScaleMode = 'natural';
+      activeNotes = naturalNotes;
+      toggleNatural.className = 'px-5 py-2 rounded-full bg-amber-500 text-slate-900 shadow-sm text-sm font-bold transition-all duration-200 focus:outline-none';
+      toggleSharps.className = 'px-5 py-2 rounded-full text-slate-300 hover:text-white text-sm font-medium transition-all duration-200 focus:outline-none';
+      renderButtons();
+    });
+
+    toggleSharps.addEventListener('click', () => {
+      if (currentScaleMode === 'chromatic') return;
+      currentScaleMode = 'chromatic';
+      activeNotes = chromaticNotes;
+      toggleSharps.className = 'px-5 py-2 rounded-full bg-amber-500 text-slate-900 shadow-sm text-sm font-bold transition-all duration-200 focus:outline-none';
+      toggleNatural.className = 'px-5 py-2 rounded-full text-slate-300 hover:text-white text-sm font-medium transition-all duration-200 focus:outline-none';
+      renderButtons();
+    });
+
+    // Initialize
+    renderButtons();
+  </script>
+</body>
+</html>
