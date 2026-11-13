@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flute Online - TaraJ Music</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome CDN for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Dark Studio Background with subtle Grid */
+    body {
+      background-color: #0f172a; 
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(17, 24, 39, 1) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(30, 58, 138, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(153, 27, 27, 0.2) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(217, 119, 6, 0.15) 0px, transparent 50%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      color: #f8fafc;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Flute Note Button Active state */
+    .note-btn.active {
+      transform: translateY(-4px) scale(1.06);
+      box-shadow: 0 10px 25px -4px rgba(217, 119, 6, 0.6), 0 0 0 3px #FBBF24;
+      border-color: #FBBF24 !important;
+    }
+
+    /* Range slider custom styling */
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: #F59E0B;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      border: 2px solid #1e293b;
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- ==========================================
+       TARAJ MUSIC HEADER (Exact Replica)
+  =========================================== -->
+  <nav class="w-full bg-[#0a0f16] border-b border-slate-800/80 sticky top-0 z-50">
+    <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo Brand -->
+        <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer">
+          <div class="w-10 h-10 bg-[#00b4d8] rounded-xl flex items-center justify-center text-slate-900 shadow-md">
+            <!-- Double Music Note Icon -->
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
+          <div class="flex flex-col justify-center">
+            <span class="text-[#00b4d8] font-bold text-2xl tracking-tight leading-none mb-1" style="font-family: 'Plus Jakarta Sans', sans-serif;">TaraJ Music</span>
+            <span class="text-slate-400 text-[10px] sm:text-xs tracking-wide leading-none">Indian Classical Practice Studio</span>
+          </div>
+        </div>
+
+        <!-- Desktop Menu Links -->
+        <div class="hidden lg:flex items-center gap-3">
+          <a href="../index.html" class="bg-[#00b4d8] hover:bg-[#0096b4] text-slate-900 px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md">Harmonium</a>
+          <a href="../metronome/index.html" class="bg-[#ffb703] hover:bg-[#fb8500] text-slate-900 px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md">Metronome</a>
+          
+          <!-- Active Page Highlighted with border -->
+          <a href="#" class="bg-[#10b981] hover:bg-[#059669] text-slate-900 px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md ring-2 ring-[#10b981]/50">Online Flute</a>
+          
+          <a href="../melody/index.html" class="bg-[#ef476f] hover:bg-[#d90429] text-white px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md">Melody Maker</a>
+        </div>
+
+        <!-- Mobile Menu Icon -->
+        <div class="lg:hidden flex items-center">
+          <button type="button" class="text-[#00b4d8] hover:text-white focus:outline-none">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+       PAGE HEADER (Title & Badges)
+  =========================================== -->
+  <header class="w-full max-w-5xl mx-auto text-center pt-10 pb-4 px-4 sm:px-6 lg:px-8">
+    
+    <!-- Main Title -->
+    <h1 class="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white tracking-tight mb-8 drop-shadow-md">
+      Flute Online
+    </h1>
+
+    <!-- Badges with FontAwesome Icons -->
+    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-10">
+      <span class="px-5 py-2 rounded-full bg-slate-800/40 border border-slate-600 shadow-sm text-xs font-semibold text-slate-300 tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-amber-500"></i>
+        FREE BROWSER INSTRUMENT
+      </span>
+      <span class="px-5 py-2 rounded-full bg-slate-800/40 border border-slate-600 shadow-sm text-xs font-semibold text-slate-300 tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-arrow-pointer text-amber-500"></i>
+        CLICK / TOUCH / KEYBOARD
+      </span>
+      <span class="px-5 py-2 rounded-full bg-slate-800/40 border border-slate-600 shadow-sm text-xs font-semibold text-slate-300 tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-music text-amber-500"></i>
+        NATURAL + CHROMATIC NOTES
+      </span>
+    </div>
+    
+    <!-- Divider Bar -->
+    <div class="flex justify-between items-end border-b border-slate-600/50 pb-3 w-full text-xs font-medium text-slate-400">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-music text-amber-500"></i>
+            PLAYABLE BAMBOO FLUTE
+        </div>
+        <div class="text-slate-500 hidden sm:block">
+            Click, tap, or press a key to play a flute-like note.
+        </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN INSTRUMENT (Flute SVG & Buttons)
+  =========================================== -->
+  <main class="w-full max-w-5xl mx-auto flex-grow flex flex-col items-center justify-center my-6 px-4">
+    <div class="relative w-full max-w-4xl flex flex-col items-center">
+      
+      <!-- Flute Graphic -->
+      <div class="w-full relative py-8 overflow-hidden flex items-center justify-center filter drop-shadow-2xl">
+        <svg id="fluteSvg" viewBox="0 0 1000 130" class="w-full max-w-4xl h-auto select-none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bambooBody" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#E5AF6A" />
+              <stop offset="25%" stop-color="#F2C88D" />
+              <stop offset="50%" stop-color="#D89D58" />
+              <stop offset="85%" stop-color="#A86C2D" />
+              <stop offset="100%" stop-color="#4A2508" />
+            </linearGradient>
+
+            <radialGradient id="holeDepth" cx="45%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#050201" />
+              <stop offset="75%" stop-color="#1A0C03" />
+              <stop offset="100%" stop-color="#361B08" />
+            </radialGradient>
+
+            <linearGradient id="threadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#7A1D1A" />
+              <stop offset="50%" stop-color="#C22923" />
+              <stop offset="100%" stop-color="#4A100E" />
+            </linearGradient>
+
+            <linearGradient id="goldThreadGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#997316" />
+              <stop offset="50%" stop-color="#E6BB3E" />
+              <stop offset="100%" stop-color="#664907" />
+            </linearGradient>
+          </defs>
+
+          <!-- Bamboo Stem Body -->
+          <g>
+            <rect x="25" y="55" width="950" height="46" rx="10" fill="#000" opacity="0.3" filter="blur(8px)" />
+            <rect x="25" y="44" width="950" height="46" rx="10" fill="url(#bambooBody)" />
+            
+            <g opacity="0.5">
+              <line x1="160" y1="44" x2="160" y2="90" stroke="#5E3113" stroke-width="4" stroke-dasharray="2 3" />
+              <line x1="380" y1="44" x2="380" y2="90" stroke="#5E3113" stroke-width="3" stroke-dasharray="2 2" />
+              <line x1="680" y1="44" x2="680" y2="90" stroke="#5E3113" stroke-width="3" stroke-dasharray="2 2" />
+              <line x1="910" y1="44" x2="910" y2="90" stroke="#5E3113" stroke-width="4" stroke-dasharray="2 3" />
+            </g>
+
+            <rect x="35" y="43" width="14" height="48" rx="2" fill="url(#threadGrad)" />
+            <rect x="52" y="43" width="10" height="48" rx="2" fill="url(#threadGrad)" />
+            <ellipse cx="120" cy="67" rx="12" ry="14" fill="url(#holeDepth)" stroke="#4A260C" stroke-width="1.5" />
+            <rect x="300" y="43" width="8" height="48" rx="1" fill="url(#threadGrad)" />
+            <rect x="310" y="43" width="3" height="48" fill="url(#goldThreadGrad)" />
+            <rect x="945" y="43" width="12" height="48" rx="2" fill="url(#threadGrad)" />
+            <rect x="960" y="43" width="6" height="48" fill="url(#threadGrad)" />
+            <rect x="30" y="46" width="940" height="4" fill="#FFFFFF" opacity="0.3" rx="2" />
+            <rect x="30" y="85" width="940" height="5" fill="#1C0D02" opacity="0.7" rx="2.5" />
+          </g>
+
+          <!-- Finger Holes -->
+          <g id="fluteHoles">
+            <g id="holeVisual-0" class="transition-all duration-150"><ellipse cx="380" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-0" cx="380" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-1" class="transition-all duration-150"><ellipse cx="455" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-1" cx="455" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-2" class="transition-all duration-150"><ellipse cx="530" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-2" cx="530" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-3" class="transition-all duration-150"><ellipse cx="605" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-3" cx="605" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-4" class="transition-all duration-150"><ellipse cx="680" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-4" cx="680" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-5" class="transition-all duration-150"><ellipse cx="755" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-5" cx="755" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-6" class="transition-all duration-150"><ellipse cx="830" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-6" cx="830" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+            <g id="holeVisual-7" class="transition-all duration-150"><ellipse cx="905" cy="67" rx="11" ry="13" fill="url(#holeDepth)" stroke="#532B0D" stroke-width="2" /><circle id="holeGlow-7" cx="905" cy="67" r="10" fill="#FCD34D" opacity="0" class="transition-opacity duration-150 blur-sm" /></g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Play Buttons -->
+      <div id="noteButtonsContainer" class="w-full flex justify-end pr-[4.5%] relative -mt-8 mb-4">
+          <div class="flex gap-4 sm:gap-6 md:gap-[2.2rem]">
+            <!-- Buttons injected via JS -->
+          </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       CONTROLS & SETTINGS (Footer Panel)
+  =========================================== -->
+  <section class="w-full max-w-5xl mx-auto space-y-4 px-4 sm:px-6 lg:px-8 mb-8">
+    <div class="glass-panel rounded-2xl p-6 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        
+        <!-- Note Set Toggle -->
+        <div class="flex items-center gap-4">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:flex items-center gap-1">
+              NOTE SET
+          </span>
+          <div class="inline-flex rounded-full bg-slate-900/60 p-1 border border-slate-700">
+            <button id="toggleNatural" class="px-5 py-2 rounded-full bg-amber-500 text-slate-900 shadow-sm text-sm font-bold transition-all duration-200 focus:outline-none">
+              Natural notes
+            </button>
+            <button id="toggleSharps" class="px-5 py-2 rounded-full text-slate-300 hover:text-white text-sm font-medium transition-all duration-200 focus:outline-none">
+              Sharps and flats
+            </button>
+          </div>
+        </div>
+
+        <!-- Volume & Vibrato -->
+        <div class="flex items-center gap-6 sm:gap-8">
+            <div class="flex items-center gap-3">
+              <button id="muteBtn" class="text-slate-400 hover:text-amber-500 transition-colors focus:outline-none" title="Toggle Mute">
+                <i class="fa-solid fa-volume-high text-lg"></i>
+              </button>
+              <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.75" class="w-20 sm:w-28 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer outline-none">
+            </div>
+
+            <div class="flex items-center">
+              <label for="vibratoToggle" class="inline-flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-300 hover:text-white select-none">
+                <input type="checkbox" id="vibratoToggle" checked class="w-4 h-4 rounded bg-slate-800 border-slate-600 text-amber-500 focus:ring-amber-500 cursor-pointer accent-amber-500">
+                <span class="hidden sm:inline">Gentle vibrato</span>
+                <span class="sm:hidden">Vibrato</span>
+              </label>
+            </div>
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="border-t border-slate-700/50 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-5">
+        <div class="flex items-center gap-2 text-sm text-slate-300 bg-slate-900/50 px-4 py-1.5 rounded-full border border-slate-700">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+          </span>
+          <span class="font-medium text-slate-400">Status:</span> 
+          <span id="activeNoteText" class="font-bold text-amber-400">Ready to play</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-slate-400 text-[11px] sm:text-xs font-mono">
+          <i class="fa-regular fa-keyboard"></i>
+          <span>A=C &nbsp;S=D &nbsp;D=E &nbsp;F=F &nbsp;G=G &nbsp;H=A &nbsp;J=B &nbsp;K=C5</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       INFORMATIONAL CONTENT
+  =========================================== -->
+  <section class="w-full max-w-5xl mx-auto space-y-8 mb-20 px-4 sm:px-6 lg:px-8 text-slate-300">
+    
+    <!-- Introduction Section -->
+    <div class="glass-panel rounded-2xl p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
+          <i class="fa-solid fa-book-open text-amber-400 text-xl"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">Experience the Virtual Bansuri</h2>
+      </div>
+      <p class="text-sm sm:text-base leading-relaxed mb-4 text-slate-300">
+        Our browser-based virtual flute allows you to explore the enchanting sounds of a traditional Bansuri without the need for physical instruments or software installations. Whether you are using a mouse, a touchscreen, or your computer keyboard, playing melodies is just a tap away. 
+      </p>
+      <p class="text-sm sm:text-base leading-relaxed text-slate-300">
+        Start your musical journey by familiarizing yourself with the natural notes (Sa, Re, Ga...). Practice basic sequences slowly, focusing on the transition between keys. While this digital tool cannot replicate the complex breath techniques of a real transverse flute, it serves as an excellent companion for understanding note placements, ear training, and composing quick musical ideas.
+      </p>
+    </div>
+
+    <!-- Notes Reference Chart -->
+    <div class="glass-panel rounded-2xl p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
+          <i class="fa-solid fa-table-list text-amber-400 text-xl"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">Beginner's Note Guide</h2>
+      </div>
+      <p class="text-sm mb-6 text-slate-400">
+        Use this quick reference table to understand how Western notes map to Indian Sargam and your computer keyboard.
+      </p>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm whitespace-nowrap">
+          <thead class="bg-slate-900/80 text-slate-200">
+            <tr>
+              <th class="p-4 rounded-tl-lg font-semibold">Western Note</th>
+              <th class="p-4 font-semibold">Indian Sargam</th>
+              <th class="p-4 font-semibold">Keyboard Key</th>
+              <th class="p-4 rounded-tr-lg font-semibold">Practice Idea</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700/50">
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">C</td>
+              <td class="p-4">Sa (Root)</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">A</kbd></td>
+              <td class="p-4 text-slate-400">Establish your base pitch.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">D</td>
+              <td class="p-4">Re</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">S</kbd></td>
+              <td class="p-4 text-slate-400">Try playing Sa-Re-Sa.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">E</td>
+              <td class="p-4">Ga</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">D</kbd></td>
+              <td class="p-4 text-slate-400">Practice stepping up: Sa-Re-Ga.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">F</td>
+              <td class="p-4">Ma</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">F</kbd></td>
+              <td class="p-4 text-slate-400">Focus on clean transitions.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">G</td>
+              <td class="p-4">Pa</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">G</kbd></td>
+              <td class="p-4 text-slate-400">A strong resting note. Play Sa-Pa.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">A</td>
+              <td class="p-4">Dha</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">H</kbd></td>
+              <td class="p-4 text-slate-400">Higher register steps.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">B</td>
+              <td class="p-4">Ni</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">J</kbd></td>
+              <td class="p-4 text-slate-400">Leading note back to Sa.</td>
+            </tr>
+            <tr class="hover:bg-slate-700/30 transition-colors">
+              <td class="p-4 font-bold text-amber-400">C5</td>
+              <td class="p-4">Sa' (High octave)</td>
+              <td class="p-4"><kbd class="px-2 py-1 bg-slate-900 border border-slate-600 rounded text-xs">K</kbd></td>
+              <td class="p-4 text-slate-400">Compare low Sa with high Sa'.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="glass-panel rounded-2xl p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
+          <i class="fa-solid fa-circle-question text-amber-400 text-xl"></i>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="space-y-4">
+        <div class="border-b border-slate-700/50 pb-4">
+          <h3 class="text-lg font-semibold text-slate-200 mb-2">Do I need to download any app to play this?</h3>
+          <p class="text-sm text-slate-400">No, this is a fully web-based synthesizer. As long as you have a modern web browser and an internet connection, you can play the flute directly on this webpage.</p>
+        </div>
+        
+        <div class="border-b border-slate-700/50 pb-4">
+          <h3 class="text-lg font-semibold text-slate-200 mb-2">Can I play sharps and flats (Komal/Tivra swaras)?</h3>
+          <p class="text-sm text-slate-400">Yes! Just click the "Sharps and flats" toggle in the control panel to switch the scale. This will allow you to play chromatic notes essential for various Raagas.</p>
+        </div>
+
+        <div class="border-b border-slate-700/50 pb-4">
+          <h3 class="text-lg font-semibold text-slate-200 mb-2">Does this teach me real flute fingering?</h3>
+          <p class="text-sm text-slate-400">This tool provides simplified, linear buttons that represent the notes for digital practice. A physical Bansuri requires specific finger hole coverage which cannot be fully replicated on a keyboard.</p>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold text-slate-200 mb-2">Can I blow into my device's microphone to play?</h3>
+          <p class="text-sm text-slate-400">Currently, this tool uses touch, mouse clicks, and keyboard strokes to trigger notes. Microphone breath-control is not supported in this version.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       JAVASCRIPT AUDIO ENGINE
+  =========================================== -->
+  <script>
+    const naturalNotes = [
+      { note: 'C',  sargam: 'Sa',  key: 'a', freq: 261.63 },
+      { note: 'D',  sargam: 'Re',  key: 's', freq: 293.66 },
+      { note: 'E',  sargam: 'Ga',  key: 'd', freq: 329.63 },
+      { note: 'F',  sargam: 'Ma',  key: 'f', freq: 349.23 },
+      { note: 'G',  sargam: 'Pa',  key: 'g', freq: 392.00 },
+      { note: 'A',  sargam: 'Dha', key: 'h', freq: 440.00 },
+      { note: 'B',  sargam: 'Ni',  key: 'j', freq: 493.88 },
+      { note: 'C5', sargam: "Sa'", key: 'k', freq: 523.25 }
+    ];
+
+    const chromaticNotes = [
+      { note: 'C',  sargam: 'Sa',    key: 'a', freq: 261.63 },
+      { note: 'C#', sargam: 're(k)', key: 'w', freq: 277.18 },
+      { note: 'D',  sargam: 'Re',    key: 's', freq: 293.66 },
+      { note: 'D#', sargam: 'ga(k)', key: 'e', freq: 311.13 },
+      { note: 'E',  sargam: 'Ga',    key: 'd', freq: 329.63 },
+      { note: 'F',  sargam: 'Ma',    key: 'f', freq: 349.23 },
+      { note: 'F#', sargam: 'Ma(t)', key: 't', freq: 369.99 },
+      { note: 'G',  sargam: 'Pa',    key: 'g', freq: 392.00 }
+    ];
+
+    let currentScaleMode = 'natural';
+    let activeNotes = naturalNotes;
+
+    let audioCtx = null;
+    let masterGain = null;
+    let activeVoices = {};
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(parseFloat(document.getElementById('volumeSlider').value), audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playFluteTone(freq) {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const vibratoEnabled = document.getElementById('vibratoToggle').checked;
+
+      const voiceGain = audioCtx.createGain();
+      voiceGain.gain.setValueAtTime(0.0001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.7, now + 0.05);
+
+      const osc1 = audioCtx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(freq, now);
+
+      const osc2 = audioCtx.createOscillator();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(freq * 2, now);
+      const osc2Gain = audioCtx.createGain();
+      osc2Gain.gain.setValueAtTime(0.18, now);
+      osc2.connect(osc2Gain);
+      osc2Gain.connect(voiceGain);
+
+      const bufferSize = audioCtx.sampleRate * 1;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(freq * 1.5, now);
+      noiseFilter.Q.setValueAtTime(4.0, now);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.04, now);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(voiceGain);
+
+      let lfo = null;
+      if (vibratoEnabled) {
+        lfo = audioCtx.createOscillator();
+        lfo.frequency.setValueAtTime(5.4, now);
+        const lfoGain = audioCtx.createGain();
+        lfoGain.gain.setValueAtTime(4.5, now);
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc1.frequency);
+        lfoGain.connect(osc2.frequency);
+        lfo.start(now);
+      }
+
+      osc1.connect(voiceGain);
+      voiceGain.connect(masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      noise.start(now);
+
+      return {
+        stop: function() {
+          const stopTime = audioCtx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.12);
+
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              noise.stop();
+              if (lfo) lfo.stop();
+              voiceGain.disconnect();
+            } catch (e) {}
+          }, 140);
+        }
+      };
+    }
+
+    function noteOn(index) {
+      if (index < 0 || index >= activeNotes.length) return;
+      const noteItem = activeNotes[index];
+      const identifier = 'note_' + index;
+
+      if (activeVoices[identifier]) return;
+
+      activeVoices[identifier] = playFluteTone(noteItem.freq);
+
+      const buttons = document.querySelectorAll('.note-btn');
+      if (buttons[index]) {
+        buttons[index].classList.add('active');
+        buttons[index].style.backgroundColor = '#1e293b';
+        buttons[index].style.borderColor = '#F59E0B';
+      }
+
+      const glow = document.getElementById(`holeGlow-${index}`);
+      if (glow) glow.setAttribute('opacity', '0.8');
+
+      document.getElementById('activeNoteText').textContent = `${noteItem.note} (${noteItem.sargam}) • ${Math.round(noteItem.freq)} Hz`;
+    }
+
+    function noteOff(index) {
+      const identifier = 'note_' + index;
+      if (activeVoices[identifier]) {
+        activeVoices[identifier].stop();
+        delete activeVoices[identifier];
+      }
+
+      const buttons = document.querySelectorAll('.note-btn');
+      if (buttons[index]) {
+        buttons[index].classList.remove('active');
+        buttons[index].style.backgroundColor = '#334155';
+        buttons[index].style.borderColor = '#0f172a';
+      }
+
+      const glow = document.getElementById(`holeGlow-${index}`);
+      if (glow) glow.setAttribute('opacity', '0');
+
+      if (Object.keys(activeVoices).length === 0) {
+        document.getElementById('activeNoteText').textContent = 'Ready to play';
+      }
+    }
+
+    function attachButtonListeners() {
+      const buttons = document.querySelectorAll('.note-btn');
+      buttons.forEach((btn) => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        btn.addEventListener('mousedown', (e) => { e.preventDefault(); noteOn(idx); });
+        btn.addEventListener('mouseup', (e) => { e.preventDefault(); noteOff(idx); });
+        btn.addEventListener('mouseleave', (e) => { noteOff(idx); });
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); noteOn(idx); }, { passive: false });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); noteOff(idx); }, { passive: false });
+        btn.addEventListener('touchcancel', (e) => { e.preventDefault(); noteOff(idx); });
+      });
+    }
+
+    const keyIndexMap = {};
+    function updateKeyIndexMap() {
+      for (const k in keyIndexMap) delete keyIndexMap[k];
+      activeNotes.forEach((item, idx) => {
+        keyIndexMap[item.key.toLowerCase()] = idx;
+      });
+    }
+
+    const pressedKeys = new Set();
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      const key = e.key.toLowerCase();
+      if (keyIndexMap.hasOwnProperty(key) && !pressedKeys.has(key)) {
+        pressedKeys.add(key);
+        noteOn(keyIndexMap[key]);
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      const key = e.key.toLowerCase();
+      if (pressedKeys.has(key)) {
+        pressedKeys.delete(key);
+        if (keyIndexMap.hasOwnProperty(key)) {
+          noteOff(keyIndexMap[key]);
+        }
+      }
+    });
+
+    const volumeSlider = document.getElementById('volumeSlider');
+    let previousVolume = 0.75;
+    volumeSlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      if (masterGain && audioCtx) masterGain.gain.setValueAtTime(val, audioCtx.currentTime);
+    });
+
+    document.getElementById('muteBtn').addEventListener('click', () => {
+      const icon = document.querySelector('#muteBtn i');
+      if (parseFloat(volumeSlider.value) > 0) {
+        previousVolume = parseFloat(volumeSlider.value);
+        volumeSlider.value = 0;
+        if (masterGain && audioCtx) masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        icon.className = 'fa-solid fa-volume-xmark text-lg';
+      } else {
+        volumeSlider.value = previousVolume || 0.75;
+        if (masterGain && audioCtx) masterGain.gain.setValueAtTime(volumeSlider.value, audioCtx.currentTime);
+        icon.className = 'fa-solid fa-volume-high text-lg';
+      }
+    });
+
+    const toggleNatural = document.getElementById('toggleNatural');
+    const toggleSharps = document.getElementById('toggleSharps');
+
+    function renderButtons() {
+      const wrapper = document.querySelector('#noteButtonsContainer > div');
+      wrapper.innerHTML = '';
+      activeNotes.forEach((item, idx) => {
+        const btn = document.createElement('button');
+        btn.setAttribute('data-index', idx);
+        btn.setAttribute('data-key', item.key);
+        btn.className = "note-btn flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full text-white shadow-lg border-2 transition-all duration-150 cursor-pointer focus:outline-none";
+        btn.style.backgroundColor = '#334155';
+        btn.style.borderColor = '#0f172a';
+        btn.innerHTML = `
+          <span class="text-sm sm:text-base font-bold text-amber-400 leading-none">${item.note}</span>
+          <span class="text-[10px] sm:text-xs text-slate-300 font-medium my-0.5 leading-none">${item.sargam}</span>
+          <span class="text-[9px] font-mono font-bold bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-slate-400 mt-1">${item.key.toUpperCase()}</span>
+        `;
+        wrapper.appendChild(btn);
+      });
+      attachButtonListeners();
+      updateKeyIndexMap();
+    }
+
+    toggleNatural.addEventListener('click', () => {
+      if (currentScaleMode === 'natural') return;
+      currentScaleMode = 'natural';
+      activeNotes = naturalNotes;
+      toggleNatural.className = 'px-5 py-2 rounded-full bg-amber-500 text-slate-900 shadow-sm text-sm font-bold transition-all duration-200 focus:outline-none';
+      toggleSharps.className = 'px-5 py-2 rounded-full text-slate-300 hover:text-white text-sm font-medium transition-all duration-200 focus:outline-none';
+      renderButtons();
+    });
+
+    toggleSharps.addEventListener('click', () => {
+      if (currentScaleMode === 'chromatic') return;
+      currentScaleMode = 'chromatic';
+      activeNotes = chromaticNotes;
+      toggleSharps.className = 'px-5 py-2 rounded-full bg-amber-500 text-slate-900 shadow-sm text-sm font-bold transition-all duration-200 focus:outline-none';
+      toggleNatural.className = 'px-5 py-2 rounded-full text-slate-300 hover:text-white text-sm font-medium transition-all duration-200 focus:outline-none';
+      renderButtons();
+    });
+
+    renderButtons();
+  </script>
+</body>
+</html>
