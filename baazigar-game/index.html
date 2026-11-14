@@ -512,19 +512,19 @@ button{font:inherit;cursor:pointer}
  <div class="seat top">
   <div class="trump-marker" id="topTrumpMarker" aria-label="Selected Hukum"></div>
   <div class="avatar">🤖</div>
-  <div class="name">Johnny</div>
+  <div class="name" id="botNameTop">Aarav</div>
   <div class="score" id="score1">Bol: -</div>
  </div>
 
  <div class="seat left">
   <div class="avatar">🤖</div>
-  <div class="name">B-4</div>
+  <div class="name" id="botNameLeft">Priya</div>
   <div class="score" id="score2">Bol: -</div>
  </div>
 
  <div class="seat right">
   <div class="avatar">🤖</div>
-  <div class="name">Cherry 2000</div>
+  <div class="name" id="botNameRight">Kabir</div>
   <div class="score" id="score3">Bol: -</div>
  </div>
 
@@ -575,7 +575,30 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  const suits=['♠','♥','♣','♦']; // Display order: Hukum, Paan, Chidi, Eent
  const ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
- const names=['You','Johnny','B-4','Cherry 2000'];
+ let names=['You','Aarav','Priya','Kabir'];
+
+ // Fresh Indian names for the three AI seats on every new game.
+ const indianNames=[
+  'Aarav','Vivaan','Aditya','Arjun','Krishna','Rohan','Rahul','Karan','Ishaan','Dev',
+  'Yash','Samar','Manav','Reyansh','Atharv','Nikhil','Varun','Mohit','Harsh','Ankit',
+  'Priya','Ananya','Aanya','Diya','Isha','Kavya','Meera','Riya','Saanvi','Aditi',
+  'Pooja','Neha','Simran','Muskan','Tanya','Nisha','Ira','Avni','Kiara','Sneha',
+  'Anushka','Payal','Sakshi','Shreya','Mahi','Radhika','Tanvi','Jhanvi','Pari','Navya'
+ ];
+ function assignFreshPlayerNames(){
+  let previous=[];
+  try{previous=JSON.parse(localStorage.getItem('baazigarLastBotNames')||'[]');}catch(e){}
+  let pool=shuffle([...indianNames]);
+  let chosen=pool.slice(0,3);
+  if(chosen.join('|')===previous.join('|')) chosen=pool.slice(3,6);
+  names=['You',...chosen];
+  try{localStorage.setItem('baazigarLastBotNames',JSON.stringify(chosen));}catch(e){}
+  const seatNameIds=['','botNameTop','botNameLeft','botNameRight'];
+  for(let p=1;p<=3;p++){
+   const el=$(seatNameIds[p]);
+   if(el)el.textContent=names[p];
+  }
+ }
 
  // Clockwise order:
  // Cherry -> Johnny -> B-4 -> You
@@ -1481,6 +1504,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   if(confirm('Start a new game? Scores will reset.')){
    totalScores=[0,0,0,0];
+   assignFreshPlayerNames();
    bidTargets=[null,null,null,null];
    gameOver=false;
    round=1;
@@ -1521,6 +1545,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('notice').textContent='Sound effects are currently off.';
  });
 
+ assignFreshPlayerNames();
  startRound();
 
 });
