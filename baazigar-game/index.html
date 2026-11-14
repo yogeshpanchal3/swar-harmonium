@@ -1,0 +1,1529 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baazigar Card Game</title>
+
+<style>
+:root{
+ --felt:#08752e;
+ --blue:#b8dcff;
+ --ink:#153c5d;
+ --gold:#ffd45b;
+}
+*{box-sizing:border-box}
+html,body{
+ margin:0;width:100%;height:100%;
+ overflow:hidden;
+ font-family:Arial,Helvetica,sans-serif;
+ background:#064b20;color:white;
+}
+button{font:inherit;cursor:pointer}
+
+.table{
+ position:relative;width:100vw;height:100dvh;
+ min-height:560px;overflow:hidden;
+ background:radial-gradient(ellipse at center,#16883a 0%,#08702d 58%,#03491d 100%);
+ border:8px solid #b7a46a;
+ box-shadow:inset 0 0 50px #002e12;
+}
+.table:before{
+ content:"";position:absolute;inset:12px;
+ border:2px solid #ffffff14;
+ border-radius:22px;pointer-events:none;
+}
+
+.topbar{
+ position:absolute;top:14px;left:16px;right:16px;
+ display:flex;justify-content:space-between;
+ z-index:50;pointer-events:none;
+}
+.topbar>div{display:flex;gap:8px;pointer-events:auto}
+
+.tool{
+ border:1px solid #333;border-radius:12px;
+ background:#f6f6f6;color:#183d5d;
+ padding:9px 12px;box-shadow:0 2px 4px #0005;
+ font-weight:bold;transition:.2s;
+}
+.tool{font-size:18px;min-width:42px}
+.tool.active{background:#ffd45b;color:#153c5d}
+
+.status{
+ position:absolute;top:70px;left:50%;
+ transform:translateX(-50%);z-index:45;
+ background:var(--blue);color:var(--ink);
+ border:2px solid #123c62;border-radius:12px;
+ padding:8px 18px;min-width:310px;
+ text-align:center;font-weight:bold;
+ box-shadow:0 3px 5px #0004;
+}
+.status small{display:block;font-size:12px;margin-top:3px}
+
+.notice{
+ position:absolute;top:76px;left:16px;
+ z-index:45;background:white;color:#222;
+ border:1px solid #333;border-radius:10px;
+ padding:12px 16px;font-size:14px;
+ font-weight:bold;max-width:260px;
+ box-shadow:0 2px 5px #0004;
+}
+
+/* PLAYER SEATS */
+.seat{
+ position:absolute;z-index:50;
+ text-align:center;min-width:125px;
+}
+.seat .avatar{
+ font-size:35px;
+ filter:drop-shadow(0 2px 2px #0005);
+ margin-bottom:-5px;
+}
+.seat .trump-marker{
+ display:none; width:max-content; margin:0 auto 4px; padding:3px 9px;
+ border:1px solid #b78a16; border-radius:7px; background:#fff4c7;
+ color:#8a5200; font-size:19px; font-weight:900; line-height:1.1;
+ box-shadow:0 1px 3px #0004;
+}
+.seat .name{
+ background:var(--blue);color:#15466e;
+ border:1px solid #163d60;border-radius:10px;
+ padding:9px 12px;font-weight:bold;
+ box-shadow:0 2px 4px #0004;white-space:nowrap;
+}
+.seat .score{
+ background:#a7d4ff;color:#17486f;
+ border:1px solid #163d60;border-top:0;
+ border-radius:0 0 8px 8px;
+ padding:5px;font-size:13px;font-weight:bold;
+}
+.seat.top{top:26px;left:50%;transform:translateX(-50%)}
+.seat.left{left:12px;top:43%;transform:translateY(-50%)}
+.seat.right{right:12px;top:43%;transform:translateY(-50%)}
+.seat.bottom{
+ bottom:190px;left:50%;
+ transform:translateX(-50%);
+}
+
+/* PLAYER HANDS */
+.hand{
+ position:absolute;z-index:10;
+ display:flex;justify-content:center;
+ align-items:flex-end;
+}
+.hand.top{
+ top:8px;left:50%;transform:translateX(-50%);
+ width:360px;height:145px;
+}
+.hand.left{
+ left:10px;top:50%;transform:translateY(-50%);
+ width:170px;height:360px;flex-direction:column;
+}
+.hand.right{
+ right:10px;top:50%;transform:translateY(-50%);
+ width:170px;height:360px;flex-direction:column;
+}
+.hand.bottom{
+ bottom:-3px;left:50%;transform:translateX(-50%);
+ width:min(94vw,1120px);height:220px;
+ align-items:flex-end;
+}
+
+/* CARDS */
+.card{
+ position:relative;flex:0 0 auto;
+ width:clamp(60px,6.5vw,91px);
+ height:clamp(91px,9.6vw,132px);
+ background:#fff;border:1.5px solid #1b1b1b;
+ border-radius:10px;color:#111;
+ box-shadow:0 3px 7px #0005;
+ user-select:none;
+ transition:
+  transform .3s ease,
+  filter .25s ease,
+  opacity .25s ease;
+ overflow:hidden;
+}
+.card .corner{
+ position:absolute;top:6px;left:7px;
+ font-size:clamp(17px,1.8vw,25px);
+ font-weight:800;line-height:1;
+}
+.card .corner span{
+ display:block;
+ font-size:clamp(15px,1.5vw,21px);
+ margin-top:3px;
+}
+.card .pip{
+ position:absolute;inset:0;
+ display:grid;place-items:center;
+ font-size:clamp(36px,4.5vw,58px);
+ opacity:.96;
+}
+.card.red{color:#d71920}
+.card.black{color:#111}
+/* Selected Hukum suit: subtle 2px border on matching cards only */
+.hand.bottom .card.trump-card{border:2px solid #d6a51d; box-shadow:0 0 0 1px #fff4c7,0 3px 7px #0005;}
+
+.hand.bottom .card{
+ margin-left:clamp(-27px,-1.8vw,-13px);
+ cursor:pointer;
+}
+.hand.bottom .card:first-child{margin-left:0}
+
+/* LEGAL CARDS */
+.hand.bottom .card.legal{
+ transform:translateY(-9px);
+ filter:none;
+ opacity:1;
+ z-index:15;
+}
+
+/* INVALID CARDS - 5% LIGHT BLUR */
+.hand.bottom .card.illegal{
+ transform:translateY(0);
+ filter:blur(.35px);
+ opacity:.97;
+ cursor:not-allowed;
+}
+
+/* CARD CLICK HIGHLIGHT */
+.hand.bottom .card.legal:hover{
+ transform:translateY(-14px);
+}
+
+/* OPPONENT CARDS */
+.hand.top .card{
+ width:58px;height:85px;
+ margin-left:-24px;
+}
+.hand.top .card:first-child{margin-left:0}
+
+.hand.left .card,.hand.right .card{
+ width:82px;height:116px;
+ margin-top:-67px;
+ transform:rotate(90deg);
+}
+.hand.left .card:first-child,
+.hand.right .card:first-child{margin-top:0}
+
+/* CARD BACK */
+.back{
+ background:repeating-linear-gradient(
+ 45deg,#f8faff 0 4px,#dce8f8 4px 6px
+ );
+ border:5px solid white;
+ outline:1px solid #1a2c4d;
+}
+.back:before{
+ content:"";position:absolute;inset:4px;
+ border:2px solid #1a3766;border-radius:4px;
+ background:repeating-linear-gradient(
+ 135deg,#fff 0 3px,#244878 3px 5px
+ );
+}
+.back:after{
+ content:"✥";position:absolute;inset:0;
+ display:grid;place-items:center;
+ color:#173d70;font-size:30px;
+ text-shadow:0 1px white;
+}
+
+/* CENTER */
+.center{
+ position:absolute;left:50%;top:48%;
+ transform:translate(-50%,-50%);
+ width:min(460px,58vw);height:360px;
+ z-index:5;
+}
+.play-slot{
+ position:absolute;width:100px;height:142px;
+ display:grid;place-items:center;
+}
+.play-slot .card{
+ width:clamp(70px,7.5vw,100px);
+ height:clamp(103px,10.5vw,142px);
+}
+#slot1{
+ top:0;left:50%;
+ transform:translateX(-50%);
+}
+#slot3{
+ right:0;top:50%;
+ transform:translateY(-50%);
+}
+#slot0{
+ bottom:0;left:50%;
+ transform:translateX(-50%);
+}
+#slot2{
+ left:0;top:50%;
+ transform:translateY(-50%);
+}
+
+/* NO NAMES UNDER CENTER CARDS */
+.play-slot label{display:none!important}
+
+/* CARD ARRIVAL */
+.play-slot .card{
+ animation:cardEnter .35s ease-out;
+}
+@keyframes cardEnter{
+ from{
+  opacity:0;
+  transform:scale(.88) translateY(-10px);
+ }
+ to{opacity:1}
+}
+
+/* ALL CARDS MOVE TO WINNER TOGETHER */
+.play-slot .card.collect-top,
+.play-slot .card.collect-right,
+.play-slot .card.collect-bottom,
+.play-slot .card.collect-left{
+ transition:
+  transform .65s cubic-bezier(.25,.8,.25,1),
+  opacity .65s ease-in-out;
+ opacity:0;
+ z-index:60;
+}
+.play-slot .card.collect-top{
+ transform:translateY(-230px) scale(.55);
+}
+.play-slot .card.collect-right{
+ transform:translateX(250px) scale(.55);
+}
+.play-slot .card.collect-bottom{
+ transform:translateY(230px) scale(.55);
+}
+.play-slot .card.collect-left{
+ transform:translateX(-250px) scale(.55);
+}
+
+/* MESSAGE */
+.message{
+ position:absolute;left:50%;
+ top:calc(48% + 145px);
+ transform:translateX(-50%);
+ z-index:45;background:#082f1dcc;
+ padding:8px 14px;border-radius:10px;
+ font-size:14px;text-align:center;
+ max-width:85vw;
+}
+
+/* MODALS */
+.modal{
+ position:absolute;inset:0;
+ background:#0009;display:none;
+ place-items:center;z-index:100;padding:20px;
+}
+.modal.show{display:grid}
+.dialog{
+ background:white;color:#173b59;
+ border-radius:18px;padding:24px;
+ max-width:440px;width:100%;
+ box-shadow:0 10px 35px #0008;text-align:center;
+}
+.dialog h2{margin:0 0 12px}
+.dialog p{line-height:1.5}
+.dialog button{margin:6px}
+/* SIDE-BY-SIDE FINAL BID TABLES */
+#bidModal .dialog{max-width:820px;width:min(94vw,820px)}
+.bid-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.bid-panel{border:1px solid #9aa9b7;border-radius:13px;padding:13px;background:#f8fbff;min-width:0}
+.bid-panel h3{margin:0 0 10px;font-size:17px;color:#153c5d}
+.bid-panel .tool{font-size:16px;padding:9px 6px;margin:0;min-width:0}
+.bid-number-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bid-color-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.bid-panel .tool.active{background:#ffd45b;color:#153c5d;border-color:#9b7614}
+.bid-panel .hint{font-size:12px;line-height:1.4;color:#526477;min-height:34px;margin:8px 0 0}
+@media(max-width:620px){
+ #bidModal{overflow-y:auto;align-items:center}
+ #bidModal .dialog{max-height:92vh;overflow-y:auto;padding:15px;width:96vw}
+ .bid-choice-grid{grid-template-columns:1fr 1fr;gap:7px}
+ .bid-panel{padding:8px 6px}
+ .bid-panel h3{font-size:13px}
+ .bid-panel .tool{font-size:13px;padding:8px 3px}
+ .bid-number-grid{gap:5px}
+ .bid-color-grid{gap:5px}
+ .bid-panel .hint{font-size:10px}
+}
+
+/* COMPACT GAME TABLE + LIVE SCOREBOARD */
+.scoreboard{
+ position:absolute;right:18px;top:125px;width:clamp(205px,19vw,285px);
+ z-index:35;background:rgba(245,250,255,.96);color:#153c5d;
+ border:2px solid #173f63;border-radius:13px;overflow:hidden;
+ box-shadow:0 4px 12px #001b0d88;
+}
+.scoreboard h3{margin:0;padding:11px 10px;text-align:center;background:#b8dcff;color:#153c5d;font-size:17px;border-bottom:1px solid #52799a}
+.scoreboard table{width:100%;border-collapse:collapse;font-size:12px;text-align:center;table-layout:auto}
+.scoreboard th{background:#e1efff;padding:8px 3px;font-size:11px;white-space:nowrap}
+.scoreboard td{padding:9px 3px;border-top:1px solid #c5d6e6;font-weight:bold;font-size:11px}
+.scoreboard tr.current td{background:#fff2c7}
+.scoreboard .player-name{text-align:left;padding-left:10px;white-space:nowrap}
+/* Keep the playing surface in the left section, leaving room for scores. */
+.status{left:39%;min-width:270px}
+.seat.top,.seat.bottom{left:39%}
+.seat.right{right:calc(22% + 12px)}
+.hand.top,.hand.bottom{left:39%}
+.hand.right{right:calc(22% + 10px)}
+.center{left:39%;width:min(420px,40vw)}
+
+/* MOBILE */
+@media(max-width:700px){
+ .scoreboard{right:7px;top:115px;width:clamp(150px,31vw,205px)}
+ .scoreboard h3{font-size:13px;padding:7px 4px}
+ .scoreboard table{font-size:9px}
+ .scoreboard th{font-size:8px;padding:5px 1px}
+ .scoreboard td{font-size:9px;padding:6px 1px}
+ .scoreboard .player-name{padding-left:5px}
+ .status{left:38%;min-width:155px;max-width:42vw;font-size:11px}
+ .seat.top,.seat.bottom{left:38%}
+ .seat.right{right:calc(31% + 3px)}
+ .hand.top,.hand.bottom{left:38%}
+ .hand.right{right:calc(31% - 20px)}
+ .center{left:38%;width:38vw}
+
+ .table{border-width:4px;min-height:500px}
+
+ .notice{
+  top:66px;left:8px;font-size:11px;
+  max-width:155px;padding:8px;
+ }
+
+ .status{
+  top:65px;min-width:185px;
+  padding:6px 8px;font-size:13px;
+ }
+
+ .seat{min-width:90px}
+ .seat .avatar{font-size:26px}
+ .seat .name{font-size:11px;padding:6px 7px}
+ .seat .score{font-size:10px;padding:3px}
+
+ .seat.top{top:18px}
+ .seat.left{left:3px;top:42%}
+ .seat.right{right:3px;top:42%}
+ .seat.bottom{bottom:155px}
+
+ .hand.top{
+  width:230px;height:95px;top:2px;
+ }
+ .hand.top .card{
+  width:39px;height:59px;margin-left:-17px;
+ }
+
+ .hand.left{
+  left:-20px;width:100px;height:240px;
+ }
+ .hand.right{
+  right:-20px;width:100px;height:240px;
+ }
+ .hand.left .card,.hand.right .card{
+  width:56px;height:80px;margin-top:-47px;
+ }
+
+ .hand.bottom{
+  width:98vw;height:165px;bottom:0;
+  justify-content:flex-start;
+  padding-left:8px;overflow:visible;
+ }
+ .hand.bottom .card{
+  width:clamp(43px,11vw,62px);
+  height:clamp(67px,17vw,91px);
+  border-radius:7px;margin-left:-18px;
+ }
+ .hand.bottom .card .corner{
+  font-size:15px;top:4px;left:5px;
+ }
+ .hand.bottom .card .corner span{font-size:13px}
+ .hand.bottom .card .pip{font-size:32px}
+
+ .center{
+  top:46%;width:250px;height:290px;
+ }
+ .play-slot{width:70px;height:103px}
+ .play-slot .card{width:70px;height:103px}
+
+ #slot1{top:0}
+ #slot0{bottom:0}
+ #slot2{left:0}
+ #slot3{right:0}
+
+ .play-slot .card.collect-top{
+  transform:translateY(-180px) scale(.55);
+ }
+ .play-slot .card.collect-right{
+  transform:translateX(160px) scale(.55);
+ }
+ .play-slot .card.collect-bottom{
+  transform:translateY(180px) scale(.55);
+ }
+ .play-slot .card.collect-left{
+  transform:translateX(-160px) scale(.55);
+ }
+
+ .message{
+  top:calc(46% + 155px);
+  font-size:11px;
+ }
+}
+</style>
+</head>
+
+<body>
+<div class="table">
+
+ <div class="topbar">
+  <div>
+   <button class="tool" id="helpBtn">ℹ️</button>
+   <button class="tool" id="newBtn">↻</button>
+  </div>
+  <div>
+   <button class="tool" id="soundBtn">🔔</button>
+   <button class="tool" id="scoreBtn">🏆</button>
+  </div>
+ </div>
+
+ <div class="notice" id="notice">
+  Review your 5 cards and declare your Bol.
+ </div>
+
+ <aside class="scoreboard" aria-label="Live scoreboard">
+  <h3>🏆 Scoreboard</h3>
+  <table>
+   <thead><tr><th>Player</th><th>Bol</th><th>Won</th><th>Score</th></tr></thead>
+   <tbody id="scoreboardBody">
+    <tr><td class="player-name">You</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">Johnny</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">B-4</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">Cherry 2000</td><td>-</td><td>0</td><td>0</td></tr>
+   </tbody>
+  </table>
+ </aside>
+
+ <div class="status" id="status">
+  BAAZIGAR <small>4 players • Trick Taking</small>
+ </div>
+
+ <div class="seat top">
+  <div class="trump-marker" id="topTrumpMarker" aria-label="Selected Hukum"></div>
+  <div class="avatar">🤖</div>
+  <div class="name">Johnny</div>
+  <div class="score" id="score1">Bol: -</div>
+ </div>
+
+ <div class="seat left">
+  <div class="avatar">🤖</div>
+  <div class="name">B-4</div>
+  <div class="score" id="score2">Bol: -</div>
+ </div>
+
+ <div class="seat right">
+  <div class="avatar">🤖</div>
+  <div class="name">Cherry 2000</div>
+  <div class="score" id="score3">Bol: -</div>
+ </div>
+
+ <div class="seat bottom">
+  <div class="avatar">🧑</div>
+  <div class="name">You</div>
+  <div class="score" id="score0">Bol: -</div>
+ </div>
+
+ <div class="hand top" id="hand1"></div>
+ <div class="hand left" id="hand2"></div>
+ <div class="hand right" id="hand3"></div>
+
+ <div class="center" id="center">
+  <div class="play-slot" id="slot1"></div>
+  <div class="play-slot" id="slot3"></div>
+  <div class="play-slot" id="slot0"></div>
+  <div class="play-slot" id="slot2"></div>
+ </div>
+
+ <div class="hand bottom" id="hand0"></div>
+
+ <div class="message" id="message" style="display:none"></div>
+
+ <!-- INFO MODAL -->
+ <div class="modal" id="modal">
+  <div class="dialog">
+   <h2 id="modalTitle">Baazigar</h2>
+   <p id="modalText"></p>
+   <button class="tool" id="closeModal">Close</button>
+  </div>
+ </div>
+
+ <!-- BIDDING MODAL: THREE STAGES -->
+ <div class="modal" id="bidModal">
+  <div class="dialog">
+   <h2 id="bidTitle" style="margin-bottom:5px">Select Hukum</h2>
+   <p id="bidDescription" style="font-size:13px;margin-bottom:18px;color:#555">Pehle 5 patton ko dekhkar Hukum chunein ya Pass karein.</p>
+   <div id="bidStageContent"></div>
+   <div id="bidPreview" style="font-size:14px;font-weight:bold;color:#17486f;margin:8px 0 12px"></div>
+   <button class="tool" id="confirmBidBtn" style="width:100%;margin-top:5px" disabled>Confirm</button>
+  </div>
+ </div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+
+ const suits=['♠','♥','♣','♦']; // Display order: Hukum, Paan, Chidi, Eent
+ const ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+ const names=['You','Johnny','B-4','Cherry 2000'];
+
+ // Clockwise order:
+ // Cherry -> Johnny -> B-4 -> You
+ const NEXT_PLAYER=[3,2,0,1];
+ const nextPlayer=p=>NEXT_PLAYER[p];
+
+ let hands=[[],[],[],[]];
+ let fullDeck=[];
+ let trick=[];
+
+ let tricksWon=[0,0,0,0];
+ let bids=['-','-','-','-'];
+ let bidTargets=[null,null,null,null];
+ let totalScores=[0,0,0,0];
+ let gameOver=false;
+
+ let turn=0;
+ let trumpSuit=null;
+ let phase='bid';
+ let round=1;
+ let makerId=0;
+ let animationBusy=false;
+ let botTimer=null;
+ let bidStage=1;
+ let selectedTrump=null;
+ let selectedHukumRun=null;
+ let selectedHukumSuit=null;
+ let selectedColor=null;
+ let selectedColorRun=null;
+ let firstHukumPassed=false;
+
+ const $=id=>document.getElementById(id);
+
+ function makeDeck(){
+  let d=[];
+  for(const s of suits){
+   for(let i=0;i<13;i++){
+    d.push({s,r:ranks[i],v:i+2});
+   }
+  }
+  return d;
+ }
+
+ function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+   let j=Math.floor(Math.random()*(i+1));
+   [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+ }
+
+ function cardHTML(c,back=false){
+
+  if(back)return `<div class="card back"></div>`;
+
+  let red=c.s==='♥'||c.s==='♦';
+
+  return `
+   <div class="card ${red?'red':'black'}">
+    <div class="corner">${c.r}<span>${c.s}</span></div>
+    <div class="pip">${c.s}</div>
+   </div>
+  `;
+ }
+
+ function sortHand(h){
+  h.sort((a,b)=>
+   suits.indexOf(a.s)-suits.indexOf(b.s)||a.v-b.v
+  );
+ }
+
+ /* START GAME */
+ function startRound(){
+
+  clearTimeout(botTimer);
+
+  hands=[[],[],[],[]];
+  trick=[];
+  turn=0;
+  trumpSuit=null;
+  phase='bid';
+  bidStage=1;
+  selectedTrump=null;
+  selectedHukumRun=null;
+  selectedHukumSuit=null;
+  selectedColor=null;
+  selectedColorRun=null;
+  bidMode=null;
+  firstHukumPassed=false;
+
+  bids=['-','-','-','-'];
+  bidTargets=[null,null,null,null];
+  tricksWon=[0,0,0,0];
+
+  animationBusy=false;
+
+  $('modal').classList.remove('show');
+  $('bidModal').classList.remove('show');
+
+  fullDeck=shuffle(makeDeck());
+
+  for(let i=0;i<4;i++){
+   hands[i]=fullDeck.slice(i*5,(i*5)+5);
+  }
+
+  hands.forEach(sortHand);
+
+  render();
+
+  $('notice').textContent='Review your 5 cards and declare your Bol.';
+  $('message').style.display='none';
+
+  setTimeout(()=>{
+   openBidStage(1);
+  },500);
+ }
+
+ /* FIND CURRENT WINNER OF THE CARDS ALREADY PLAYED */
+ function getCurrentWinner(plays){
+
+  if(!plays.length)return null;
+
+  const ledSuit=plays[0].card.s;
+
+  let winner=plays[0];
+
+  for(let i=1;i<plays.length;i++){
+
+   const current=plays[i];
+
+   const winnerIsTrump=winner.card.s===trumpSuit;
+   const currentIsTrump=current.card.s===trumpSuit;
+
+   if(currentIsTrump&&!winnerIsTrump){
+
+    winner=current;
+
+   }else if(currentIsTrump&&winnerIsTrump){
+
+    if(current.card.v>winner.card.v){
+     winner=current;
+    }
+
+   }else if(!winnerIsTrump&&!currentIsTrump){
+
+    if(current.card.s===ledSuit&&
+       winner.card.s!==ledSuit){
+
+     winner=current;
+
+    }else if(current.card.s===winner.card.s&&
+             current.card.v>winner.card.v){
+
+     winner=current;
+
+    }
+
+   }
+
+  }
+
+  return winner;
+ }
+
+ /*
+  SMART LEGAL CARD RULES
+
+  1. Follow the led suit if available.
+  2. If a higher card of that suit is available,
+     player must play a higher card.
+  3. If no higher card is available,
+     a lower card of the same suit is allowed.
+  4. If player has no led suit, play trump if available.
+  5. If a higher trump is available, play higher trump.
+  6. If no led suit and no trump, any card is allowed.
+ */
+
+ function legalCards(p){
+
+  const hand=hands[p];
+
+  if(!hand.length)return [];
+
+  // First player can lead any card
+  if(trick.length===0){
+   return [...hand];
+  }
+
+  const ledSuit=trick[0].card.s;
+
+  // Find cards of the suit led
+  const sameSuit=hand.filter(c=>c.s===ledSuit);
+
+  // If player has led suit
+  if(sameSuit.length){
+
+   const currentWinner=getCurrentWinner(trick);
+
+   // SPECIAL CASE: another player has already cut the led suit with Hukum.
+   // In this one situation, if we still hold the led suit, ANY card of
+   // that led suit is legal (even a smaller one). We must still follow suit;
+   // we cannot throw a different suit or waste another Hukum card.
+   const hukumHasCut = ledSuit!==trumpSuit &&
+    trick.some(play=>play.card.s===trumpSuit);
+
+   if(hukumHasCut){
+    return sameSuit;
+   }
+
+   // In every other situation, beat the current winning card with a
+   // higher card of the led suit when one is available.
+   // Must beat the current winning card if possible
+   const higherCards=sameSuit.filter(c=>
+    c.v>currentWinner.card.v
+   );
+
+   return higherCards.length?higherCards:sameSuit;
+  }
+
+  // Player has no led suit: check whether Hukum has already cut.
+  const trumpCards=hand.filter(c=>c.s===trumpSuit);
+  const hukumAlreadyCut = ledSuit!==trumpSuit &&
+   trick.some(play=>play.card.s===trumpSuit);
+
+  if(trumpCards.length){
+
+   const currentWinner=getCurrentWinner(trick);
+
+   if(hukumAlreadyCut && currentWinner.card.s===trumpSuit){
+    // If a BIGGER Hukum (cut) is still in hand, it must be played.
+    // If only smaller Hukum cards remain, player may discard ANY suit.
+    const biggerCuts=trumpCards.filter(c=>
+     c.v>currentWinner.card.v
+    );
+
+    return biggerCuts.length ? biggerCuts : [...hand];
+   }
+
+   // Hukum has not cut yet: any Hukum must be used when player
+   // cannot follow the led suit.
+   if(currentWinner.card.s!==trumpSuit){
+    return trumpCards;
+   }
+
+   // Hukum is already winning; if a higher Hukum is available,
+   // the player must overtake it. Otherwise smaller Hukum is allowed.
+   const higherTrump=trumpCards.filter(c=>
+    c.v>currentWinner.card.v
+   );
+
+   return higherTrump.length?higherTrump:trumpCards;
+  }
+
+  // No led suit and no Hukum: any card
+  return [...hand];
+ }
+
+ /* RENDER */
+ function render(){
+
+  for(let p=0;p<4;p++){
+
+   const el=$('hand'+p);
+   el.innerHTML='';
+
+   if(p===0){
+
+    hands[p].forEach(c=>{
+
+     let wrap=document.createElement('div');
+     wrap.innerHTML=cardHTML(c);
+
+     let node=wrap.firstElementChild;
+
+     // Highlight only cards belonging to the selected Hukum suit.
+     if(trumpSuit && c.s===trumpSuit) node.classList.add('trump-card');
+
+     if(phase==='play'&&turn===0){
+
+      const legal=legalCards(0).includes(c);
+
+      node.classList.add(legal?'legal':'illegal');
+
+     }
+
+     // Direct click: no separate Play button
+     node.addEventListener('click',()=>{
+
+      if(phase!=='play'||turn!==0||animationBusy)return;
+
+      if(!legalCards(0).includes(c)){
+
+       showInvalidMessage(c);
+       return;
+
+      }
+
+      playCard(0,c);
+
+     });
+
+     el.appendChild(node);
+
+    });
+
+   }else{
+
+    hands[p].forEach(()=>{
+
+     let wrap=document.createElement('div');
+     wrap.innerHTML=cardHTML(null,true);
+
+     el.appendChild(wrap.firstElementChild);
+
+    });
+
+   }
+
+   const displayBid=bids[p]==='pass'?'Pass':bids[p];
+
+   $('score'+p).textContent=
+    `Bol: ${displayBid} | Won: ${tricksWon[p]}`;
+
+  }
+
+  const scoreboardBody=$('scoreboardBody');
+  if(scoreboardBody){
+   scoreboardBody.innerHTML=names.map((name,p)=>{
+    const bid=bids[p]??'-';
+    return `<tr class="${turn===p&&phase==='play'?'current':''}"><td class="player-name">${name}</td><td>${bid}</td><td>${tricksWon[p]}</td><td>${totalScores[p]}</td></tr>`;
+   }).join('');
+  }
+
+  const trumpMarker=$('topTrumpMarker');
+  if(trumpMarker){
+   if(trumpSuit){
+    const suitNames={'♠':'Hukam','♥':'Paan','♦':'Eent','♣':'Chidi'};
+    trumpMarker.textContent=`${trumpSuit} ${suitNames[trumpSuit]||trumpSuit}`;
+    trumpMarker.style.display='block';
+   }else{trumpMarker.textContent='';trumpMarker.style.display='none';}
+  }
+
+  let trickNum=13-hands[0].length+1;
+  let trumpText=trumpSuit?` • Hukum: ${trumpSuit}`:'';
+
+  $('status').innerHTML=
+   `ROUND ${round} <small>${phase==='bid'?'Declare Bol':`Trick ${trickNum}/13${trumpText}`}</small>`;
+
+ }
+
+ function showInvalidMessage(c){
+
+  if(trick.length===0)return;
+
+  const ledSuit=trick[0].card.s;
+  const haveSuit=hands[0].some(x=>x.s===ledSuit);
+  const currentWinner=getCurrentWinner(trick);
+
+  if(haveSuit){
+
+   const hukumHasCut = ledSuit!==trumpSuit &&
+    trick.some(play=>play.card.s===trumpSuit);
+
+   if(c.s!==ledSuit){
+
+    $('notice').textContent=
+     `You must play ${ledSuit}.`;
+
+   }else if(hukumHasCut){
+
+    $('notice').textContent=
+     `Hukum has cut the trick. Any ${ledSuit} card is allowed.`;
+
+   }else{
+
+    $('notice').textContent=
+     `You must play a higher ${ledSuit} card if available.`;
+
+   }
+
+  }else if(c.s!==trumpSuit&&hands[0].some(x=>x.s===trumpSuit)){
+
+   const hukumAlreadyCut = ledSuit!==trumpSuit &&
+    trick.some(play=>play.card.s===trumpSuit);
+   const biggerCuts=hands[0].filter(x=>
+    x.s===trumpSuit && x.v>currentWinner.card.v
+   );
+
+   if(hukumAlreadyCut && currentWinner.card.s===trumpSuit && !biggerCuts.length){
+    $('notice').textContent=
+     `Only smaller Hukum remains. You may play any suit.`;
+   }else if(hukumAlreadyCut && currentWinner.card.s===trumpSuit && biggerCuts.length){
+    $('notice').textContent=
+     `A bigger Hukum is available. You must play the bigger cut.`;
+   }else{
+    $('notice').textContent=
+     `You have no ${ledSuit}. Play Hukum ${trumpSuit}.`;
+   }
+
+  }else{
+
+   $('notice').textContent=
+    'This card is not valid for this turn.';
+
+  }
+
+ }
+
+ /* TWO-STEP BIDDING SYSTEM
+    Step 1: After first 5 cards choose a Hukum suit OR Pass.
+    Step 2: After all 13 cards, choose exactly ONE bid:
+      - If Hukum was selected: Hukum Bol 1-13 OR same-suit Color Bol 5-13.
+      - If Pass was selected: choose a color and Color Bol 5-13.
+    Only one final bid table is used; there is no separate third table.
+ */
+ let bidMode=null;
+ function renderBidStage(){
+  const content=$('bidStageContent');
+  const title=$('bidTitle');
+  const desc=$('bidDescription');
+  const preview=$('bidPreview');
+  const confirm=$('confirmBidBtn');
+  content.innerHTML='';
+  confirm.disabled=true;
+  if(bidStage===1){
+   title.textContent='Select Hukum';
+   desc.textContent='Pehle 5 patton ko dekhkar Hukum chunein ya Pass karein.';
+   content.innerHTML=`
+    <div style="font-size:12px;font-weight:bold;color:#777;text-align:left;margin-bottom:8px">Step 1 — Hukum ya Pass</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px">
+     <button class="tool stage1-suit" data-suit="♠" style="font-size:18px">♠ Hukam</button>
+     <button class="tool stage1-suit" data-suit="♥" style="font-size:18px;color:#d71920">♥ Paan</button>
+     <button class="tool stage1-suit" data-suit="♦" style="font-size:18px;color:#d71920">♦ Eent</button>
+     <button class="tool stage1-suit" data-suit="♣" style="font-size:18px">♣ Chidi</button>
+    </div>
+    <button class="tool" id="passHukumBtn" style="width:100%">PASS</button>`;
+   preview.textContent=selectedTrump?`Selected Hukum: ${getSuitName(selectedTrump)} (${selectedTrump})`:firstHukumPassed?'Aapne PASS select kiya hai.':'Hukum select karein ya PASS karein.';
+   content.querySelectorAll('.stage1-suit').forEach(btn=>{
+    if(btn.dataset.suit===selectedTrump)btn.classList.add('active');
+    btn.addEventListener('click',()=>{selectedTrump=btn.dataset.suit;firstHukumPassed=false;renderBidStage()});
+   });
+   const passBtn=$('passHukumBtn');
+   if(firstHukumPassed)passBtn.classList.add('active');
+   passBtn.addEventListener('click',()=>{firstHukumPassed=true;selectedTrump=null;renderBidStage()});
+   confirm.textContent=firstHukumPassed?'Confirm PASS':selectedTrump?`Confirm ${getSuitName(selectedTrump)} Hukum`:'Select Hukum';
+   confirm.disabled=!(firstHukumPassed||selectedTrump);
+  } else if(bidStage===2){
+   if(firstHukumPassed){
+    // PASS: show both bidding options. Only one may be selected.
+    title.textContent='Select Your Bol';
+    desc.textContent='PASS kiya tha: Hukum Bol ya Color Bol — dono mein se sirf ek chunein.';
+    const suitButtons=[['♠','Hukam',''],['♥','Paan','color:#d71920'],['♦','Eent','color:#d71920'],['♣','Chidi','']];
+    content.innerHTML=`
+     <div class="bid-choice-grid">
+      <section class="bid-panel">
+       <h3>Hukum Bol (1–13)</h3>
+       <div class="hint" style="margin:0 0 8px">Hukum Bol ke liye 1 se 13 tak number chunein.</div>
+       <div class="bid-number-grid" id="hukumNumbers">${Array.from({length:13},(_,i)=>`<button class="tool hukum-number" data-val="${i+1}">${i+1}</button>`).join('')}</div>
+      </section>
+      <section class="bid-panel">
+       <h3>Color Bol (10–13)</h3>
+       <div class="bid-color-grid" id="colorSuitChoices">${suitButtons.map(([s,n,style])=>`<button class="tool color-pick" data-suit="${s}" style="${style}">${s} ${n}</button>`).join('')}</div>
+       <div class="bid-number-grid" id="colorNumbers">${[10,11,12,13].map(n=>`<button class="tool color-number" data-val="${n}" disabled>${n}</button>`).join('')}</div>
+       <div class="hint" id="colorHint">Pehle Color Bol ka rang chunein, phir 10 se 13 mein se number chunein.</div>
+      </section>
+     </div>`;
+    content.querySelectorAll('.hukum-number').forEach(btn=>{
+     const val=Number(btn.dataset.val);
+     if(selectedHukumRun===val)btn.classList.add('active');
+     btn.addEventListener('click',()=>{
+      selectedHukumRun=val;selectedColorRun=null;bidMode='hukum';
+      content.querySelectorAll('.hukum-number').forEach(b=>b.classList.toggle('active',b===btn));
+      content.querySelectorAll('.color-number').forEach(b=>b.classList.remove('active'));
+      updateFinalBidPreview();
+     });
+    });
+    content.querySelectorAll('.color-pick').forEach(btn=>{
+     if(btn.dataset.suit===selectedColor)btn.classList.add('active');
+     btn.addEventListener('click',()=>{
+      selectedColor=btn.dataset.suit;selectedColorRun=null;
+      content.querySelectorAll('.color-pick').forEach(b=>b.classList.toggle('active',b===btn));
+      content.querySelectorAll('.color-number').forEach(b=>{b.disabled=false;b.classList.remove('active')});
+      $('colorHint').textContent=`${getSuitName(selectedColor)} (${selectedColor}) mein 10–13 mein se number chunein.`;
+      bidMode='color';selectedHukumRun=null;
+      content.querySelectorAll('.hukum-number').forEach(b=>b.classList.remove('active'));
+      updateFinalBidPreview();
+     });
+    });
+    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
+     if(!selectedColor)return;
+     selectedColorRun=Number(btn.dataset.val);selectedHukumRun=null;bidMode='color';
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
+     content.querySelectorAll('.hukum-number').forEach(b=>b.classList.remove('active'));
+     updateFinalBidPreview();
+    }));
+    if(selectedColor){content.querySelectorAll('.color-number').forEach(b=>b.disabled=false);$('colorHint').textContent=`${getSuitName(selectedColor)} (${selectedColor}) mein 10–13 mein se number chunein.`;}
+   }else{
+    // A suit was selected in Step 1: show ONLY that suit's Color Bol table.
+    title.textContent='Select Your Bol';
+    desc.textContent=`${getSuitName(selectedTrump)} Hukum chuna hai. Ab sirf ${getSuitName(selectedTrump)} Color Bol 5–13 mein se chunein.`;
+    selectedColor=selectedTrump;
+    content.innerHTML=`
+     <section class="bid-panel" style="width:100%;box-sizing:border-box">
+      <h3>${selectedTrump} ${getSuitName(selectedTrump)} Color Bol (5–13)</h3>
+      <div class="bid-number-grid" id="colorNumbers">${Array.from({length:9},(_,i)=>i+5).map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div>
+      <div class="hint">Sirf ${getSuitName(selectedTrump)} ke liye 5 se 13 tak number chunein.</div>
+     </section>`;
+    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedColorRun=Number(btn.dataset.val);selectedHukumRun=null;bidMode='color';
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
+     updateFinalBidPreview();
+    }));
+   }
+   function updateFinalBidPreview(){
+    if(bidMode==='hukum'&&selectedHukumRun){
+     preview.textContent=`Hukum Bol: ${selectedHukumRun} Run.`;
+     confirm.textContent='Confirm Hukum Bol';confirm.disabled=false;
+    }else if(bidMode==='color'&&selectedColor&&selectedColorRun){
+     preview.textContent=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun} Run.`;
+     confirm.textContent='Confirm Color Bol';confirm.disabled=false;
+    }else{
+     preview.textContent=firstHukumPassed?'Hukum Bol ya Color Bol mein se sirf ek chunein.':`${getSuitName(selectedTrump)} Color Bol mein 5–13 chunein.`;
+     confirm.textContent='Confirm Bol';confirm.disabled=true;
+    }
+   }
+   updateFinalBidPreview();
+  }
+ }
+ function getSuitName(s){return {'♠':'Hukam','♥':'Paan','♦':'Eent','♣':'Chidi'}[s]||s}
+ function openBidStage(stage){bidStage=stage;renderBidStage();$('bidModal').classList.add('show')}
+
+ // Estimate a realistic bid from the complete 13-card hand.
+ // Aces, protected kings/queens, trump length and long suits increase the estimate.
+ function estimateHandStrength(hand, trump){
+  // Estimate likely tricks from the actual 13 cards: high-card control,
+  // protected honors, trump length and void suits. This is a forecast,
+  // not a guaranteed number of tricks.
+  let estimate=0;
+  const counts={'♠':0,'♥':0,'♦':0,'♣':0};
+  hand.forEach(c=>counts[c.s]++);
+  for(const suit of suits){
+   const cards=hand.filter(c=>c.s===suit).sort((a,b)=>b.v-a.v);
+   const n=cards.length;
+   if(!n)continue;
+   const honorValues={'A':1.00,'K':0.68,'Q':0.40,'J':0.22,'10':0.12};
+   cards.forEach((c,index)=>{
+    let value=honorValues[c.r]||0;
+    if(index>0)value*=0.55;
+    if(suit===trump)value*=1.22;
+    estimate+=value;
+   });
+   if(suit===trump){
+    if(n>=2)estimate+=(n-1)*0.30;
+    if(n>=4)estimate+=(n-3)*0.25;
+   }else if(n>=5){
+    estimate+=(n-4)*0.12;
+   }
+  }
+  const trumpCount=counts[trump]||0;
+  for(const suit of suits){
+   if(suit!==trump&&counts[suit]===0&&trumpCount>=2)estimate+=0.22;
+  }
+  return Math.max(0,Math.min(13,Math.round(estimate)));
+ }
+
+ function strongestSideSuit(hand, trump){
+  const options=suits.filter(s=>s!==trump);
+  return options.sort((a,b)=>{
+   const score=s=>hand.filter(c=>c.s===s).reduce((n,c)=>n+(c.r==='A'?4:c.r==='K'?3:c.r==='Q'?2:c.r==='J'?1:0),0)+hand.filter(c=>c.s===s).length*0.2;
+   return score(b)-score(a);
+  })[0]||trump;
+ }
+
+ function assignComputerBids(){
+  // Each AI first estimates its own bid from its complete 13-card hand.
+  // The combined bids may be 11, 12 OR 13, but must never exceed 13.
+  // If the estimates together exceed the remaining room, scale them fairly
+  // instead of letting the first bot take nearly all available tricks.
+  const remaining=Math.max(0,13-Number(bidTargets[0]||0));
+  const estimates=[1,2,3].map(p=>estimateHandStrength(hands[p],trumpSuit));
+  const estimateTotal=estimates.reduce((sum,n)=>sum+n,0);
+  let allocated=[...estimates];
+
+  if(estimateTotal>remaining){
+   const exact=estimates.map(n=>remaining*n/estimateTotal);
+   allocated=exact.map(n=>Math.floor(n));
+   let left=remaining-allocated.reduce((sum,n)=>sum+n,0);
+   const order=exact.map((value,i)=>({i,fraction:value-Math.floor(value),strength:estimates[i]}))
+    .sort((a,b)=>b.fraction-a.fraction||b.strength-a.strength);
+   for(let i=0;i<left;i++) allocated[order[i%order.length].i]++;
+  }
+
+  for(let i=0;i<3;i++){
+   const p=i+1;
+   const bid=allocated[i];
+   bidTargets[p]=bid;
+
+   if(firstHukumPassed){
+    if(bid>=10){
+     const side=strongestSideSuit(hands[p],trumpSuit);
+     bids[p]=`${getSuitName(side)} Color Bol: ${bid}`;
+    }else{
+     bids[p]=`Hukum Bol: ${bid}`;
+    }
+   }else{
+    bids[p]=`${getSuitName(trumpSuit)} Color Bol: ${bid}`;
+   }
+  }
+
+  const total=bidTargets.reduce((sum,n)=>sum+Number(n||0),0);
+  if(total>13) throw new Error('Total Bol cannot exceed 13');
+ }
+
+ $('confirmBidBtn').addEventListener('click',()=>{
+  if(bidStage===1){
+   if(!firstHukumPassed&&!selectedTrump)return;
+   if(firstHukumPassed){
+    // PASS means no selected color becomes trump; the complete Spade (Hukam)
+    // suit remains the only Hukum Kaat and can cut every other led suit.
+    trumpSuit='♠';makerId=0;bids[0]='PASS';bids[1]='-';
+   }else{
+    trumpSuit=selectedTrump;makerId=0;bids[0]=`${getSuitName(selectedTrump)} Hukum`;
+   }
+   bidMode=null;selectedHukumRun=null;selectedColorRun=null;selectedColor=selectedTrump;
+   $('bidModal').classList.remove('show');
+   hands[0].push(...fullDeck.slice(20,28));
+   hands[1].push(...fullDeck.slice(28,36));
+   hands[2].push(...fullDeck.slice(36,44));
+   hands[3].push(...fullDeck.slice(44,52));
+   hands.forEach(sortHand);render();
+   $('notice').textContent='All 13 cards have been dealt. Ab apna ek Bol select karein.';
+   setTimeout(()=>openBidStage(2),350);
+   return;
+  }
+  if(bidStage===2){
+   if(bidMode==='hukum'){
+    if(!selectedHukumRun)return;
+    bids[0]=`${bids[0]} | Hukum Bol: ${selectedHukumRun}`;
+    bidTargets[0]=selectedHukumRun;
+   }else if(bidMode==='color'){
+    if(!selectedColor||!selectedColorRun)return;
+    bids[0]=`${bids[0]} | ${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;
+    bidTargets[0]=selectedColorRun;
+    // In PASS mode, Color Bol is only a bid: Spades remain the sole Hukum Kaat.
+    // Otherwise, the selected Color Bol suit becomes trump as before.
+    if(!firstHukumPassed)trumpSuit=selectedColor;
+   }else{return}
+   assignComputerBids();
+   $('bidModal').classList.remove('show');
+   phase='play';turn=makerId;
+   $('notice').textContent=`${bids[0]}. Total Bol: ${bidTargets.reduce((sum,n)=>sum+Number(n||0),0)}/13 (maximum). Game starts!`;
+   $('message').style.display='block';
+   $('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
+   render();
+   if(turn!==0)botLoop();
+  }
+ });
+
+ /* PLAY CARD IMMEDIATELY ON CLICK */
+ function playCard(p,c){
+
+  if(animationBusy||phase!=='play')return;
+
+  if(!hands[p].includes(c))return;
+
+  const legal=legalCards(p);
+
+  if(!legal.includes(c)){
+
+   if(p===0)showInvalidMessage(c);
+   return;
+
+  }
+
+  // Remove card from hand
+  hands[p]=hands[p].filter(x=>x!==c);
+
+  // Add card to center
+  trick.push({p,card:c});
+
+  renderTrick();
+
+  if(trick.length<4){
+
+   turn=nextPlayer(p);
+
+   render();
+
+   if(turn!==0){
+
+    botLoop();
+
+   }else{
+
+    $('message').textContent='Your turn — choose a card.';
+    $('notice').textContent='Click one of your raised cards to play it.';
+
+   }
+
+  }else{
+
+   $('message').textContent='All four cards played.';
+
+   setTimeout(resolveTrick,900);
+
+  }
+
+ }
+
+ /* CENTER CARDS WITHOUT NAMES */
+ function renderTrick(){
+
+  for(let p=0;p<4;p++){
+
+   let slot=$('slot'+p);
+
+   let t=trick.find(x=>x.p===p);
+
+   slot.innerHTML=t?cardHTML(t.card):'';
+
+  }
+
+ }
+
+ /* BOT CARD CHOICE */
+ function botChoice(p){
+  const legal=legalCards(p);
+  if(!legal.length)return null;
+
+  const target=Number(bidTargets[p]||0);
+  const won=Number(tricksWon[p]||0);
+  const stillNeeded=Math.max(0,target-won);
+  const tricksLeft=hands[p].length;
+
+  // Evaluate which legal cards would currently win this trick.
+  const winningCards=trick.length?legal.filter(c=>
+   getCurrentWinner([...trick,{p,card:c}]).p===p
+  ):[];
+
+  // If the bot has already made its Bol, avoid taking unnecessary tricks.
+  // If it still needs tricks, take the cheapest card that can secure one.
+  if(stillNeeded===0){
+   const nonWinning=legal.filter(c=>!winningCards.includes(c));
+   if(nonWinning.length)return nonWinning.sort((a,b)=>a.v-b.v)[0];
+   return legal.sort((a,b)=>a.v-b.v)[0];
+  }
+
+  if(winningCards.length){
+   // Save high cards: use the lowest winning card, not an oversized card.
+   return winningCards.sort((a,b)=>a.v-b.v)[0];
+  }
+
+  // No guaranteed win available: conserve strong cards when enough tricks remain,
+  // but use the strongest legal option when the remaining target is urgent.
+  if(stillNeeded>=tricksLeft){
+   return legal.sort((a,b)=>b.v-a.v)[0];
+  }
+  return legal.sort((a,b)=>a.v-b.v)[0];
+ }
+
+ /* BOT TURN */
+ function botLoop(){
+
+  clearTimeout(botTimer);
+
+  if(turn===0||phase!=='play'||animationBusy)return;
+
+  botTimer=setTimeout(()=>{
+
+   if(turn===0||phase!=='play'||animationBusy)return;
+
+   let card=botChoice(turn);
+
+   if(card)playCard(turn,card);
+
+  },850);
+
+ }
+
+ /* WINNER */
+ function resolveTrick(){
+
+  if(trick.length!==4)return;
+
+  const winningPlay=getCurrentWinner(trick);
+  const winner=winningPlay.p;
+
+  tricksWon[winner]++;
+
+  animationBusy=true;
+
+  $('message').textContent=
+   `${names[winner]} wins the trick!`;
+
+  // All four cards move at the same time
+  const destination={
+   1:'collect-top',
+   3:'collect-right',
+   0:'collect-bottom',
+   2:'collect-left'
+  }[winner];
+
+  const allCards=document.querySelectorAll('.play-slot .card');
+
+  allCards.forEach(card=>{
+   card.classList.add(destination);
+  });
+
+  setTimeout(()=>{
+
+   trick=[];
+   renderTrick();
+
+   turn=winner;
+   animationBusy=false;
+
+   render();
+
+   if(hands[0].length===0){
+
+    setTimeout(finishRound,500);
+    return;
+
+   }
+
+   setTimeout(()=>{
+
+    if(turn===0){
+
+     $('message').textContent=
+      'Your turn — lead the trick.';
+
+     $('notice').textContent=
+      'Click any raised card to play.';
+
+    }else{
+
+     $('message').textContent=
+      `${names[turn]} is leading the next trick.`;
+
+     botLoop();
+
+    }
+
+   },400);
+
+  },700);
+
+ }
+
+ /* ROUND COMPLETE */
+ function finishRound(){
+
+  clearTimeout(botTimer);
+
+  // Exact bid earns the declared points; any miss (under or over) loses them.
+  for(let p=0;p<4;p++){
+   const target=Number(bidTargets[p]||0);
+   if(tricksWon[p]===target) totalScores[p]+=target;
+   else totalScores[p]-=target;
+  }
+
+  render();
+  const winnerIndex=totalScores.findIndex(score=>score>=51);
+  $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Complete';
+  const roundLines=names.map((n,i)=>{
+   const target=bidTargets[i]??'-';
+   const result=tricksWon[i]===target?'Bol Sahi':'Bol Galat';
+   const delta=tricksWon[i]===target?`+${target}`:`-${target}`;
+   return `${n}: Bol ${target}, Won ${tricksWon[i]}, ${result} (${delta}), Total Score ${totalScores[i]}`;
+  });
+  if(winnerIndex>=0){
+   gameOver=true;
+   phase='over';
+   $('modalText').innerHTML=`<strong>${names[winnerIndex]} ne sabse pehle 51 points complete kar liye!</strong><br><br>${roundLines.join('<br>')}<br><br>Game Khatam!`;
+   $('message').textContent=`🏆 ${names[winnerIndex]} wins the game!`;
+   $('notice').textContent=`${names[winnerIndex]} is the Baazigar!`;
+   $('modal').classList.add('show');
+   render();
+   return;
+  }
+
+  $('modalText').innerHTML=roundLines.join('<br>')+'<br><br>Agli baazi shuru ho rahi hai...';
+  $('modal').classList.add('show');
+
+  selectedTrump=null;
+  selectedHukumRun=null;
+  selectedHukumSuit=null;
+  selectedColor=null;
+  selectedColorRun=null;
+  bidMode=null;
+  firstHukumPassed=false;
+
+  setTimeout(()=>{
+   $('modal').classList.remove('show');
+   startRound();
+  },3500);
+
+ }
+
+ /* BUTTONS */
+ $('newBtn').addEventListener('click',()=>{
+
+  if(confirm('Start a new game? Scores will reset.')){
+   totalScores=[0,0,0,0];
+   bidTargets=[null,null,null,null];
+   gameOver=false;
+   round=1;
+   startRound();
+  }
+
+ });
+
+ $('helpBtn').addEventListener('click',()=>{
+
+  $('modalTitle').textContent='Baazigar Rules';
+
+  $('modalText').textContent=
+   'Follow the suit led by the first player. If you have a higher card of that suit, you must play it. If you do not have a higher card, a lower card of that suit is allowed. If you have no card of that suit, play Hukum if available. If you have neither, play any card.';
+
+  $('modal').classList.add('show');
+
+ });
+
+ $('scoreBtn').addEventListener('click',()=>{
+
+  $('modalTitle').textContent='Current Round Score';
+
+  $('modalText').innerHTML=
+   names.map((n,i)=>
+    `${n}: Bid ${bidTargets[i]??'-'}, Won ${tricksWon[i]}, Total Score ${totalScores[i]}`
+   ).join('<br>');
+
+  $('modal').classList.add('show');
+
+ });
+
+ $('closeModal').addEventListener('click',()=>{
+  $('modal').classList.remove('show');
+ });
+
+ $('soundBtn').addEventListener('click',()=>{
+  $('notice').textContent='Sound effects are currently off.';
+ });
+
+ startRound();
+
+});
+</script>
+</body>
+</html>
