@@ -1973,8 +1973,12 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function sortHand(h){
+  // Keep the active Hukum suit at the FAR RIGHT of every player's hand.
+  // The other three suits retain their usual order.
+  const displayOrder=suits.filter(s=>s!==trumpSuit);
+  if(trumpSuit)displayOrder.push(trumpSuit);
   h.sort((a,b)=>
-   suits.indexOf(a.s)-suits.indexOf(b.s)||a.v-b.v
+   displayOrder.indexOf(a.s)-displayOrder.indexOf(b.s)||a.v-b.v
   );
  }
 
@@ -2557,6 +2561,8 @@ window.addEventListener('DOMContentLoaded',()=>{
     // Otherwise, the selected Color Bol suit becomes trump as before.
     if(!firstHukumPassed)trumpSuit=selectedColor;
    }else{return}
+   // Re-sort after the final Hukum suit is known, for all four players.
+   hands.forEach(sortHand);
    assignComputerBids();
    $('bidModal').classList.remove('show');
    phase='play';turn=roundStarter;
