@@ -325,6 +325,29 @@ button{font:inherit;cursor:pointer}
  max-width:85vw;
 }
 
+/* ROUND WINNER CELEBRATION */
+.celebration{position:relative;overflow:hidden;margin:10px -4px 14px;padding:14px 10px 12px;border-radius:14px;background:linear-gradient(135deg,#fff4c4,#ffe08a 48%,#fff7d8);border:2px solid #d4a437;box-shadow:0 5px 18px #9b741c44}
+.celebration .trophy{font-size:42px;animation:trophyBounce .75s ease-in-out infinite alternate}
+.celebration h3{margin:5px 0;color:#8b5700;font-size:23px;letter-spacing:.5px}
+.celebration .winner-names{font-weight:800;color:#17486f;font-size:17px;margin:5px 0}
+.celebration .party-line{font-size:13px;color:#654b20;margin:4px 0}
+.celebration .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.celebration .confetti i{position:absolute;top:-15px;width:7px;height:12px;border-radius:2px;animation:confettiFall 2.6s linear infinite;left:var(--x);background:var(--c);animation-delay:var(--d)}
+@keyframes confettiFall{to{transform:translateY(240px) rotate(620deg);opacity:.1}}
+@keyframes trophyBounce{to{transform:translateY(-7px) rotate(5deg)}}
+/* NEW GAME MODE PICKER: colorful 31 / 51 target selection */
+#gameModeModal{z-index:140;background:rgba(1,13,24,.88);backdrop-filter:blur(5px)}
+#gameModeModal .mode-dialog{max-width:560px;padding:25px 22px;background:linear-gradient(145deg,#fff8df,#e8f4ff 55%,#fff);border:3px solid #d6ad50;box-shadow:0 0 0 5px #173e5b,0 18px 45px #0009}
+.mode-dialog h2{font-size:clamp(22px,4vw,30px);color:#123d60;margin:0 0 8px}
+.mode-dialog .mode-subtitle{font-size:15px;color:#526779;margin:0 0 20px}
+.mode-options{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mode-option{border:2px solid #d5a63e;border-radius:18px;padding:18px 12px;cursor:pointer;color:#173b59;background:linear-gradient(145deg,#fff,#ffedb5);box-shadow:0 6px 14px #183b5b25;transition:transform .15s,box-shadow .15s}
+.mode-option:last-child{background:linear-gradient(145deg,#e7f5ff,#b9e0ff);border-color:#3c8dc1}
+.mode-option:hover{transform:translateY(-3px);box-shadow:0 10px 18px #183b5b35}
+.mode-option strong{display:block;font-size:clamp(30px,6vw,42px);line-height:1.1}
+.mode-option span{display:block;font-size:14px;font-weight:800;margin-top:6px}
+.mode-dialog .mode-foot{font-size:12px;color:#65788a;margin:17px 0 0}
+@media(max-width:520px){#gameModeModal .mode-dialog{padding:20px 13px}.mode-options{gap:10px}.mode-option{padding:17px 7px}.mode-option span{font-size:12px}}
 /* MODALS */
 .modal{
  position:absolute;inset:0;
@@ -1784,6 +1807,20 @@ body{background:#071e16}
 
  <div class="message" id="message" style="display:none"></div>
 
+ <!-- GAME TARGET SELECTION MODAL -->
+ <div class="modal show" id="gameModeModal" role="dialog" aria-modal="true" aria-labelledby="gameModeTitle">
+  <div class="dialog mode-dialog">
+   <div style="font-size:38px;margin-bottom:5px">🏆 🃏 🎉</div>
+   <h2 id="gameModeTitle">Aap kaunsi Baazi khelna chahte hain?</h2>
+   <p class="mode-subtitle">Game shuru karne se pehle apna target score chunein.</p>
+   <div class="mode-options">
+    <button type="button" class="mode-option" id="choose31"><strong>31</strong><span>31 POINTS KI BAAZI</span><span>Chhoti aur tez baazi ⚡</span></button>
+    <button type="button" class="mode-option" id="choose51"><strong>51</strong><span>51 POINTS KI BAAZI</span><span>Lambi aur mazedaar baazi 👑</span></button>
+   </div>
+   <p class="mode-foot">Aapke chune hue target par pahunchne wala pehla khiladi game jeetega.</p>
+  </div>
+ </div>
+
  <!-- INFO MODAL -->
  <div class="modal" id="modal">
   <div class="dialog">
@@ -1882,11 +1919,14 @@ window.addEventListener('DOMContentLoaded',()=>{
  let bidTargets=[null,null,null,null];
  let totalScores=[0,0,0,0];
  let gameOver=false;
+ let targetScore=null; // chosen game length: 31 or 51 points
 
  let turn=0;
  let trumpSuit=null;
  let phase='bid';
  let round=1;
+ // Opening lead rotates clockwise: You -> right -> top -> left -> You.
+ let roundStarter=0;
  let makerId=0;
  let animationBusy=false;
  let botTimer=null;
@@ -1945,7 +1985,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   hands=[[],[],[],[]];
   trick=[];
-  turn=0;
+  turn=roundStarter;
   trumpSuit=null;
   phase='bid';
   bidStage=1;
@@ -2488,9 +2528,9 @@ window.addEventListener('DOMContentLoaded',()=>{
    if(firstHukumPassed){
     // PASS means no selected color becomes trump; the complete Spade (Hukam)
     // suit remains the only Hukum Kaat and can cut every other led suit.
-    trumpSuit='♠';makerId=0;bids[0]='PASS';bids[1]='-';
+    trumpSuit='♠';bids[0]='PASS';bids[1]='-';
    }else{
-    trumpSuit=selectedTrump;makerId=0;bids[0]=`${getSuitName(selectedTrump)} Hukum`;
+    trumpSuit=selectedTrump;bids[0]=`${getSuitName(selectedTrump)} Hukum`;
    }
    bidMode=null;selectedHukumRun=null;selectedColorRun=null;selectedColor=selectedTrump;
    $('bidModal').classList.remove('show');
@@ -2519,7 +2559,7 @@ window.addEventListener('DOMContentLoaded',()=>{
    }else{return}
    assignComputerBids();
    $('bidModal').classList.remove('show');
-   phase='play';turn=makerId;
+   phase='play';turn=roundStarter;
    $('notice').textContent=`${bids[0]}. Total Bol: ${bidTargets.reduce((sum,n)=>sum+Number(n||0),0)}/13 (maximum). Game starts!`;
    $('message').style.display='block';
    $('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
@@ -2527,6 +2567,58 @@ window.addEventListener('DOMContentLoaded',()=>{
    if(turn!==0)botLoop();
   }
  });
+
+ /* GAME SOUND EFFECTS: synthesized locally with Web Audio (no external files). */
+ let soundEnabled=true;
+ let audioContext=null;
+ function getAudioContext(){
+  if(!soundEnabled)return null;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return null;
+  if(!audioContext)audioContext=new AC();
+  if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+  return audioContext;
+ }
+ function cardSound(){
+  const ctx=getAudioContext();if(!ctx)return;
+  const now=ctx.currentTime;
+  // Soft paper/card flick with a short woody tap.
+  const length=Math.floor(ctx.sampleRate*.075);
+  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+  const noise=ctx.createBufferSource();noise.buffer=buffer;
+  const filter=ctx.createBiquadFilter();filter.type='highpass';filter.frequency.value=850;
+  const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.13,now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+.075);
+  noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+.08);
+  const osc=ctx.createOscillator(),og=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(185,now);osc.frequency.exponentialRampToValueAtTime(95,now+.055);og.gain.setValueAtTime(.0001,now);og.gain.exponentialRampToValueAtTime(.055,now+.006);og.gain.exponentialRampToValueAtTime(.0001,now+.065);osc.connect(og);og.connect(ctx.destination);osc.start(now);osc.stop(now+.07);
+ }
+ function celebrationSound(){
+  const ctx=getAudioContext();if(!ctx)return;
+  const start=ctx.currentTime;
+  // A short crowd-like applause made from layered filtered noise claps.
+  for(let n=0;n<15;n++){
+   const t=start+n*.105+(Math.random()*.035);
+   const len=Math.floor(ctx.sampleRate*.11),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+   for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+   const src=ctx.createBufferSource();src.buffer=buf;
+   const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1100+Math.random()*1000;bp.Q.value=.7;
+   const g=ctx.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+.105);
+   src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+.12);
+  }
+  // Three bright firework launches/pops.
+  [0,0.48,0.96].forEach((delay,i)=>{
+   const t=start+delay,osc=ctx.createOscillator(),g=ctx.createGain();osc.type='sine';osc.frequency.setValueAtTime(420+i*90,t);osc.frequency.exponentialRampToValueAtTime(1150+i*120,t+.22);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.05);g.gain.exponentialRampToValueAtTime(.0001,t+.28);osc.connect(g);g.connect(ctx.destination);osc.start(t);osc.stop(t+.3);
+   const len=Math.floor(ctx.sampleRate*.16),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);for(let j=0;j<len;j++)d[j]=(Math.random()*2-1)*(1-j/len);
+   const src=ctx.createBufferSource(),hp=ctx.createBiquadFilter(),pg=ctx.createGain();src.buffer=buf;hp.type='highpass';hp.frequency.value=1800;pg.gain.setValueAtTime(.0001,t+.2);pg.gain.exponentialRampToValueAtTime(.19,t+.215);pg.gain.exponentialRampToValueAtTime(.0001,t+.36);src.connect(hp);hp.connect(pg);pg.connect(ctx.destination);src.start(t+.2);src.stop(t+.37);
+  });
+ }
+ function celebrationMarkup(winners){
+  const namesText=winners.length?winners.map(i=>names[i]).join(' & '):'Is round mein kisi ka Bol poora nahi hua';
+  const sub=winners.length?'BAAZI JEETNE PAR BADHAI HO!':'Agli baazi mein phir koshish karein!';
+  const confetti=Array.from({length:26},(_,i)=>`<i style="--x:${(i*37)%100}%;--d:${(i%9)*-.22}s;--c:${['#e53e3e','#f5b700','#168b55','#3478d4','#a34acb'][i%5]}"></i>`).join('');
+  return `<div class="celebration"><div class="confetti">${confetti}</div><div class="trophy">🏆</div><h3>CONGRATULATIONS!</h3><div class="winner-names">${namesText}</div><div class="party-line">${sub}</div><div class="party-line">👏 तालियाँ • 🎉 पटाखे • 🎊 शाबाशी!</div></div>`;
+ }
 
  /* PLAY CARD IMMEDIATELY ON CLICK */
  function playCard(p,c){
@@ -2543,6 +2635,9 @@ window.addEventListener('DOMContentLoaded',()=>{
    return;
 
   }
+
+  // Sound for every card played by a human or computer.
+  cardSound();
 
   // Remove card from hand
   hands[p]=hands[p].filter(x=>x!==c);
@@ -2737,7 +2832,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
 
   render();
-  const winnerIndex=totalScores.findIndex(score=>score>=51);
+  const winnerIndex=totalScores.findIndex(score=>score>=targetScore);
   $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Complete';
   const roundLines=names.map((n,i)=>{
    const target=bidTargets[i]??'-';
@@ -2748,7 +2843,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(winnerIndex>=0){
    gameOver=true;
    phase='over';
-   $('modalText').innerHTML=`<strong>${names[winnerIndex]} ne sabse pehle 51 points complete kar liye!</strong><br><br>${roundLines.join('<br>')}<br><br>Game Khatam!`;
+   $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne sabse pehle ${targetScore} points complete kar liye!</strong><br><br>${roundLines.join('<br>')}<br><br>Game Khatam!`;
+   celebrationSound();
    $('message').textContent=`🏆 ${names[winnerIndex]} wins the game!`;
    $('notice').textContent=`${names[winnerIndex]} is the Baazigar!`;
    $('modal').classList.add('show');
@@ -2756,8 +2852,10 @@ window.addEventListener('DOMContentLoaded',()=>{
    return;
   }
 
-  $('modalText').innerHTML=roundLines.join('<br>')+'<br><br>Agli baazi shuru ho rahi hai...';
+  const roundWinners=names.map((n,i)=>i).filter(i=>tricksWon[i]>=Number(bidTargets[i]||0));
+  $('modalText').innerHTML=celebrationMarkup(roundWinners)+roundLines.join('<br>')+'<br><br>Agli baazi shuru ho rahi hai...';
   $('modal').classList.add('show');
+  celebrationSound();
 
   selectedTrump=null;
   selectedHukumRun=null;
@@ -2769,6 +2867,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   setTimeout(()=>{
    $('modal').classList.remove('show');
+   round++;
+   roundStarter=nextPlayer(roundStarter);
    startRound();
   },3500);
 
@@ -2783,10 +2883,25 @@ window.addEventListener('DOMContentLoaded',()=>{
    bidTargets=[null,null,null,null];
    gameOver=false;
    round=1;
-   startRound();
+   roundStarter=0;
+   targetScore=null;
+   $('gameModeModal').classList.add('show');
   }
 
  });
+
+ function beginSelectedGame(points){
+  targetScore=points;
+  round=1;
+  roundStarter=0;
+  totalScores=[0,0,0,0];
+  gameOver=false;
+  $('gameModeModal').classList.remove('show');
+  $('notice').textContent=`${points} points ki baazi shuru!`;
+  startRound();
+ }
+ $('choose31').addEventListener('click',()=>beginSelectedGame(31));
+ $('choose51').addEventListener('click',()=>beginSelectedGame(51));
 
  $('helpBtn').addEventListener('click',()=>{
 
@@ -2817,11 +2932,14 @@ window.addEventListener('DOMContentLoaded',()=>{
  });
 
  $('soundBtn').addEventListener('click',()=>{
-  $('notice').textContent='Sound effects are currently off.';
+  soundEnabled=!soundEnabled;
+  $('soundBtn').textContent=soundEnabled?'🔔':'🔕';
+  $('notice').textContent=soundEnabled?'Card sounds and celebration sounds are ON.':'Game sounds are OFF.';
+  if(soundEnabled){const ctx=getAudioContext();if(ctx){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=660;g.gain.value=.035;o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.07);}}
  });
 
  assignFreshPlayerNames();
- startRound();
+ $('gameModeModal').classList.add('show');
 
 });
 </script>
