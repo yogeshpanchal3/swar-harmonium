@@ -752,8 +752,30 @@ button{font:inherit;cursor:pointer}
 }
 
 
-/* Scoreboard window hidden as requested; scoring logic remains active. */
-.scoreboard{display:none !important;}
+/* TOTAL SCORE panel: live scores are displayed above the Minus Taas Ki Mehfil artwork. */
+.mehfil-panel{justify-content:flex-start;gap:14px;padding-top:clamp(18px,2.2vw,30px)}
+.mehfil-panel .scoreboard{
+  display:block !important;position:relative;inset:auto;width:100%;max-width:680px;
+  margin:0 auto 4px;z-index:5;background:rgba(239,247,255,.97);color:#153c5d;
+  border:2px solid #cda85c;border-radius:13px;overflow:hidden;
+  box-shadow:0 5px 16px #0005;
+}
+.mehfil-panel .scoreboard h3{margin:0;padding:9px 10px;text-align:center;background:linear-gradient(90deg,#ffe6a1,#c99a43);color:#17364c;font-size:17px;border-bottom:1px solid #98702f;letter-spacing:.5px}
+.mehfil-panel .scoreboard table{width:100%;border-collapse:collapse;font-size:13px;text-align:center;table-layout:fixed}
+.mehfil-panel .scoreboard th{background:#dcecff;padding:7px 5px;font-size:11px;white-space:nowrap}
+.mehfil-panel .scoreboard td{padding:8px 5px;border-top:1px solid #c5d6e6;font-weight:700;font-size:12px}
+.mehfil-panel .scoreboard tr.current td{background:#fff0bd}
+.mehfil-panel .scoreboard .player-name{text-align:left;padding-left:12px;white-space:nowrap}
+.mehfil-panel .mehfil-kicker{margin-top:4px;margin-bottom:12px}
+@media(max-width:700px){
+ .mehfil-panel{gap:12px;padding:20px 14px 28px}
+ .mehfil-panel .scoreboard{max-width:none;margin-bottom:2px}
+ .mehfil-panel .scoreboard h3{font-size:15px;padding:8px 5px}
+ .mehfil-panel .scoreboard table{font-size:11px}
+ .mehfil-panel .scoreboard th{font-size:10px;padding:6px 2px}
+ .mehfil-panel .scoreboard td{font-size:10px;padding:7px 2px}
+ .mehfil-panel .scoreboard .player-name{padding-left:7px}
+}
 
 
 /* Responsive game + original Minus Taas Ki Mehfil intro panel */
@@ -1050,6 +1072,570 @@ body{background:#071e16}
   box-shadow:inset 0 0 50px #020a12aa,inset 0 0 0 3px #fff4,0 0 0 3px #684515,0 0 14px #0009 !important;
 }
 
+
+/* Player labels: align with each player's own hand, keep every card unobstructed */
+@media (min-width:701px){
+  /* Top player's name goes below the top row of cards */
+  .seat.top{
+    top:112px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:125px !important;
+  }
+
+  /* Side names sit just inside their vertical card stacks, centered on the stack */
+  .seat.left{
+    left:112px !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:125px !important;
+  }
+  .seat.right{
+    right:112px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:125px !important;
+  }
+
+  /* Reduce player-name text and label size by about 10% */
+  .seat .name{
+    font-size:90% !important;
+    padding:8px 10px !important;
+    box-sizing:border-box !important;
+  }
+}
+
+/* Keep labels centered and compact on phones too; avoid covering cards */
+@media (max-width:700px){
+  .seat .name{
+    font-size:90% !important;
+    padding:4px 4px !important;
+    box-sizing:border-box !important;
+  }
+  .seat.top{
+    top:clamp(135px,20vh,185px) !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+  }
+  .seat.left{
+    left:clamp(82px,21vw,112px) !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+  .seat.right{
+    right:clamp(82px,21vw,112px) !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+}
+
+
+/* CLEAN PLAYER LABELS: hide robot/person icons and center all name plates */
+.seat .avatar{display:none !important}
+
+/* Remove the floating "Your turn — choose a card" prompt */
+.message{display:none !important}
+
+.seat{min-width:0 !important;text-align:center !important}
+.seat .name{
+  font-size:90% !important;
+  padding:8px 10px !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+}
+.seat .score{
+  font-size:90% !important;
+  padding:4px 5px !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+}
+
+/* Desktop: top and bottom labels centered; side labels beside their own card stacks */
+@media(min-width:701px){
+  .seat.top{
+    top:154px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:125px !important;
+  }
+  .seat.left{
+    left:104px !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:112px !important;
+  }
+  .seat.right{
+    right:104px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:112px !important;
+  }
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:190px !important;
+    transform:translateX(-50%) !important;
+    width:150px !important;
+  }
+}
+
+/* Phones: keep all four name/score labels centered in their own seat areas */
+@media(max-width:700px){
+  .seat .name{font-size:90% !important;padding:4px 5px !important}
+  .seat .score{font-size:90% !important;padding:3px 2px !important}
+  .seat.top{
+    top:clamp(165px,24vh,220px) !important;
+    left:50% !important;right:auto !important;
+    transform:translateX(-50%) !important;
+    width:clamp(76px,25vw,105px) !important;
+  }
+  .seat.left{
+    left:60px !important;right:auto !important;
+    top:49% !important;transform:translateY(-50%) !important;
+    width:clamp(76px,23vw,100px) !important;
+  }
+  .seat.right{
+    right:60px !important;left:auto !important;
+    top:49% !important;transform:translateY(-50%) !important;
+    width:clamp(76px,23vw,100px) !important;
+  }
+  .seat.bottom{
+    left:50% !important;right:auto !important;
+    bottom:clamp(74px,10vh,100px) !important;
+    transform:translateX(-50%) !important;
+    width:clamp(110px,40vw,155px) !important;
+  }
+}
+
+
+/* FINAL SEAT + HAND REFINEMENT */
+@media (min-width:701px){
+  /* Trump/suit marker returns to the top edge, above the top player's cards */
+  .seat.top .trump-marker{
+    display:block;
+    position:absolute;
+    top:-132px;
+    left:50%;
+    transform:translateX(-50%);
+    margin:0;
+    white-space:nowrap;
+    z-index:60;
+  }
+  /* Top player's name and score sit immediately below their card row */
+  .seat.top{
+    top:154px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:175px !important;
+  }
+
+  /* Side players: labels sit beside their own card stacks without narrow wrapping */
+  .seat.left{
+    left:106px !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:155px !important;
+  }
+  .seat.right{
+    right:106px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:155px !important;
+  }
+
+  /* You: centered above the hand, with enough width for a readable score */
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:190px !important;
+    transform:translateX(-50%) !important;
+    width:225px !important;
+  }
+
+  .seat .name{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    padding:7px 8px !important;
+  }
+  .seat .score{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+    line-height:1.15 !important;
+    padding:4px 5px !important;
+  }
+
+  /* Slightly larger 13-card hand, centered and lifted from the bottom edge */
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:8px !important;
+    width:96% !important;
+    height:126px !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    padding:0 6px 4px !important;
+    overflow:visible !important;
+  }
+  .hand.bottom .card{
+    width:clamp(58px,6.4vw,68px) !important;
+    height:clamp(92px,11vh,110px) !important;
+    flex:0 1 auto !important;
+    margin-left:-13px !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+}
+
+/* Phone layout: retain compact arrangement while centering the player's labels */
+@media (max-width:700px){
+  .seat.top .trump-marker{
+    display:block;
+    position:absolute;
+    top:-34px;
+    left:50%;
+    transform:translateX(-50%);
+    margin:0;
+    font-size:12px;
+    padding:2px 5px;
+    white-space:nowrap;
+    z-index:60;
+  }
+  .seat.top{
+    top:clamp(165px,24vh,220px) !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:clamp(100px,30vw,140px) !important;
+  }
+  .seat.left{
+    left:clamp(60px,17vw,92px) !important;
+    right:auto !important;
+    top:49% !important;
+    transform:translateY(-50%) !important;
+    width:clamp(100px,27vw,125px) !important;
+  }
+  .seat.right{
+    right:clamp(60px,17vw,92px) !important;
+    left:auto !important;
+    top:49% !important;
+    transform:translateY(-50%) !important;
+    width:clamp(100px,27vw,125px) !important;
+  }
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:clamp(92px,12vh,125px) !important;
+    transform:translateX(-50%) !important;
+    width:clamp(150px,48vw,205px) !important;
+  }
+  .seat .name{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+  }
+  .seat .score{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:normal !important;
+    line-height:1.12 !important;
+    padding:3px 3px !important;
+  }
+  .hand.bottom{
+    bottom:5px !important;
+    height:clamp(100px,15vh,125px) !important;
+    padding-bottom:5px !important;
+    align-items:flex-end !important;
+  }
+}
+
+
+/* USER-MARKED BLACK AREAS: put labels and cards directly in these zones */
+@media (min-width:701px){
+  /* Top player label */
+  .seat.top{
+    top:112px !important;
+    left:50% !important;
+    right:auto !important;
+    width:118px !important;
+    transform:translateX(-50%) !important;
+    z-index:55 !important;
+  }
+
+  /* Left and right player labels: centered in the marked rectangles */
+  .seat.left{
+    left:80px !important;
+    right:auto !important;
+    top:50% !important;
+    width:105px !important;
+    transform:translateY(-50%) !important;
+    z-index:55 !important;
+  }
+  .seat.right{
+    right:80px !important;
+    left:auto !important;
+    top:50% !important;
+    width:105px !important;
+    transform:translateY(-50%) !important;
+    z-index:55 !important;
+  }
+
+  /* You label: centered in the lower marked rectangle, above the hand */
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:164px !important;
+    width:152px !important;
+    transform:translateX(-50%) !important;
+    z-index:55 !important;
+  }
+
+  .seat .name,.seat .score{
+    display:block !important;
+    width:100% !important;
+    text-align:center !important;
+    white-space:normal !important;
+    overflow-wrap:normal !important;
+    line-height:1.12 !important;
+  }
+  .seat .name{font-size:90% !important;padding:6px 4px !important}
+  .seat .score{font-size:90% !important;padding:3px 3px !important}
+
+  /* Move the player's 13 cards into the full lower marked strip.
+     Do not allow flex-shrink: each card keeps a readable size. */
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:10px !important;
+    width:calc(100% - 44px) !important;
+    height:150px !important;
+    transform:translateX(-50%) !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    flex-wrap:nowrap !important;
+    padding:0 3px 5px !important;
+    overflow:visible !important;
+    z-index:20 !important;
+  }
+  .hand.bottom .card{
+    width:clamp(48px,6.2vw,66px) !important;
+    height:clamp(86px,13vh,116px) !important;
+    flex:0 0 auto !important;
+    margin-left:clamp(-12px,-1vw,-6px) !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+}
+
+/* On phones, preserve the same four-seat arrangement and keep the hand inside view */
+@media (max-width:700px){
+  .seat.top{
+    top:clamp(145px,22vh,190px) !important;
+    left:50% !important;right:auto !important;
+    width:clamp(95px,29vw,125px) !important;
+    transform:translateX(-50%) !important;
+  }
+  .seat.left{
+    left:clamp(54px,14vw,78px) !important;
+    right:auto !important;top:49% !important;
+    width:clamp(90px,25vw,112px) !important;
+    transform:translateY(-50%) !important;
+  }
+  .seat.right{
+    right:clamp(54px,14vw,78px) !important;
+    left:auto !important;top:49% !important;
+    width:clamp(90px,25vw,112px) !important;
+    transform:translateY(-50%) !important;
+  }
+  .seat.bottom{
+    left:50% !important;right:auto !important;
+    bottom:clamp(112px,16vh,145px) !important;
+    width:clamp(130px,43vw,175px) !important;
+    transform:translateX(-50%) !important;
+  }
+  .seat .name,.seat .score{
+    display:block !important;width:100% !important;
+    text-align:center !important;white-space:normal !important;
+    line-height:1.12 !important;
+  }
+  .hand.bottom{
+    left:50% !important;right:auto !important;
+    bottom:8px !important;width:calc(100% - 16px) !important;
+    height:clamp(110px,17vh,140px) !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;align-items:flex-end !important;
+    flex-wrap:nowrap !important;overflow:visible !important;
+    padding:0 2px 4px !important;
+  }
+  .hand.bottom .card{
+    width:clamp(24px,7.2vw,46px) !important;
+    height:clamp(48px,13vh,84px) !important;
+    flex:0 0 auto !important;
+    margin-left:clamp(-12px,-1.7vw,-5px) !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+  .hand.bottom .card .corner{font-size:clamp(10px,2.8vw,15px) !important}
+  .hand.bottom .card .corner span{font-size:clamp(9px,2.4vw,13px) !important}
+  .hand.bottom .card .pip{font-size:clamp(18px,5vw,31px) !important}
+}
+
+
+/* FINAL FIX: You's 13-card hand fills the lower table width */
+@media (min-width:701px){
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    width:calc(100% - 28px) !important;
+    bottom:14px !important;
+    height:150px !important;
+    transform:translateX(-50%) !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    gap:0 !important;
+    padding:0 2px 4px !important;
+    overflow:visible !important;
+  }
+  .hand.bottom .card{
+    box-sizing:border-box !important;
+    width:clamp(74px,7.6vw,82px) !important;
+    min-width:clamp(74px,7.6vw,82px) !important;
+    max-width:clamp(74px,7.6vw,82px) !important;
+    height:clamp(112px,14vh,130px) !important;
+    flex:0 0 clamp(74px,7.6vw,82px) !important;
+    margin-left:-8px !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+}
+
+
+/* LATEST UI FIX: show trump marker, relocate round status, compact player labels */
+.notice{display:none !important;}
+.status{
+  top:76px !important;
+  left:16px !important;
+  right:auto !important;
+  transform:none !important;
+  width:min(260px,29vw) !important;
+  min-width:0 !important;
+  max-width:260px !important;
+  padding:9px 12px !important;
+  text-align:left !important;
+  z-index:47 !important;
+}
+.status small{font-size:11px !important;}
+.seat .trump-marker{
+  display:block !important;
+  width:max-content !important;
+  margin:0 auto 3px !important;
+  position:relative !important;
+  z-index:55 !important;
+}
+/* Reduce only name and Bol/Won plates by about 30%, without shrinking avatars/cards */
+.seat .name{
+  font-size:11px !important;
+  padding:6px 8px !important;
+  line-height:1.05 !important;
+  border-radius:7px !important;
+}
+.seat .score{
+  font-size:9px !important;
+  padding:3px 4px !important;
+  line-height:1.1 !important;
+  border-radius:0 0 6px 6px !important;
+}
+@media(max-width:700px){
+  .status{
+    top:53px !important;left:8px !important;right:auto !important;
+    width:42vw !important;max-width:180px !important;
+    padding:6px 7px !important;font-size:10px !important;
+    line-height:1.15 !important;
+  }
+  .status small{font-size:9px !important;}
+  .seat .name{font-size:8px !important;padding:3px 4px !important;}
+  .seat .score{font-size:6px !important;padding:2px 2px !important;}
+  .seat .trump-marker{font-size:12px !important;padding:2px 5px !important;}
+  .seat.top{top:clamp(145px,22vh,205px) !important;}
+}
+
+
+
+/* FINAL POSITION FIX: keep You label just above the cards, not too high */
+@media (min-width:701px){
+  .seat.bottom{
+    bottom:172px !important;
+    z-index:70 !important;
+  }
+  .seat.top .trump-marker{
+    display:block !important;
+    position:absolute !important;
+    top:-112px !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    z-index:100 !important;
+    margin:0 !important;
+    white-space:nowrap !important;
+  }
+}
+@media (max-width:700px){
+  .seat.bottom{
+    bottom:clamp(118px,16vh,145px) !important;
+    z-index:70 !important;
+  }
+  .seat.top .trump-marker{
+    display:block !important;
+    position:absolute !important;
+    top:-108px !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    z-index:100 !important;
+    margin:0 !important;
+    white-space:nowrap !important;
+  }
+}
+/* HUKUM / SELECTED SUIT MARKER: fixed to the game table top, not the player seat */
+.table > .trump-marker{
+  display:none;
+  position:absolute !important;
+  top:12px !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  z-index:220 !important;
+  width:max-content !important;
+  margin:0 !important;
+  padding:4px 11px !important;
+  border:1px solid #b78a16 !important;
+  border-radius:8px !important;
+  background:#fff1b8 !important;
+  color:#805000 !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+  box-shadow:0 2px 5px #0006 !important;
+  pointer-events:none !important;
+}
+@media(max-width:700px){
+  .table > .trump-marker{top:8px !important;font-size:14px !important;padding:3px 8px !important;}
+}
 </style>
 </head>
 
@@ -1072,25 +1658,14 @@ body{background:#071e16}
   Review your first 5 cards and choose Hukum or PASS.
  </div>
 
- <aside class="scoreboard" aria-label="Live scoreboard">
-  <h3>🏆 Scoreboard</h3>
-  <table>
-   <thead><tr><th>Player</th><th>Bol</th><th>Won</th><th>Score</th></tr></thead>
-   <tbody id="scoreboardBody">
-    <tr><td class="player-name">You</td><td>-</td><td>0</td><td>0</td></tr>
-    <tr><td class="player-name">Johnny</td><td>-</td><td>0</td><td>0</td></tr>
-    <tr><td class="player-name">B-4</td><td>-</td><td>0</td><td>0</td></tr>
-    <tr><td class="player-name">Cherry 2000</td><td>-</td><td>0</td><td>0</td></tr>
-   </tbody>
-  </table>
- </aside>
+
 
  <div class="status" id="status">
   BAAZIGAR <small>4 players • Trick Taking</small>
  </div>
 
+ <div class="trump-marker" id="topTrumpMarker" aria-label="Selected Hukum"></div>
  <div class="seat top">
-  <div class="trump-marker" id="topTrumpMarker" aria-label="Selected Hukum"></div>
   <div class="avatar">🤖</div>
   <div class="name" id="botNameTop">Aarav</div>
   <div class="score" id="score1">Bol: -</div>
@@ -1150,6 +1725,18 @@ body{background:#071e16}
  </div>
 </div>
 <section class="mehfil-panel" aria-label="Minus Taas Ki Mehfil introduction">
+ <aside class="scoreboard" aria-label="Live scoreboard">
+  <h3>🏆 TOTAL SCORE</h3>
+  <table>
+   <thead><tr><th>Player</th><th>Bol</th><th>Won</th><th>Total Score</th></tr></thead>
+   <tbody id="scoreboardBody">
+    <tr><td class="player-name">You</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">Johnny</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">B-4</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">Cherry 2000</td><td>-</td><td>0</td><td>0</td></tr>
+   </tbody>
+  </table>
+ </aside>
   <div class="mehfil-kicker">BAAZIGAR CARD TABLE • DESI TAASH EXPERIENCE</div>
   <div class="mehfil-art">
     <div class="mehfil-copy">
@@ -2160,3 +2747,4 @@ window.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
+
