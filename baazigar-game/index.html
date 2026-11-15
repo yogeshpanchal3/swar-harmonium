@@ -25,14 +25,26 @@ button{font:inherit;cursor:pointer}
 .table{
  position:relative;width:100vw;height:100dvh;
  min-height:560px;overflow:hidden;
- background:radial-gradient(ellipse at center,#16883a 0%,#08702d 58%,#03491d 100%);
- border:8px solid #b7a46a;
- box-shadow:inset 0 0 50px #002e12;
+ background:
+  radial-gradient(ellipse at center,#16883a 0%,#08702d 58%,#03491d 100%) padding-box,
+  linear-gradient(135deg,#fff1ad 0%,#b47b22 16%,#f8df91 32%,#805018 50%,#e7c36d 68%,#9b681d 84%,#fff0a8 100%) border-box;
+ border:12px solid transparent;
+ box-shadow:
+  inset 0 0 50px #002e12,
+  inset 0 0 0 3px #fff4,
+  0 0 0 3px #684515,
+  0 0 14px #0009;
 }
 .table:before{
- content:"";position:absolute;inset:12px;
- border:2px solid #ffffff14;
- border-radius:22px;pointer-events:none;
+ content:"";position:absolute;inset:10px;
+ border:2px solid #ffe9a0a8;
+ border-radius:18px;pointer-events:none;
+ box-shadow:inset 0 0 0 1px #ffffff26;
+}
+.table:after{
+ content:"";position:absolute;inset:4px;
+ border:1px solid #fff8;
+ border-radius:14px;pointer-events:none;
 }
 
 .topbar{
@@ -471,6 +483,274 @@ button{font:inherit;cursor:pointer}
   font-size:11px;
  }
 }
+
+
+/* MOBILE LAYOUT REWORK: fit the full game to a phone screen */
+@media (max-width:700px){
+  html,body{width:100%;height:100%;height:100dvh;overflow:hidden}
+  .table{
+    width:100vw;height:100dvh;min-height:0;
+    border-width:3px;overflow:hidden;
+  }
+  .table:before{inset:6px;border-radius:14px}
+
+  .topbar{top:7px;left:8px;right:8px}
+  .topbar>div{gap:5px}
+  .tool{min-width:36px;padding:7px 9px;font-size:16px;border-radius:9px}
+
+  /* Keep info and score readable without covering the players */
+  .notice{
+    top:55px;left:8px;max-width:43vw;width:43vw;
+    padding:7px 8px;font-size:10px;line-height:1.25;
+  }
+  .scoreboard{
+    top:55px;right:8px;width:49vw;max-width:245px;
+    border-width:1px;border-radius:9px;
+  }
+  .scoreboard h3{font-size:12px;padding:5px 3px}
+  .scoreboard table{font-size:9px}
+  .scoreboard th{font-size:8px;padding:4px 1px}
+  .scoreboard td{font-size:9px;padding:5px 1px}
+  .scoreboard .player-name{padding-left:4px}
+
+  .status{
+    top:150px;left:50%;transform:translateX(-50%);
+    width:calc(100vw - 24px);min-width:0;max-width:420px;
+    padding:6px 8px;font-size:12px;line-height:1.2;
+  }
+  .status small{font-size:10px}
+
+  .seat{min-width:76px}
+  .seat .avatar{font-size:23px;margin-bottom:-3px}
+  .seat .trump-marker{font-size:14px;padding:2px 6px;margin-bottom:2px}
+  .seat .name{font-size:11px;padding:5px 7px;border-radius:7px}
+  .seat .score{font-size:9px;padding:3px 2px;white-space:nowrap}
+
+  .seat.top{top:205px;left:50%;transform:translateX(-50%)}
+  .seat.left{left:5px;top:49%;transform:translateY(-50%)}
+  .seat.right{right:5px;top:49%;transform:translateY(-50%)}
+  .seat.bottom{bottom:clamp(105px,12vh,155px);left:50%;transform:translateX(-50%)}
+
+  .hand.top{
+    top:205px;left:50%;transform:translateX(-50%);
+    width:190px;height:75px;
+  }
+  .hand.top .card{width:34px;height:51px;margin-left:-15px;border-radius:5px}
+  .hand.left,.hand.right{
+    top:50%;width:58px;height:210px;
+    transform:translateY(-50%);
+  }
+  .hand.left{left:0}
+  .hand.right{right:0}
+  .hand.left .card,.hand.right .card{
+    width:42px;height:61px;margin-top:-38px;border-radius:5px;
+  }
+
+  .hand.bottom{
+    left:0;bottom:0;transform:none;
+    width:100vw;height:clamp(100px,14vh,145px);
+    justify-content:center;align-items:flex-end;
+    padding:0 5px 5px;overflow:visible;
+  }
+  .hand.bottom .card{
+    width:clamp(29px,8.2vw,52px);
+    height:clamp(48px,13.5vw,82px);
+    margin-left:clamp(-17px,-3.2vw,-10px);
+    border-radius:6px;
+  }
+  .hand.bottom .card:first-child{margin-left:0}
+  .hand.bottom .card .corner{font-size:clamp(11px,3.2vw,16px);top:3px;left:3px}
+  .hand.bottom .card .corner span{font-size:clamp(10px,2.8vw,14px);margin-top:1px}
+  .hand.bottom .card .pip{font-size:clamp(22px,6vw,34px)}
+  .hand.bottom .card.legal{transform:translateY(-6px)}
+  .hand.bottom .card.legal:hover{transform:translateY(-8px)}
+
+  .center{
+    top:52%;left:50%;transform:translate(-50%,-50%);
+    width:min(190px,48vw);height:220px;
+  }
+  .play-slot{width:55px;height:80px}
+  .play-slot .card{width:55px;height:80px;border-radius:6px}
+  .play-slot .card .corner{font-size:13px;top:3px;left:4px}
+  .play-slot .card .corner span{font-size:11px}
+  .play-slot .card .pip{font-size:27px}
+  .play-slot .card.collect-top{transform:translateY(-115px) scale(.55)}
+  .play-slot .card.collect-right{transform:translateX(100px) scale(.55)}
+  .play-slot .card.collect-bottom{transform:translateY(115px) scale(.55)}
+  .play-slot .card.collect-left{transform:translateX(-100px) scale(.55)}
+
+  .message{
+    top:calc(52% + 125px);left:50%;max-width:75vw;
+    font-size:10px;padding:6px 9px;
+  }
+
+  .dialog{padding:16px;max-width:94vw}
+  #bidModal .dialog{max-height:90dvh}
+}
+
+
+/* PORTRAIT PHONE FIX: readable 13-card hand and separated player areas */
+@media (max-width:700px) and (orientation:portrait){
+  html,body{
+    width:100%;height:100%;height:100dvh;overflow:hidden;
+    overscroll-behavior:none;
+  }
+  .table{
+    width:100vw;height:100dvh;min-height:0;
+    border-width:5px;overflow:hidden;
+  }
+  .table:before{inset:6px;border-radius:12px}
+  .table:after{inset:2px;border-radius:10px}
+
+  .topbar{top:5px;left:6px;right:6px}
+  .topbar>div{gap:5px}
+  .tool{min-width:34px;padding:6px 8px;font-size:15px;border-radius:9px}
+
+  /* Top information row */
+  .notice{
+    top:52px;left:7px;width:37vw;max-width:155px;
+    padding:6px 7px;font-size:9px;line-height:1.2;
+    z-index:46;
+  }
+  .scoreboard{
+    top:50px;right:6px;width:45vw;max-width:190px;
+    border-width:1px;border-radius:8px;
+  }
+  .scoreboard h3{font-size:11px;padding:4px 2px}
+  .scoreboard table{font-size:8px;table-layout:fixed}
+  .scoreboard th{font-size:7px;padding:3px 1px}
+  .scoreboard td{font-size:8px;padding:4px 1px;overflow-wrap:anywhere}
+  .scoreboard .player-name{padding-left:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Status stays in the middle and never covers the scoreboard */
+  .status{
+    top:42%;left:50%;transform:translate(-50%,-50%);
+    width:auto;min-width:0;max-width:70vw;
+    padding:5px 8px;font-size:10px;line-height:1.2;
+    z-index:42;
+  }
+  .status small{font-size:9px}
+
+  /* Seats */
+  .seat{min-width:0;width:clamp(76px,25vw,105px);z-index:32}
+  .seat .avatar{font-size:21px;margin-bottom:-3px}
+  .seat .trump-marker{font-size:12px;padding:2px 5px;margin-bottom:2px}
+  .seat .name{font-size:10px;padding:4px 5px;border-radius:7px;overflow:hidden;text-overflow:ellipsis}
+  .seat .score{font-size:8px;padding:3px 1px;white-space:nowrap;overflow:hidden}
+  .seat.top{
+    top:clamp(145px,22vh,205px);left:50%;
+    transform:translateX(-50%);
+  }
+  .seat.left{left:4px;top:49%;transform:translateY(-50%)}
+  .seat.right{right:4px;top:49%;transform:translateY(-50%)}
+  .seat.bottom{
+    left:50%;bottom:clamp(74px,10vh,100px);
+    transform:translateX(-50%);
+  }
+
+  /* Opponent hands: keep card backs behind the name plates */
+  .hand.top{
+    top:clamp(115px,17vh,155px);left:50%;
+    transform:translateX(-50%);
+    width:92vw;height:54px;overflow:hidden;
+    justify-content:center;align-items:flex-start;
+  }
+  .hand.top .card{
+    width:clamp(22px,6vw,30px);height:42px;
+    margin-left:clamp(-12px,-2.6vw,-8px);
+    border-radius:4px;flex-shrink:0;
+  }
+  .hand.top .card:first-child{margin-left:0}
+
+  .hand.left,.hand.right{
+    top:50%;width:48px;height:clamp(190px,30vh,270px);
+    transform:translateY(-50%);
+    justify-content:flex-start;align-items:center;
+    overflow:hidden;
+  }
+  .hand.left{left:0}
+  .hand.right{right:0}
+  .hand.left .card,.hand.right .card{
+    width:35px;height:50px;
+    margin-top:-31px;transform:none;
+    border-radius:4px;flex-shrink:0;
+  }
+  .hand.left .card:first-child,.hand.right .card:first-child{margin-top:0}
+
+  /* User's 13 cards: calculate overlap so every card stays on screen */
+  .hand.bottom{
+    left:0;right:0;bottom:0;width:100%;
+    height:clamp(86px,13vh,112px);
+    transform:none;justify-content:center;align-items:flex-end;
+    padding:0 3px 5px;overflow:visible;
+    z-index:25;
+  }
+  .hand.bottom .card{
+    width:clamp(24px,7.25vw,43px);
+    height:clamp(43px,12.2vw,68px);
+    margin-left:clamp(-15px,-2.25vw,-8px);
+    border-radius:5px;flex:0 1 auto;
+  }
+  .hand.bottom .card:first-child{margin-left:0}
+  .hand.bottom .card .corner{
+    top:3px;left:3px;font-size:clamp(10px,3vw,15px);
+  }
+  .hand.bottom .card .corner span{
+    font-size:clamp(9px,2.6vw,13px);margin-top:1px;
+  }
+  .hand.bottom .card .pip{font-size:clamp(19px,5.6vw,31px)}
+  .hand.bottom .card.legal{transform:translateY(-5px)}
+  .hand.bottom .card.legal:hover{transform:translateY(-5px)}
+
+  /* Four cards in the centre */
+  .center{
+    top:52%;left:50%;transform:translate(-50%,-50%);
+    width:min(160px,44vw);height:180px;
+  }
+  .play-slot{width:45px;height:66px}
+  .play-slot .card{width:45px;height:66px;border-radius:5px}
+  .play-slot .card .corner{font-size:11px;top:3px;left:3px}
+  .play-slot .card .corner span{font-size:9px}
+  .play-slot .card .pip{font-size:22px}
+  .play-slot .card.collect-top{transform:translateY(-90px) scale(.55)}
+  .play-slot .card.collect-right{transform:translateX(82px) scale(.55)}
+  .play-slot .card.collect-bottom{transform:translateY(90px) scale(.55)}
+  .play-slot .card.collect-left{transform:translateX(-82px) scale(.55)}
+  .message{
+    top:calc(52% + 100px);left:50%;
+    max-width:72vw;font-size:9px;padding:5px 7px;
+  }
+
+  /* Modals fit within phone height; both bid panels remain readable */
+  .modal{padding:8px;overflow-y:auto;align-items:center}
+  .dialog{width:94vw;max-width:94vw;max-height:92dvh;overflow-y:auto;padding:14px 12px;border-radius:15px}
+  .dialog h2{font-size:21px;margin-bottom:7px}
+  .dialog p{font-size:12px;line-height:1.35;margin:7px 0}
+  #bidModal .dialog{width:96vw;max-width:96vw;max-height:92dvh;padding:10px 8px}
+  .bid-choice-grid{grid-template-columns:1fr 1fr;gap:6px}
+  .bid-panel{padding:7px 5px;border-radius:9px}
+  .bid-panel h3{font-size:11px;margin-bottom:6px}
+  .bid-panel .tool{font-size:11px;padding:7px 2px}
+  .bid-number-grid,.bid-color-grid{gap:4px}
+  .bid-panel .hint{font-size:9px;line-height:1.25;min-height:28px;margin-top:5px}
+  .dialog button{font-size:13px;padding:8px 5px;margin:4px}
+}
+
+/* Very narrow phones: slightly tighter cards without hiding their rank/suit */
+@media (max-width:380px) and (orientation:portrait){
+  .hand.bottom .card{
+    width:clamp(22px,6.9vw,27px);
+    height:clamp(40px,11.5vw,48px);
+    margin-left:-9px;
+  }
+  .hand.bottom .card:first-child{margin-left:0}
+  .hand.bottom .card .corner{font-size:10px;top:2px;left:2px}
+  .hand.bottom .card .corner span{font-size:9px}
+  .hand.bottom .card .pip{font-size:18px}
+  .scoreboard{width:43vw}
+  .seat .score{font-size:7px}
+}
+
 </style>
 </head>
 
@@ -489,7 +769,7 @@ button{font:inherit;cursor:pointer}
  </div>
 
  <div class="notice" id="notice">
-  Review your 5 cards and declare your Bol.
+  Review your first 5 cards and choose Hukum or PASS.
  </div>
 
  <aside class="scoreboard" aria-label="Live scoreboard">
@@ -700,6 +980,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   fullDeck=shuffle(makeDeck());
 
+  // First deal: 5 cards to each player for the Hukum / PASS decision.
+  // The remaining 32 cards stay in the deck until Step 1 is confirmed.
   for(let i=0;i<4;i++){
    hands[i]=fullDeck.slice(i*5,(i*5)+5);
   }
@@ -708,7 +990,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   render();
 
-  $('notice').textContent='Review your 5 cards and declare your Bol.';
+  $('notice').textContent='Review your first 5 cards and choose Hukum or PASS.';
   $('message').style.display='none';
 
   setTimeout(()=>{
@@ -1008,8 +1290,8 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  /* TWO-STEP BIDDING SYSTEM
-    Step 1: After first 5 cards choose a Hukum suit OR Pass.
-    Step 2: After all 13 cards, choose exactly ONE bid:
+    Step 1: After receiving the first 5 cards choose a Hukum suit OR Pass.
+    Step 2: After receiving the remaining 8 cards (13 total), choose exactly ONE bid:
       - If Hukum was selected: Hukum Bol 1-13 OR same-suit Color Bol 5-13.
       - If Pass was selected: choose a color and Color Bol 5-13.
     Only one final bid table is used; there is no separate third table.
@@ -1224,12 +1506,13 @@ window.addEventListener('DOMContentLoaded',()=>{
    }
    bidMode=null;selectedHukumRun=null;selectedColorRun=null;selectedColor=selectedTrump;
    $('bidModal').classList.remove('show');
+   // Step 1 confirmed: deal the remaining 8 cards to each player.
    hands[0].push(...fullDeck.slice(20,28));
    hands[1].push(...fullDeck.slice(28,36));
    hands[2].push(...fullDeck.slice(36,44));
    hands[3].push(...fullDeck.slice(44,52));
    hands.forEach(sortHand);render();
-   $('notice').textContent='All 13 cards have been dealt. Ab apna ek Bol select karein.';
+   $('notice').textContent='Ab sabhi 13 cards mil gaye hain. Apna Bol select karein.';
    setTimeout(()=>openBidStage(2),350);
    return;
   }
@@ -1454,11 +1737,15 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   clearTimeout(botTimer);
 
-  // Exact bid earns the declared points; any miss (under or over) loses them.
+  // Meeting or exceeding the Bol earns the declared Bol points.
+  // Only falling short deducts the full declared Bol. Scores may go negative.
   for(let p=0;p<4;p++){
    const target=Number(bidTargets[p]||0);
-   if(tricksWon[p]===target) totalScores[p]+=target;
-   else totalScores[p]-=target;
+   if(tricksWon[p]>=target){
+    totalScores[p]+=target;
+   }else{
+    totalScores[p]-=target;
+   }
   }
 
   render();
@@ -1466,8 +1753,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Complete';
   const roundLines=names.map((n,i)=>{
    const target=bidTargets[i]??'-';
-   const result=tricksWon[i]===target?'Bol Sahi':'Bol Galat';
-   const delta=tricksWon[i]===target?`+${target}`:`-${target}`;
+   const result=tricksWon[i]>=target?'Bol Sahi':'Bol Galat';
+   const delta=tricksWon[i]>=target?`+${target}`:`-${target}`;
    return `${n}: Bol ${target}, Won ${tricksWon[i]}, ${result} (${delta}), Total Score ${totalScores[i]}`;
   });
   if(winnerIndex>=0){
