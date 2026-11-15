@@ -2852,10 +2852,10 @@ window.addEventListener('DOMContentLoaded',()=>{
    return;
   }
 
-  const roundWinners=names.map((n,i)=>i).filter(i=>tricksWon[i]>=Number(bidTargets[i]||0));
-  $('modalText').innerHTML=celebrationMarkup(roundWinners)+roundLines.join('<br>')+'<br><br>Agli baazi shuru ho rahi hai...';
+  // A normal round is not the end of the full game: show only the score summary.
+  // Congratulations, applause and fireworks are reserved for the final game winner.
+  $('modalText').innerHTML='<strong>Is round ka score:</strong><br><br>'+roundLines.join('<br>')+'<br><br>Agli baazi shuru ho rahi hai...';
   $('modal').classList.add('show');
-  celebrationSound();
 
   selectedTrump=null;
   selectedHukumRun=null;
