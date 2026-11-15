@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baazigar Card Game</title>
+<title>Minus Taas Ki Mehfil</title>
 
 <style>
 :root{
@@ -751,10 +751,310 @@ button{font:inherit;cursor:pointer}
   .seat .score{font-size:7px}
 }
 
+
+/* Scoreboard window hidden as requested; scoring logic remains active. */
+.scoreboard{display:none !important;}
+
+
+/* Responsive game + original Minus Taas Ki Mehfil intro panel */
+html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+body{background:#071e16}
+.app-layout{
+  width:100%;min-height:100vh;
+  display:grid;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);
+  align-items:stretch;gap:0;padding:12px;
+  background:radial-gradient(ellipse at top,#172a25 0%,#101815 65%,#080d0b 100%);
+}
+.app-layout>.table{
+  width:100%;height:calc(100vh - 24px);min-height:600px;
+  border-radius:3px;
+}
+.mehfil-panel{
+  min-width:0;min-height:calc(100vh - 24px);position:relative;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(18px,3vw,46px);
+  overflow:hidden;color:#fff5d8;
+  background:
+    radial-gradient(circle at 80% 20%,#f0c56b22 0 2px,transparent 3px),
+    radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%);
+  border:1px solid #cda85c;border-left:0;
+  box-shadow:inset 0 0 0 5px #d6b56a22,inset 0 0 55px #020a12aa;
+}
+.mehfil-kicker{font-size:10px;letter-spacing:3px;color:#e9c878;font-weight:800;margin-bottom:22px}
+.mehfil-art{
+  min-height:390px;position:relative;display:flex;align-items:center;
+  padding:clamp(20px,3vw,42px);
+  border:1px solid #cda85c;border-radius:22px;
+  background:linear-gradient(135deg,#163e4d 0%,#102d47 52%,#0a1c31 100%);
+  box-shadow:0 16px 35px #0008,inset 0 0 35px #c79d4a14;
+  overflow:hidden;
+}
+.mehfil-art:before,.mehfil-art:after{
+  content:"";position:absolute;pointer-events:none;border:1px solid #d6b56a55;border-radius:16px;
+}
+.mehfil-art:before{inset:8px}
+.mehfil-art:after{inset:14px;border-style:dashed;opacity:.45}
+.mehfil-copy{position:relative;z-index:3;max-width:68%}
+.mehfil-eyebrow{font-size:10px;letter-spacing:2px;color:#f1d58e;font-weight:800}
+.mehfil-copy h1{font-size:clamp(36px,5.2vw,76px);line-height:.9;margin:18px 0 12px;font-weight:1000;letter-spacing:-2px;color:#ffe08a;text-shadow:0 4px 0 #7b4b17,0 9px 18px #0009}
+.mehfil-copy h1 span{display:block;font-size:.48em;line-height:1.15;letter-spacing:1px;color:#fff5df;margin-top:9px}
+.mehfil-copy p{font-size:clamp(13px,1.4vw,18px);color:#e8e4d7;margin:18px 0}
+.mehfil-rule{width:74px;height:3px;background:#e4bd67;margin:20px 0}
+.mehfil-tags{display:flex;flex-wrap:wrap;gap:7px}
+.mehfil-tags span{padding:7px 10px;border:1px solid #d9b76a88;border-radius:20px;color:#f5d98f;font-size:11px;font-weight:800;background:#081c2c88}
+.mehfil-note{font-size:12px;color:#c7d4d5;margin-top:22px;line-height:1.5}
+.mehfil-cards{position:absolute;right:7%;top:50%;width:36%;height:230px;transform:translateY(-50%)}
+.mehfil-card{
+  position:absolute;width:clamp(82px,10vw,140px);height:clamp(125px,15vw,205px);
+  border:5px solid #fff8e8;border-radius:12px;background:linear-gradient(145deg,#fff 0%,#f4ead7 100%);
+  box-shadow:0 12px 24px #0009;color:#122b40;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.mehfil-card b{position:absolute;top:8px;left:10px;font-size:clamp(20px,2.4vw,34px)}
+.mehfil-card span{font-size:clamp(44px,5vw,68px)}
+.mehfil-card.card-one{left:0;top:25px;transform:rotate(-18deg);color:#bd2834}
+.mehfil-card.card-two{left:31%;top:0;transform:rotate(1deg)}
+.mehfil-card.card-three{right:0;top:28px;transform:rotate(17deg);color:#bd2834}
+.mehfil-seal{
+  position:absolute;right:6%;bottom:9%;z-index:4;width:62px;height:62px;border-radius:50%;
+  display:grid;place-content:center;text-align:center;background:linear-gradient(145deg,#ffe59b,#b47a25);
+  border:3px solid #fff0bd;color:#57350e;font-weight:1000;font-size:21px;box-shadow:0 5px 12px #0008;
+}
+.mehfil-seal small{font-size:8px;letter-spacing:1px}
+.mehfil-footer{text-align:center;color:#c9b77f;font-size:9px;letter-spacing:2px;margin-top:22px}
+.mehfil-footer span{color:#f6d77e;margin:0 7px}
+
+/* On phones the game is the first full screen; intro panel is below and reached by scrolling. */
+@media(max-width:700px){
+  html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+  .app-layout{display:flex;flex-direction:column;gap:0;padding:0;min-height:0}
+  .app-layout>.table{
+    flex:0 0 100svh;width:100vw;height:100svh;height:100dvh;
+    min-height:560px;border-radius:0;
+  }
+  .mehfil-panel{
+    flex:0 0 auto;width:100%;min-height:82svh;
+    padding:24px 18px 30px;border-left:1px solid #cda85c;
+    border-top:0;
+  }
+  .mehfil-kicker{font-size:9px;letter-spacing:2px;margin-bottom:16px}
+  .mehfil-art{min-height:440px;padding:24px 18px;align-items:flex-start}
+  .mehfil-copy{max-width:100%;padding-top:4px}
+  .mehfil-copy h1{font-size:clamp(43px,12vw,68px);margin-top:15px}
+  .mehfil-copy h1 span{font-size:.43em}
+  .mehfil-copy p{font-size:14px;max-width:90%}
+  .mehfil-cards{top:auto;bottom:34px;right:8%;width:75%;height:175px;transform:none;opacity:.96}
+  .mehfil-card{width:90px;height:135px}
+  .mehfil-card b{font-size:22px}
+  .mehfil-card span{font-size:48px}
+  .mehfil-seal{right:7%;bottom:7%;width:52px;height:52px;font-size:18px}
+  .mehfil-footer{font-size:8px;line-height:1.6;letter-spacing:1px}
+}
+
+
+/* BOT HAND SPACING: keep all opponent cards inside the table and leave clear room behind Radhika. */
+@media (min-width:701px){
+  /* Samar - top row */
+  .hand.top{
+    width:min(430px,46%);
+    height:120px;
+    top:12px;
+  }
+  .hand.top .card{
+    width:46px;
+    height:68px;
+    margin-left:-20px;
+    border-radius:7px;
+  }
+  .hand.top .card:first-child{margin-left:0}
+
+  /* Ananya - left row: smaller cards, tucked neatly toward the outer edge */
+  .hand.left{
+    left:-12px;
+    width:135px;
+    height:330px;
+  }
+  .hand.left .card{
+    width:58px;
+    height:84px;
+    margin-top:-52px;
+    border-radius:8px;
+    transform:rotate(90deg) scale(.88);
+    transform-origin:center;
+  }
+  .hand.left .card:first-child{margin-top:0}
+
+  /* Radhika - right row: smaller and shifted farther back into the free space */
+  .hand.right{
+    right:-34px;
+    width:135px;
+    height:330px;
+  }
+  .hand.right .card{
+    width:58px;
+    height:84px;
+    margin-top:-52px;
+    border-radius:8px;
+    transform:rotate(90deg) scale(.82);
+    transform-origin:center;
+  }
+  .hand.right .card:first-child{margin-top:0}
+}
+
+
+/* FINAL DESKTOP POSITION FIX: right opponent mirrors left opponent; user hand centered inside table */
+@media (min-width:701px){
+  /* Priya/Radhika side cards should sit close to the seat, matching Shreya's layout */
+  .hand.right{
+    right:calc(22% + 10px) !important;
+    left:auto !important;
+    width:135px !important;
+    height:330px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+  .hand.right .card{
+    width:58px !important;
+    height:84px !important;
+    margin-top:-52px !important;
+    transform:rotate(90deg) scale(.88) !important;
+    transform-origin:center !important;
+  }
+  .hand.right .card:first-child{margin-top:0 !important}
+
+  /* Keep all 13 of the user's cards centered within the green game table */
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    width:96% !important;
+    max-width:96% !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+    box-sizing:border-box !important;
+    overflow:visible !important;
+  }
+}
+
+
+/* Align each opponent's card stack exactly with that player's seat center */
+@media (min-width:701px){
+  /* Kavya: centered above the top seat */
+  .hand.top{
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;
+  }
+
+  /* Rohan: center card stack on the left seat */
+  .hand.left{
+    left:-12px !important;
+    right:auto !important;
+    width:135px !important;
+    transform:translateY(-50%) !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+
+  /* Aditya: mirror Rohan so the stack is centered on the right seat,
+     instead of being pushed toward the middle of the table */
+  .hand.right{
+    right:-12px !important;
+    left:auto !important;
+    width:135px !important;
+    transform:translateY(-50%) !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+}
+
+
+/* Keep played trick cards in a balanced cross at the exact center of the green table.
+   This also prevents the left-side played card from covering Rohan's name/seat. */
+@media (min-width:701px){
+  .center{
+    left:50% !important;
+    top:48% !important;
+    width:min(420px,48vw) !important;
+    height:340px !important;
+    transform:translate(-50%,-50%) !important;
+  }
+  #slot1{
+    top:0 !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+  }
+  #slot0{
+    bottom:0 !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+  }
+  #slot2{
+    left:0 !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+  #slot3{
+    right:0 !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+}
+/* On phones, keep the four played cards centered in the game table too. */
+@media (max-width:700px){
+  .center{
+    left:50% !important;
+    top:52% !important;
+    width:min(190px,52vw) !important;
+    height:180px !important;
+    transform:translate(-50%,-50%) !important;
+  }
+  #slot1{left:50% !important;right:auto !important;top:0 !important;transform:translateX(-50%) !important}
+  #slot0{left:50% !important;right:auto !important;bottom:0 !important;transform:translateX(-50%) !important}
+  #slot2{left:0 !important;right:auto !important;top:50% !important;transform:translateY(-50%) !important}
+  #slot3{right:0 !important;left:auto !important;top:50% !important;transform:translateY(-50%) !important}
+}
+
+
+/* Distinct app sections: green game table and classic blue Mehfil panel */
+.app-layout{gap:12px !important;padding:12px !important}
+.app-layout>.table{
+  border:8px solid #b7a46a !important;
+  box-shadow:0 0 0 2px #6f501f,0 8px 22px #0008,inset 0 0 50px #002e12 !important;
+}
+.mehfil-panel{
+  border:2px solid #b9954b !important;
+  border-radius:8px !important;
+  box-shadow:inset 0 0 0 5px #d6b56a22,inset 0 0 55px #020a12aa,0 8px 22px #0008 !important;
+}
+@media(max-width:700px){
+  .app-layout{gap:12px !important;padding:0 !important}
+  .app-layout>.table{border:5px solid #b7a46a !important}
+  .mehfil-panel{border:2px solid #b9954b !important;border-radius:8px !important}
+}
+
+
+/* Both side-by-side tables use the same MINUS TAAS KI MEHFIL teal background */
+.app-layout>.table{
+  background:
+    radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%) padding-box,
+    linear-gradient(135deg,#fff1ad 0%,#b47b22 16%,#f8df91 32%,#805018 50%,#e7c36d 68%,#9b681d 84%,#fff0a8 100%) border-box !important;
+  box-shadow:inset 0 0 50px #020a12aa,inset 0 0 0 3px #fff4,0 0 0 3px #684515,0 0 14px #0009 !important;
+}
+
 </style>
 </head>
 
 <body>
+<div class="app-layout">
 <div class="table">
 
  <div class="topbar">
@@ -848,6 +1148,27 @@ button{font:inherit;cursor:pointer}
    <button class="tool" id="confirmBidBtn" style="width:100%;margin-top:5px" disabled>Confirm</button>
   </div>
  </div>
+</div>
+<section class="mehfil-panel" aria-label="Minus Taas Ki Mehfil introduction">
+  <div class="mehfil-kicker">BAAZIGAR CARD TABLE • DESI TAASH EXPERIENCE</div>
+  <div class="mehfil-art">
+    <div class="mehfil-copy">
+      <div class="mehfil-eyebrow">TAASH KHELO • MEHFIL JAMAO</div>
+      <h1>MINUS <span>TAAS KI MEHFIL</span></h1>
+      <p>Har chaal mein dimaag, har baazi mein mazaa.</p>
+      <div class="mehfil-rule"></div>
+      <div class="mehfil-tags"><span>♠ HUKUM</span><span>♥ PAAN</span><span>♦ EENT</span><span>♣ CHIDI</span></div>
+      <div class="mehfil-note">Apni chaal chuno. Apna Bol lagao. Mehfil jamao.</div>
+    </div>
+    <div class="mehfil-cards" aria-hidden="true">
+      <div class="mehfil-card card-one"><b>A</b><span>♠</span></div>
+      <div class="mehfil-card card-two"><b>K</b><span>♥</span></div>
+      <div class="mehfil-card card-three"><b>Q</b><span>♦</span></div>
+    </div>
+    <div class="mehfil-seal">13<br><small>TAASH</small></div>
+  </div>
+  <div class="mehfil-footer">MINUS TAAS KI MEHFIL <span>•</span> EK NAYA DESI CARD GAME EXPERIENCE</div>
+</section>
 </div>
 
 <script>
