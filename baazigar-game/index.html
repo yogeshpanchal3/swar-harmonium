@@ -1973,25 +1973,12 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function sortHand(h){
-  // Arrange all four suits in a rotating sequence based on the active Hukum.
-  // The Hukum suit is always at the FAR RIGHT, and the three suits to its
-  // left follow the requested fixed cycle without mixing:
-  // Chidi -> Paan, Hukum, Eent, Chidi
-  // Eent  -> Chidi, Paan, Hukum, Eent
-  // Paan  -> Hukum, Eent, Chidi, Paan
-  // Hukum -> Eent, Chidi, Paan, Hukum
-  // PASS keeps Spades (Hukum) as the active trump suit.
-  const suitCycle=['♦','♣','♥','♠'];
-  let displayOrder;
-  if(trumpSuit && suitCycle.includes(trumpSuit)){
-   const trumpIndex=suitCycle.indexOf(trumpSuit);
-   displayOrder=[...suitCycle.slice(trumpIndex+1),...suitCycle.slice(0,trumpIndex+1)];
-  }else{
-   displayOrder=[...suitCycle];
-  }
-  const suitRank=new Map(displayOrder.map((s,i)=>[s,i]));
+  // Keep the active Hukum suit at the FAR RIGHT of every player's hand.
+  // The other three suits retain their usual order.
+  const displayOrder=suits.filter(s=>s!==trumpSuit);
+  if(trumpSuit)displayOrder.push(trumpSuit);
   h.sort((a,b)=>
-   (suitRank.get(a.s)??99)-(suitRank.get(b.s)??99)||a.v-b.v
+   displayOrder.indexOf(a.s)-displayOrder.indexOf(b.s)||a.v-b.v
   );
  }
 
@@ -2373,81 +2360,36 @@ window.addEventListener('DOMContentLoaded',()=>{
    confirm.textContent=firstHukumPassed?'Confirm PASS':selectedTrump?`Confirm ${getSuitName(selectedTrump)} Hukum`:'Select Hukum';
    confirm.disabled=!(firstHukumPassed||selectedTrump);
   } else if(bidStage===2){
-   if(firstHukumPassed){
-    // PASS: show both bidding options. Only one may be selected.
-    title.textContent='Select Your Bol';
-    desc.textContent='PASS kiya tha: Hukum Bol ya Color Bol — dono mein se sirf ek chunein.';
-    const suitButtons=[['♠','Hukam',''],['♥','Paan','color:#d71920'],['♦','Eent','color:#d71920'],['♣','Chidi','']];
-    content.innerHTML=`
-     <div class="bid-choice-grid">
-      <section class="bid-panel">
-       <h3>Hukum Bol (1–13)</h3>
-       <div class="hint" style="margin:0 0 8px">Hukum Bol ke liye 1 se 13 tak number chunein.</div>
-       <div class="bid-number-grid" id="hukumNumbers">${Array.from({length:13},(_,i)=>`<button class="tool hukum-number" data-val="${i+1}">${i+1}</button>`).join('')}</div>
-      </section>
-      <section class="bid-panel">
-       <h3>Color Bol (10–13)</h3>
-       <div class="bid-color-grid" id="colorSuitChoices">${suitButtons.map(([s,n,style])=>`<button class="tool color-pick" data-suit="${s}" style="${style}">${s} ${n}</button>`).join('')}</div>
-       <div class="bid-number-grid" id="colorNumbers">${[10,11,12,13].map(n=>`<button class="tool color-number" data-val="${n}" disabled>${n}</button>`).join('')}</div>
-       <div class="hint" id="colorHint">Pehle Color Bol ka rang chunein, phir 10 se 13 mein se number chunein.</div>
-      </section>
-     </div>`;
-    content.querySelectorAll('.hukum-number').forEach(btn=>{
-     const val=Number(btn.dataset.val);
-     if(selectedHukumRun===val)btn.classList.add('active');
-     btn.addEventListener('click',()=>{
-      selectedHukumRun=val;selectedColorRun=null;bidMode='hukum';
-      content.querySelectorAll('.hukum-number').forEach(b=>b.classList.toggle('active',b===btn));
-      content.querySelectorAll('.color-number').forEach(b=>b.classList.remove('active'));
-      updateFinalBidPreview();
-     });
-    });
-    content.querySelectorAll('.color-pick').forEach(btn=>{
-     if(btn.dataset.suit===selectedColor)btn.classList.add('active');
-     btn.addEventListener('click',()=>{
-      selectedColor=btn.dataset.suit;selectedColorRun=null;
-      content.querySelectorAll('.color-pick').forEach(b=>b.classList.toggle('active',b===btn));
-      content.querySelectorAll('.color-number').forEach(b=>{b.disabled=false;b.classList.remove('active')});
-      $('colorHint').textContent=`${getSuitName(selectedColor)} (${selectedColor}) mein 10–13 mein se number chunein.`;
-      bidMode='color';selectedHukumRun=null;
-      content.querySelectorAll('.hukum-number').forEach(b=>b.classList.remove('active'));
-      updateFinalBidPreview();
-     });
-    });
-    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
-     if(!selectedColor)return;
-     selectedColorRun=Number(btn.dataset.val);selectedHukumRun=null;bidMode='color';
-     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
-     content.querySelectorAll('.hukum-number').forEach(b=>b.classList.remove('active'));
+   title.textContent='Sabse Badi Bol Lagayein';
+   desc.textContent='Kisi bhi rang mein 5 se 13 tak bol laga sakte hain. Agli bol pichhli sabse badi bol se zyada honi chahiye.';
+   const suitButtons=[['♠','Hukam',''],['♥','Paan','color:#d71920'],['♦','Eent','color:#d71920'],['♣','Chidi','']];
+   content.innerHTML=`
+    <section class="bid-panel" style="width:100%;box-sizing:border-box">
+     <h3>Apna Rang aur Bol Chunein (5–13)</h3>
+     <div class="bid-color-grid" id="colorSuitChoices">${suitButtons.map(([s,n,style])=>`<button class="tool color-pick" data-suit="${s}" style="${style}">${s} ${n}</button>`).join('')}</div>
+     <div class="bid-number-grid" id="colorNumbers">${Array.from({length:9},(_,i)=>i+5).map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div>
+     <div class="hint">Sabse unchi bol lagane wale ka chuna hua rang Hukum banega. Barabar bol ko pehle bolne wala jeetega.</div>
+    </section>`;
+   if(!selectedColor)selectedColor=selectedTrump||'♠';
+   content.querySelectorAll('.color-pick').forEach(btn=>{
+    if(btn.dataset.suit===selectedColor)btn.classList.add('active');
+    btn.addEventListener('click',()=>{
+     selectedColor=btn.dataset.suit;
+     content.querySelectorAll('.color-pick').forEach(b=>b.classList.toggle('active',b===btn));
      updateFinalBidPreview();
-    }));
-    if(selectedColor){content.querySelectorAll('.color-number').forEach(b=>b.disabled=false);$('colorHint').textContent=`${getSuitName(selectedColor)} (${selectedColor}) mein 10–13 mein se number chunein.`;}
-   }else{
-    // A suit was selected in Step 1: show ONLY that suit's Color Bol table.
-    title.textContent='Select Your Bol';
-    desc.textContent=`${getSuitName(selectedTrump)} Hukum chuna hai. Ab sirf ${getSuitName(selectedTrump)} Color Bol 5–13 mein se chunein.`;
-    selectedColor=selectedTrump;
-    content.innerHTML=`
-     <section class="bid-panel" style="width:100%;box-sizing:border-box">
-      <h3>${selectedTrump} ${getSuitName(selectedTrump)} Color Bol (5–13)</h3>
-      <div class="bid-number-grid" id="colorNumbers">${Array.from({length:9},(_,i)=>i+5).map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div>
-      <div class="hint">Sirf ${getSuitName(selectedTrump)} ke liye 5 se 13 tak number chunein.</div>
-     </section>`;
-    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
-     selectedColorRun=Number(btn.dataset.val);selectedHukumRun=null;bidMode='color';
-     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
-     updateFinalBidPreview();
-    }));
-   }
+    });
+   });
+   content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedColorRun=Number(btn.dataset.val);
+    content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
+    updateFinalBidPreview();
+   }));
    function updateFinalBidPreview(){
-    if(bidMode==='hukum'&&selectedHukumRun){
-     preview.textContent=`Hukum Bol: ${selectedHukumRun} Run.`;
-     confirm.textContent='Confirm Hukum Bol';confirm.disabled=false;
-    }else if(bidMode==='color'&&selectedColor&&selectedColorRun){
-     preview.textContent=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun} Run.`;
-     confirm.textContent='Confirm Color Bol';confirm.disabled=false;
+    if(selectedColor&&selectedColorRun){
+     preview.textContent=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}.`;
+     confirm.textContent='Confirm Bol';confirm.disabled=false;
     }else{
-     preview.textContent=firstHukumPassed?'Hukum Bol ya Color Bol mein se sirf ek chunein.':`${getSuitName(selectedTrump)} Color Bol mein 5–13 chunein.`;
+     preview.textContent='Rang aur 5 se 13 tak bol chunein.';
      confirm.textContent='Confirm Bol';confirm.disabled=true;
     }
    }
@@ -2500,43 +2442,26 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function assignComputerBids(){
-  // Each AI first estimates its own bid from its complete 13-card hand.
-  // The combined bids may be 11, 12 OR 13, but must never exceed 13.
-  // If the estimates together exceed the remaining room, scale them fairly
-  // instead of letting the first bot take nearly all available tricks.
-  const remaining=Math.max(0,13-Number(bidTargets[0]||0));
-  const estimates=[1,2,3].map(p=>estimateHandStrength(hands[p],trumpSuit));
-  const estimateTotal=estimates.reduce((sum,n)=>sum+n,0);
-  let allocated=[...estimates];
-
-  if(estimateTotal>remaining){
-   const exact=estimates.map(n=>remaining*n/estimateTotal);
-   allocated=exact.map(n=>Math.floor(n));
-   let left=remaining-allocated.reduce((sum,n)=>sum+n,0);
-   const order=exact.map((value,i)=>({i,fraction:value-Math.floor(value),strength:estimates[i]}))
-    .sort((a,b)=>b.fraction-a.fraction||b.strength-a.strength);
-   for(let i=0;i<left;i++) allocated[order[i%order.length].i]++;
-  }
-
-  for(let i=0;i<3;i++){
-   const p=i+1;
-   const bid=allocated[i];
-   bidTargets[p]=bid;
-
-   if(firstHukumPassed){
-    if(bid>=10){
-     const side=strongestSideSuit(hands[p],trumpSuit);
-     bids[p]=`${getSuitName(side)} Color Bol: ${bid}`;
-    }else{
-     bids[p]=`Hukum Bol: ${bid}`;
-    }
+  // AI players evaluate every possible trump suit from their actual 13 cards.
+  // They only raise the current high bid; equal bids keep the earlier bidder.
+  let highBid=Number(bidTargets[0]||0);
+  let winningSuit=selectedColor;
+  for(let p=1;p<=3;p++){
+   const choices=suits.map(s=>({s,estimate:estimateHandStrength(hands[p],s)}))
+    .sort((a,b)=>b.estimate-a.estimate);
+   const best=choices[0];
+   const natural=Math.max(5,Math.min(13,Math.round(best.estimate)));
+   const bid=natural>highBid?natural:0;
+   if(bid){
+    bidTargets[p]=bid; bids[p]=`${getSuitName(best.s)} Color Bol: ${bid}`;
+    highBid=bid; winningSuit=best.s;
    }else{
-    bids[p]=`${getSuitName(trumpSuit)} Color Bol: ${bid}`;
+    bidTargets[p]=0; bids[p]='PASS';
    }
   }
-
-  const total=bidTargets.reduce((sum,n)=>sum+Number(n||0),0);
-  if(total>13) throw new Error('Total Bol cannot exceed 13');
+  trumpSuit=winningSuit;
+  makerId=bidTargets.indexOf(highBid);
+  if(makerId<0)makerId=0;
  }
 
  $('confirmBidBtn').addEventListener('click',()=>{
@@ -2562,24 +2487,17 @@ window.addEventListener('DOMContentLoaded',()=>{
    return;
   }
   if(bidStage===2){
-   if(bidMode==='hukum'){
-    if(!selectedHukumRun)return;
-    bids[0]=`${bids[0]} | Hukum Bol: ${selectedHukumRun}`;
-    bidTargets[0]=selectedHukumRun;
-   }else if(bidMode==='color'){
-    if(!selectedColor||!selectedColorRun)return;
-    bids[0]=`${bids[0]} | ${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;
-    bidTargets[0]=selectedColorRun;
-    // In PASS mode, Color Bol is only a bid: Spades remain the sole Hukum Kaat.
-    // Otherwise, the selected Color Bol suit becomes trump as before.
-    if(!firstHukumPassed)trumpSuit=selectedColor;
-   }else{return}
-   // Re-sort after the final Hukum suit is known, for all four players.
+   if(!selectedColor||!selectedColorRun)return;
+   bids[0]=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;
+   bidTargets[0]=selectedColorRun;
+   // User bids first. AI players may outbid with a higher card-based estimate.
+   trumpSuit=selectedColor;
    hands.forEach(sortHand);
    assignComputerBids();
+   hands.forEach(sortHand);
    $('bidModal').classList.remove('show');
    phase='play';turn=roundStarter;
-   $('notice').textContent=`${bids[0]}. Total Bol: ${bidTargets.reduce((sum,n)=>sum+Number(n||0),0)}/13 (maximum). Game starts!`;
+   $('notice').textContent=`${names[makerId]} ki sabse badi bol: ${getSuitName(trumpSuit)} ${bidTargets[makerId]}. Yehi rang Hukum hai. Game starts!`;
    $('message').style.display='block';
    $('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
    render();
