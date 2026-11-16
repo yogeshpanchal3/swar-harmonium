@@ -1937,6 +1937,9 @@ window.addEventListener('DOMContentLoaded',()=>{
  let selectedColor=null;
  let selectedColorRun=null;
  let firstHukumPassed=false;
+ let firstHukumChoices=['PASS','PASS','PASS','PASS'];
+ let allPassedFirstStage=false;
+ let selectedBidType='color';
 
  const $=id=>document.getElementById(id);
 
@@ -2000,6 +2003,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   selectedColorRun=null;
   bidMode=null;
   firstHukumPassed=false;
+  firstHukumChoices=['PASS','PASS','PASS','PASS'];
+  allPassedFirstStage=false;
+  selectedBidType='color';
 
   bids=['-','-','-','-'];
   bidTargets=[null,null,null,null];
@@ -2019,10 +2025,21 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
 
   hands.forEach(sortHand);
+  // All three AI players inspect their own first five cards and choose a suit or PASS.
+  for(let p=1;p<=3;p++){
+   const counts=suits.map(s=>({s,cards:hands[p].filter(c=>c.s===s)}));
+   counts.sort((a,b)=>{
+    const score=x=>x.cards.length*1.15+x.cards.reduce((v,c)=>v+(c.r==='A'?1.5:c.r==='K'?0.9:c.r==='Q'?0.45:0),0);
+    return score(b)-score(a);
+   });
+   const best=counts[0];
+   const strength=best.cards.length*1.15+best.cards.reduce((v,c)=>v+(c.r==='A'?1.5:c.r==='K'?0.9:c.r==='Q'?0.45:0),0);
+   firstHukumChoices[p]=(best.cards.length>=2 && strength>=2.7)?best.s:'PASS';
+  }
 
   render();
 
-  $('notice').textContent='Review your first 5 cards and choose Hukum or PASS.';
+  $('notice').textContent='Sabhi players apne pehle 5 patte dekhkar Hukum ya PASS chun rahe hain.';
   $('message').style.display='none';
 
   setTimeout(()=>{
@@ -2360,40 +2377,60 @@ window.addEventListener('DOMContentLoaded',()=>{
    confirm.textContent=firstHukumPassed?'Confirm PASS':selectedTrump?`Confirm ${getSuitName(selectedTrump)} Hukum`:'Select Hukum';
    confirm.disabled=!(firstHukumPassed||selectedTrump);
   } else if(bidStage===2){
-   title.textContent='Sabse Badi Bol Lagayein';
-   desc.textContent='Kisi bhi rang mein 5 se 13 tak bol laga sakte hain. Agli bol pichhli sabse badi bol se zyada honi chahiye.';
-   const suitButtons=[['♠','Hukam',''],['♥','Paan','color:#d71920'],['♦','Eent','color:#d71920'],['♣','Chidi','']];
-   content.innerHTML=`
-    <section class="bid-panel" style="width:100%;box-sizing:border-box">
-     <h3>Apna Rang aur Bol Chunein (5–13)</h3>
-     <div class="bid-color-grid" id="colorSuitChoices">${suitButtons.map(([s,n,style])=>`<button class="tool color-pick" data-suit="${s}" style="${style}">${s} ${n}</button>`).join('')}</div>
-     <div class="bid-number-grid" id="colorNumbers">${Array.from({length:9},(_,i)=>i+5).map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div>
-     <div class="hint">Sabse unchi bol lagane wale ka chuna hua rang Hukum banega. Barabar bol ko pehle bolne wala jeetega.</div>
-    </section>`;
-   if(!selectedColor)selectedColor=selectedTrump||'♠';
-   content.querySelectorAll('.color-pick').forEach(btn=>{
-    if(btn.dataset.suit===selectedColor)btn.classList.add('active');
-    btn.addEventListener('click',()=>{
-     selectedColor=btn.dataset.suit;
+   title.textContent=allPassedFirstStage?'Sabhi PASS — Hukum ya Color Bol Chunein':'Sabse Badi Bol Lagayein';
+   if(allPassedFirstStage){
+    desc.textContent='Hukum Bol 1–13 ya kisi bhi rang mein Color Bol 10–13 chunein. Sabse badi bol lagane wale ka rang Hukum hoga.';
+    content.innerHTML=`
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <section class="bid-panel"><h3>♠ Hukum Bol (1–13)</h3><div class="bid-number-grid" id="hukumNumbers">${Array.from({length:13},(_,i)=>i+1).map(n=>`<button class="tool hukum-number" data-val="${n}">${n}</button>`).join('')}</div></section>
+      <section class="bid-panel"><h3>Color Bol (10–13)</h3><div class="bid-color-grid" id="colorSuitChoices">${[['♠','Hukam'],['♥','Paan'],['♦','Eent'],['♣','Chidi']].map(([s,n])=>`<button class="tool color-pick" data-suit="${s}">${s} ${n}</button>`).join('')}</div><div class="bid-number-grid" id="colorNumbers">${[10,11,12,13].map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div></section>
+     </div>`;
+    content.querySelectorAll('.hukum-number').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedBidType='hukum';selectedHukumRun=Number(btn.dataset.val);selectedColorRun=null;
+     content.querySelectorAll('.hukum-number').forEach(b=>b.classList.toggle('active',b===btn));
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.remove('active'));
+     updateFallbackPreview();
+    }));
+    content.querySelectorAll('.color-pick').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedColor=btn.dataset.suit;selectedBidType='color';
      content.querySelectorAll('.color-pick').forEach(b=>b.classList.toggle('active',b===btn));
-     updateFinalBidPreview();
-    });
-   });
-   content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
-    selectedColorRun=Number(btn.dataset.val);
-    content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
-    updateFinalBidPreview();
-   }));
-   function updateFinalBidPreview(){
-    if(selectedColor&&selectedColorRun){
-     preview.textContent=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}.`;
-     confirm.textContent='Confirm Bol';confirm.disabled=false;
-    }else{
-     preview.textContent='Rang aur 5 se 13 tak bol chunein.';
-     confirm.textContent='Confirm Bol';confirm.disabled=true;
+     updateFallbackPreview();
+    }));
+    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedColorRun=Number(btn.dataset.val);selectedBidType='color';selectedHukumRun=null;
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
+     content.querySelectorAll('.hukum-number').forEach(b=>b.classList.remove('active'));
+     updateFallbackPreview();
+    }));
+    function updateFallbackPreview(){
+     if(selectedBidType==='hukum'&&selectedHukumRun){preview.textContent=`Hukum Bol: ${selectedHukumRun}`;confirm.disabled=false;}
+     else if(selectedBidType==='color'&&selectedColor&&selectedColorRun){preview.textContent=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;confirm.disabled=false;}
+     else{preview.textContent='Dono mein se sirf ek bol chunein.';confirm.disabled=true;}
+     confirm.textContent='Confirm Bol';
     }
+    updateFallbackPreview();
+   }else{
+    desc.textContent='Pehle 5 patton mein Hukum chunne wale players hi ab 5 se 13 tak bol laga sakte hain. Sabse badi bol jeetegi.';
+    content.innerHTML=`
+     <section class="bid-panel" style="width:100%;box-sizing:border-box">
+      <h3>Apna Rang aur Bol Chunein (5–13)</h3>
+      <div class="bid-color-grid" id="colorSuitChoices">${[['♠','Hukam'],['♥','Paan'],['♦','Eent'],['♣','Chidi']].map(([s,n])=>`<button class="tool color-pick" data-suit="${s}">${s} ${n}</button>`).join('')}</div>
+      <div class="bid-number-grid" id="colorNumbers">${Array.from({length:9},(_,i)=>i+5).map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div>
+      <div class="hint">Aapki pehli 5 patton wali choice aur AI players ki choice ke mutabik highest bid hi Hukum banegi.</div>
+     </section>`;
+    if(!selectedColor)selectedColor=selectedTrump||'♠';
+    content.querySelectorAll('.color-pick').forEach(btn=>{
+     if(btn.dataset.suit===selectedColor)btn.classList.add('active');
+     btn.addEventListener('click',()=>{selectedColor=btn.dataset.suit;content.querySelectorAll('.color-pick').forEach(b=>b.classList.toggle('active',b===btn));updateRegularPreview();});
+    });
+    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{selectedColorRun=Number(btn.dataset.val);content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));updateRegularPreview();}));
+    function updateRegularPreview(){
+     if(selectedColor&&selectedColorRun){preview.textContent=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}.`;confirm.textContent='Confirm Bol';confirm.disabled=false;}
+     else{preview.textContent='Rang aur 5 se 13 tak bol chunein.';confirm.textContent='Confirm Bol';confirm.disabled=true;}
+    }
+    updateRegularPreview();
    }
-   updateFinalBidPreview();
+
   }
  }
  function getSuitName(s){return {'♠':'Hukam','♥':'Paan','♦':'Eent','♣':'Chidi'}[s]||s}
@@ -2442,58 +2479,91 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function assignComputerBids(){
-  // AI players evaluate every possible trump suit from their actual 13 cards.
-  // They only raise the current high bid; equal bids keep the earlier bidder.
+  // Only players who selected a Hukum suit in the first-five stage may bid here.
   let highBid=Number(bidTargets[0]||0);
   let winningSuit=selectedColor;
+  makerId=0;
   for(let p=1;p<=3;p++){
-   const choices=suits.map(s=>({s,estimate:estimateHandStrength(hands[p],s)}))
-    .sort((a,b)=>b.estimate-a.estimate);
-   const best=choices[0];
-   const natural=Math.max(5,Math.min(13,Math.round(best.estimate)));
-   const bid=natural>highBid?natural:0;
-   if(bid){
-    bidTargets[p]=bid; bids[p]=`${getSuitName(best.s)} Color Bol: ${bid}`;
-    highBid=bid; winningSuit=best.s;
-   }else{
-    bidTargets[p]=0; bids[p]='PASS';
-   }
+   if(firstHukumChoices[p]==='PASS'){bids[p]='PASS';bidTargets[p]=0;continue;}
+   const suit=firstHukumChoices[p];
+   const natural=Math.max(5,Math.min(13,Math.round(estimateHandStrength(hands[p],suit))));
+   if(natural>highBid){bidTargets[p]=natural;bids[p]=`${getSuitName(suit)} Color Bol: ${natural}`;highBid=natural;winningSuit=suit;makerId=p;}
+   else{bidTargets[p]=0;bids[p]='PASS';}
   }
   trumpSuit=winningSuit;
-  makerId=bidTargets.indexOf(highBid);
-  if(makerId<0)makerId=0;
+ }
+
+ function assignFallbackComputerBids(){
+  // When all four passed the first-five decision, AI players choose either
+  // Hukum 1-13 or a color 10-13, using their complete 13-card hand.
+  let highBid=Number(bidTargets[0]||0);
+  let winningSuit=selectedBidType==='hukum'?'♠':selectedColor;
+  makerId=0;
+  for(let p=1;p<=3;p++){
+   const suitOptions=suits.map(s=>({s,score:estimateHandStrength(hands[p],s)})).sort((a,b)=>b.score-a.score);
+   const best=suitOptions[0];
+   const colorBid=Math.max(10,Math.min(13,Math.round(best.score)));
+   const hukumBid=Math.max(1,Math.min(13,Math.round(estimateHandStrength(hands[p],'♠'))));
+   const useColor=colorBid>=hukumBid+2;
+   const bid=useColor?colorBid:hukumBid;
+   if(bid>highBid){highBid=bid;winningSuit=useColor?best.s:'♠';makerId=p;bidTargets[p]=bid;bids[p]=useColor?`${getSuitName(best.s)} Color Bol: ${bid}`:`Hukum Bol: ${bid}`;}
+   else{bidTargets[p]=0;bids[p]='PASS';}
+  }
+  trumpSuit=winningSuit;
  }
 
  $('confirmBidBtn').addEventListener('click',()=>{
   if(bidStage===1){
    if(!firstHukumPassed&&!selectedTrump)return;
-   if(firstHukumPassed){
-    // PASS means no selected color becomes trump; the complete Spade (Hukam)
-    // suit remains the only Hukum Kaat and can cut every other led suit.
-    trumpSuit='♠';bids[0]='PASS';bids[1]='-';
-   }else{
-    trumpSuit=selectedTrump;bids[0]=`${getSuitName(selectedTrump)} Hukum`;
-   }
-   bidMode=null;selectedHukumRun=null;selectedColorRun=null;selectedColor=selectedTrump;
+   firstHukumChoices[0]=firstHukumPassed?'PASS':selectedTrump;
+   allPassedFirstStage=firstHukumChoices.every(choice=>choice==='PASS');
    $('bidModal').classList.remove('show');
-   // Step 1 confirmed: deal the remaining 8 cards to each player.
+   // Deal the remaining eight cards only after all players' first-five choices are recorded.
    hands[0].push(...fullDeck.slice(20,28));
    hands[1].push(...fullDeck.slice(28,36));
    hands[2].push(...fullDeck.slice(36,44));
    hands[3].push(...fullDeck.slice(44,52));
    hands.forEach(sortHand);render();
-   $('notice').textContent='Ab sabhi 13 cards mil gaye hain. Apna Bol select karein.';
+   if(allPassedFirstStage){
+    bids=['-','-','-','-'];bidTargets=[null,null,null,null];
+    selectedBidType='color';selectedHukumRun=null;selectedColorRun=null;selectedColor='♠';
+    $('notice').textContent='Sabhi players ne pehle 5 patton par PASS kiya. Ab Hukum Bol 1–13 ya Color Bol 10–13 chunein.';
+   }else{
+    $('notice').textContent='Pehle 5 patton mein Hukum chunne wale players ab highest bol ke liye compete karenge.';
+    selectedColor=selectedTrump||firstHukumChoices.find(x=>x!=='PASS')||'♠';
+    // If You passed, only the AI players who selected Hukum take part in the final bid.
+    if(firstHukumChoices[0]==='PASS'){
+     bids[0]='PASS';bidTargets[0]=0;
+     assignComputerBids();
+     hands.forEach(sortHand);
+     phase='play';turn=roundStarter;
+     $('notice').textContent=`${names[makerId]} ki sabse badi bol: ${getSuitName(trumpSuit)} ${bidTargets[makerId]}. Yehi rang Hukum hai. Game starts!`;
+     $('message').style.display='block';
+     $('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
+     render();
+     if(turn!==0)botLoop();
+     return;
+    }
+   }
    setTimeout(()=>openBidStage(2),350);
    return;
   }
   if(bidStage===2){
-   if(!selectedColor||!selectedColorRun)return;
-   bids[0]=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;
-   bidTargets[0]=selectedColorRun;
-   // User bids first. AI players may outbid with a higher card-based estimate.
-   trumpSuit=selectedColor;
-   hands.forEach(sortHand);
-   assignComputerBids();
+   if(allPassedFirstStage){
+    if(selectedBidType==='hukum'){
+     if(!selectedHukumRun)return;
+     bidTargets[0]=selectedHukumRun;bids[0]=`Hukum Bol: ${selectedHukumRun}`;trumpSuit='♠';
+    }else{
+     if(!selectedColor||!selectedColorRun)return;
+     bidTargets[0]=selectedColorRun;bids[0]=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;trumpSuit=selectedColor;
+    }
+    assignFallbackComputerBids();
+   }else{
+    if(!selectedColor||!selectedColorRun)return;
+    bids[0]=`${getSuitName(selectedColor)} Color Bol: ${selectedColorRun}`;
+    bidTargets[0]=selectedColorRun;trumpSuit=selectedColor;
+    assignComputerBids();
+   }
    hands.forEach(sortHand);
    $('bidModal').classList.remove('show');
    phase='play';turn=roundStarter;
