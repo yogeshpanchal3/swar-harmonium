@@ -1973,12 +1973,25 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function sortHand(h){
-  // Keep the active Hukum suit at the FAR RIGHT of every player's hand.
-  // The other three suits retain their usual order.
-  const displayOrder=suits.filter(s=>s!==trumpSuit);
-  if(trumpSuit)displayOrder.push(trumpSuit);
+  // Arrange all four suits in a rotating sequence based on the active Hukum.
+  // The Hukum suit is always at the FAR RIGHT, and the three suits to its
+  // left follow the requested fixed cycle without mixing:
+  // Chidi -> Paan, Hukum, Eent, Chidi
+  // Eent  -> Chidi, Paan, Hukum, Eent
+  // Paan  -> Hukum, Eent, Chidi, Paan
+  // Hukum -> Eent, Chidi, Paan, Hukum
+  // PASS keeps Spades (Hukum) as the active trump suit.
+  const suitCycle=['♦','♣','♥','♠'];
+  let displayOrder;
+  if(trumpSuit && suitCycle.includes(trumpSuit)){
+   const trumpIndex=suitCycle.indexOf(trumpSuit);
+   displayOrder=[...suitCycle.slice(trumpIndex+1),...suitCycle.slice(0,trumpIndex+1)];
+  }else{
+   displayOrder=[...suitCycle];
+  }
+  const suitRank=new Map(displayOrder.map((s,i)=>[s,i]));
   h.sort((a,b)=>
-   displayOrder.indexOf(a.s)-displayOrder.indexOf(b.s)||a.v-b.v
+   (suitRank.get(a.s)??99)-(suitRank.get(b.s)??99)||a.v-b.v
   );
  }
 
