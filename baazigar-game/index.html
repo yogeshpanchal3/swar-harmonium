@@ -1784,6 +1784,80 @@ body{background:#071e16}
   /* Played cards must remain visually above the side labels if they approach. */
   .center{z-index:26 !important}
 }
+
+/* LAPTOP / DESKTOP VIEWPORT FIT: keep the complete game and side panel inside
+   the visible browser area at normal 100% zoom. */
+@media (min-width:701px){
+  html,body{
+    width:100%;height:100%;min-height:0;
+    overflow:hidden !important;
+  }
+  .app-layout{
+    box-sizing:border-box !important;
+    width:100vw !important;height:100vh !important;height:100dvh !important;
+    min-height:0 !important;
+    padding:clamp(4px,.65vw,10px) !important;
+    gap:clamp(6px,.65vw,10px) !important;
+    grid-template-columns:minmax(0,1.14fr) minmax(290px,.86fr) !important;
+    align-items:stretch !important;
+    overflow:hidden !important;
+  }
+  .app-layout>.table{
+    box-sizing:border-box !important;
+    width:100% !important;height:100% !important;
+    min-width:0 !important;min-height:0 !important;
+    max-height:100% !important;
+  }
+  .app-layout>.mehfil-panel{
+    box-sizing:border-box !important;
+    width:100% !important;height:100% !important;
+    min-width:0 !important;min-height:0 !important;
+    max-height:100% !important;
+    padding:clamp(12px,2vw,30px) !important;
+    justify-content:center !important;
+  }
+  .mehfil-art{
+    min-height:0 !important;
+    height:min(58vh,480px) !important;
+    padding:clamp(14px,2.2vw,34px) !important;
+  }
+  .mehfil-kicker{margin-bottom:clamp(8px,1.6vh,18px) !important}
+  .mehfil-footer{margin-top:clamp(8px,1.6vh,18px) !important}
+  .modal{max-height:100dvh !important;overflow-y:auto !important}
+  .dialog{max-height:calc(100dvh - 24px) !important;overflow-y:auto !important}
+}
+
+/* Short laptop displays (e.g. 1366x768): compact the card rows and artwork
+   without requiring browser zoom-out. */
+@media (min-width:701px) and (max-height:820px){
+  .app-layout{padding:5px !important;gap:6px !important}
+  .app-layout>.table{border-width:6px !important}
+  .hand.bottom{height:clamp(96px,16vh,124px) !important;bottom:8px !important}
+  .hand.bottom .card{height:clamp(82px,13vh,104px) !important;width:clamp(48px,5.2vw,68px) !important}
+  .hand.top{height:clamp(72px,12vh,96px) !important}
+  .hand.top .card{height:clamp(54px,9vh,68px) !important;width:clamp(34px,3.6vw,46px) !important}
+  .hand.left,.hand.right{height:clamp(220px,42vh,300px) !important}
+  .hand.left .card,.hand.right .card{height:clamp(58px,10vh,78px) !important;width:clamp(42px,4.5vw,58px) !important}
+  .mehfil-art{height:min(54vh,390px) !important}
+  .mehfil-copy h1{font-size:clamp(32px,4.5vw,62px) !important}
+  .mehfil-cards{height:clamp(150px,27vh,205px) !important}
+  .mehfil-card{height:clamp(105px,17vh,150px) !important;width:clamp(68px,8vw,112px) !important}
+}
+
+@media (min-width:701px) and (max-height:680px){
+  .mehfil-panel{padding:8px 14px !important}
+  .mehfil-art{height:48vh !important;padding:12px !important}
+  .mehfil-kicker,.mehfil-footer{font-size:8px !important;margin:5px 0 !important}
+  .hand.bottom{height:88px !important}
+  .hand.bottom .card{height:74px !important}
+}
+
+
+/* Per-turn decision countdown */
+.turn-countdown{position:absolute;top:clamp(58px,7vh,82px);right:clamp(12px,2vw,24px);z-index:40;display:none;align-items:center;gap:8px;padding:8px 14px;border:2px solid #d4a84d;border-radius:12px;background:linear-gradient(135deg,#fff4ce,#ffd66b);color:#173d5d;font-weight:900;font-size:clamp(17px,1.7vw,23px);box-shadow:0 3px 12px rgba(0,0,0,.28);font-variant-numeric:tabular-nums}
+.turn-countdown.warning{background:linear-gradient(135deg,#ffe4e4,#ff9b9b);border-color:#c52b36;color:#8e101b;animation:timerPulse .7s infinite alternate}
+@keyframes timerPulse{from{transform:scale(1)}to{transform:scale(1.045)}}
+
 </style>
 </head>
 
@@ -1801,6 +1875,7 @@ body{background:#071e16}
    <button class="tool" id="scoreBtn">🏆</button>
   </div>
  </div>
+ <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">60</span> सेकंड</div>
 
  <div class="notice" id="notice">
   Review your first 5 cards and choose Hukum or PASS.
@@ -2013,6 +2088,92 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  const $=id=>document.getElementById(id);
 
+ // Human decision timer: 60 seconds for each bidding table and each card turn.
+ const DECISION_SECONDS=60;
+ let decisionTimerId=null;
+ let decisionSecondsLeft=DECISION_SECONDS;
+ let decisionTimerContext=null;
+ let decisionTimerToken=0;
+ function stopDecisionTimer(){
+  decisionTimerToken++;
+  if(decisionTimerId!==null){clearInterval(decisionTimerId);decisionTimerId=null;}
+  decisionTimerContext=null;
+  const box=$('turnCountdown');if(box){box.style.display='none';box.classList.remove('warning');}
+ }
+ function paintDecisionTimer(){
+  const box=$('turnCountdown'),value=$('turnCountdownValue');
+  if(!box||!value)return;
+  value.textContent=String(decisionSecondsLeft);
+  box.style.display='flex';
+  box.classList.toggle('warning',decisionSecondsLeft<=10);
+ }
+ function startDecisionTimer(context){
+  stopDecisionTimer();
+  const token=++decisionTimerToken;
+  decisionTimerContext=context;
+  decisionSecondsLeft=DECISION_SECONDS;
+  paintDecisionTimer();
+  decisionTimerId=setInterval(()=>{
+   if(token!==decisionTimerToken){clearInterval(decisionTimerId);return;}
+   decisionSecondsLeft--;
+   paintDecisionTimer();
+   if(decisionSecondsLeft<=0){
+    clearInterval(decisionTimerId);decisionTimerId=null;
+    const expiredContext=decisionTimerContext;decisionTimerContext=null;
+    handleDecisionTimeout(expiredContext);
+   }
+  },1000);
+ }
+ function startHumanTurnTimer(){
+  if(phase==='play'&&turn===0&&!gameOver&&!animationBusy)startDecisionTimer('card');
+  else stopDecisionTimer();
+ }
+ function handleDecisionTimeout(context){
+  const box=$('turnCountdown');if(box){box.style.display='none';box.classList.remove('warning');}
+  if(context==='card'){
+   if(phase!=='play'||turn!==0||animationBusy)return;
+   const card=botChoice(0); // Same legal-card strategy used by the AI, applied to the human hand.
+   if(card){$('notice').textContent='समय पूरा हुआ — आपके लिए अपने आप एक सही पत्ता चला दिया गया।';playCard(0,card);}
+   return;
+  }
+  if(context!=='bid'||!$('bidModal').classList.contains('show')||currentAuctionPlayer!==0)return;
+  $('notice').textContent='समय पूरा हुआ — उपलब्ध पत्तों के हिसाब से चुनाव अपने आप कर दिया गया।';
+  if(bidStage===1){
+   const choice=chooseComputerFirstFiveSuit(0);
+   if(choice==='PASS'){firstHukumPassed=true;selectedTrump=null;}
+   else{firstHukumPassed=false;selectedTrump=choice;}
+   $('confirmBidBtn').click();
+   return;
+  }
+  if(bidStage===2){
+   if(fallbackAuction){
+    const best=suits.map(s=>({s,score:estimateHandStrength(hands[0],s)})).sort((a,b)=>b.score-a.score)[0];
+    selectedBidType='hukum';selectedHukumRun=Math.max(2,Math.min(13,estimateHandStrength(hands[0],best.s)));selectedColorRun=null;
+    $('confirmBidBtn').click();
+   }else{
+    selectedColorRun=Math.max(5,Math.min(13,estimateHandStrength(hands[0],firstHukumChoices[colorChooser]||trumpSuit)));
+    $('confirmBidBtn').click();
+   }
+   return;
+  }
+  if(bidStage===3){
+   // If the right table has a complete user selection, confirm it independently.
+   if(selectedFinalHukumSuit&&selectedFinalHukumBid!==null&&!finalHukumConfirmed){
+    $('confirmHukumOnlyBtn')?.click();
+   }
+   if(!runChoiceConfirmed){
+    if(selectedRunTarget===null){
+     let autoRun=Math.max(2,Math.min(13,estimateHandStrength(hands[0],trumpSuit)));
+     const order=(runChoiceQueue&&runChoiceQueue.length)?runChoiceQueue:[...auctionOrder];
+     const last=order[order.length-1];
+     if(last===0){const others=bidTargets.reduce((sum,v,i)=>sum+(i===0?0:(Number(v)||0)),0);autoRun=Math.max(autoRun,12-others);}
+     selectedRunTarget=Math.max(2,Math.min(13,autoRun));
+    }
+    $('confirmRunOnlyBtn')?.click();
+   }
+  }
+ }
+
  function makeDeck(){
   let d=[];
   for(const s of suits){
@@ -2058,6 +2219,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  /* START GAME */
  function startRound(){
 
+  stopDecisionTimer();
   clearTimeout(botTimer);
 
   hands=[[],[],[],[]];
@@ -2504,9 +2666,14 @@ window.addEventListener('DOMContentLoaded',()=>{
    content.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
     <section class="bid-panel" style="width:100%;box-sizing:border-box;text-align:center">
      <h3>FINAL RUN • AAPKI 13-CARD HAND</h3>
-     <div style="margin:7px 0 10px;padding:9px 8px;border:1px solid #d4a84d;border-radius:9px;background:#fff7df;color:#173d5d;font-size:13px;font-weight:700;line-height:1.45">
-      5 patte dekhkar rang chunne wala: <span style="color:#9a4b20">${chooserName}</span><br>
-      Uska pehla rang: <span style="font-size:17px">${firstColorText}</span>
+     <div style="margin:7px 0 10px;padding:12px 10px;border:2px solid #d4a84d;border-radius:12px;background:linear-gradient(135deg,#fff8e7,#fff0c9);color:#173d5d;font-size:14px;font-weight:800;line-height:1.5;box-shadow:0 2px 8px rgba(23,61,93,.14)">
+      <div style="font-size:15px">5 पत्ते देखकर रंग चुनने वाला: <span style="color:#9a4b20">${chooserName==='Kisi ne nahi'?'किसी ने नहीं':chooserName}</span></div>
+      <div style="margin-top:7px;font-size:13px">उसका पहला चुना हुआ रंग</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:3px">
+       <span style="font-size:76px;line-height:.95;font-weight:900;color:${trumpSuit==='♥'?'#d51f3b':trumpSuit==='♦'?'#c65b13':trumpSuit==='♣'?'#147343':'#17365f'};text-shadow:0 2px 3px rgba(0,0,0,.16)">${trumpSuit}</span>
+       <span style="font-size:28px;font-weight:900;color:${trumpSuit==='♥'?'#c5162e':trumpSuit==='♦'?'#a94b08':trumpSuit==='♣'?'#11653b':'#17365f'}">${noOneChoseColor?'हुकुम में बोलें':(trumpSuit==='♥'?'पान में बोलें':trumpSuit==='♦'?'ईंट में बोलें':trumpSuit==='♣'?'चिड़ी में बोलें':'हुकुम में बोलें')}</span>
+      </div>
+      ${noOneChoseColor?'<div style="font-size:12px;margin-top:5px;color:#674b12">कोई रंग नहीं चुना गया — डिफॉल्ट हुकुम रहेगा</div>':''}
      </div>
      <div class="bid-number-grid" style="grid-template-columns:repeat(4,1fr)">${Array.from({length:12},(_,i)=>i+2).map(n=>`<button type="button" class="tool run-target-number" data-val="${n}" aria-label="${n} Run">${n}</button>`).join('')}</div>
      <div style="font-size:12px;font-weight:700;color:#9a4b20;margin-top:8px">Minimum 2 Run • Maximum 13 Run per player • Total par koi limit nahi</div>
@@ -2519,7 +2686,7 @@ window.addEventListener('DOMContentLoaded',()=>{
       return `<button type="button" class="tool final-hukum-suit" data-suit="${su}" style="${style}">${su} ${n}</button>`;
      }).join('')}</div>
      <div class="bid-number-grid" style="grid-template-columns:repeat(4,1fr);margin-top:8px">${[10,11,12,13].map(n=>`<button type="button" class="tool final-hukum-number" data-val="${n}">${n}</button>`).join('')}</div>
-     <div style="font-size:12px;font-weight:700;color:#17486f;margin-top:8px">${noOneChoseColor?'Kisi ne pehle rang nahi chuna, isliye default ♠ Hukum hai. Aap chahein to yahan koi bhi rang badal sakte hain.':'Yahan chuna gaya rang sabhi 4 players ka Final Hukum hoga. Yeh table Run se alag hai.'}</div>
+     <div style="font-size:12px;font-weight:700;color:#17486f;margin-top:8px">${noOneChoseColor?'किसी ने पहले रंग नहीं चुना, इसलिए डिफॉल्ट हुकुम रहेगा। आप चाहें तो यहाँ रंग बदल सकते हैं।':'यहाँ चुना गया रंग चारों खिलाड़ियों का अंतिम हुकुम होगा। यह रन वाली टेबल से अलग है।'}</div>
      <button type="button" class="tool" id="confirmHukumOnlyBtn" style="width:100%;margin-top:10px">Confirm Hukum Color</button>
     </section>
    </div>`;
@@ -2566,7 +2733,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
  }
  function getSuitName(s){return {'♠':'Hukam','♥':'Paan','♦':'Eent','♣':'Chidi'}[s]||s}
- function openBidStage(stage){bidStage=stage;renderBidStage();$('bidModal').classList.add('show')}
+ function openBidStage(stage){bidStage=stage;renderBidStage();$('bidModal').classList.add('show');if(currentAuctionPlayer===0)startDecisionTimer('bid');}
 
  // Estimate likely tricks from a player's actual cards.
  function estimateHandStrength(hand, trump){
@@ -2727,7 +2894,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('notice').textContent=`${getSuitName(trumpSuit)} Hukum final hai. ${colorChooser>=0?names[colorChooser]+' ne pehle rang chuna tha aur wahi pehli chaal chalega.':'Kisi ne rang nahi chuna, isliye round starter pehli chaal chalega.'} Game starts!`;
   $('message').style.display='block';
   $('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
-  render();if(turn!==0)botLoop();
+  render();if(turn!==0)botLoop();else startHumanTurnTimer();
  }
  function finishRunChoicesAndStartPlay(){
   // Minimum table total is 12. Totals of 10 or less skip the card-play round
@@ -2755,9 +2922,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   phase='play';turn=(colorChooser>=0?colorChooser:roundStarter);
   $('notice').textContent=`Hukum ${getSuitName(trumpSuit)} hai. Sabhi players ke Run lock ho gaye. ${colorChooser>=0?names[colorChooser]+' ne pehle rang chuna tha aur wahi pehli chaal chalega.':'Kisi ne rang nahi chuna, isliye round starter pehli chaal chalega.'} Game starts!`;
   $('message').style.display='block';$('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
-  render();if(turn!==0)botLoop();
+  render();if(turn!==0)botLoop();else startHumanTurnTimer();
  }
  function finishSkippedBolRound(totalBol){
+  stopDecisionTimer();
   clearTimeout(botTimer);
   $('bidModal').classList.remove('show');
   for(let p=0;p<4;p++) totalScores[p]+=(Number(bidTargets[p])||0);
@@ -2766,7 +2934,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   const lines=names.map((n,i)=>`${n}: Bol ${bidTargets[i]}, Won 0, +${bidTargets[i]} points, Total Score ${totalScores[i]}`);
   $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Skip — Bol Points Added';
   if(winnerIndex>=0){
-   gameOver=true;phase='over';
+   gameOver=true;phase='over';stopDecisionTimer();
    $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne ${targetScore} points complete kar liye!</strong><br><br>${lines.join('<br>')}<br><br>Game Khatam!`;
    $('restartAfterWin').style.display='block';celebrationSound();
    $('message').textContent=`🏆 ${names[winnerIndex]} wins the game!`;
@@ -2831,6 +2999,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  function finishHumanRunAndHukumChoice(){
   if(bidStage!==3||!runChoiceConfirmed)return;
+  stopDecisionTimer();
   if(selectedRunTarget===null||selectedRunTarget<2||selectedRunTarget>13)return;
   // Right-side Hukum table is an independent optional override. If it was
   // confirmed, apply that suit; otherwise keep the first selected/default Hukum.
@@ -2881,6 +3050,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  $('confirmBidBtn').addEventListener('click',()=>{
+  stopDecisionTimer();
   if(bidStage===1){
    firstHukumChoices[currentAuctionPlayer]=firstHukumPassed?'PASS':selectedTrump;
    const choseColor=!firstHukumPassed&&!!selectedTrump;
@@ -2990,6 +3160,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   }
 
+  // Stop the player's clock immediately when a valid card is played.
+  stopDecisionTimer();
   // Sound for every card played by a human or computer.
   cardSound();
 
@@ -3009,10 +3181,11 @@ window.addEventListener('DOMContentLoaded',()=>{
 
    if(turn!==0){
 
-    botLoop();
+    stopDecisionTimer();botLoop();
 
    }else{
 
+    startHumanTurnTimer();
     $('message').textContent='Your turn — choose a card.';
     $('notice').textContent='Click one of your raised cards to play it.';
 
@@ -3148,6 +3321,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
     if(turn===0){
 
+     startHumanTurnTimer();
      $('message').textContent=
       'Your turn — lead the trick.';
 
@@ -3156,6 +3330,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
     }else{
 
+     stopDecisionTimer();
      $('message').textContent=
       `${names[turn]} is leading the next trick.`;
 
@@ -3172,6 +3347,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  /* ROUND COMPLETE */
  function finishRound(){
 
+  stopDecisionTimer();
   clearTimeout(botTimer);
 
   // Meeting or exceeding the Bol earns the declared Bol points.
@@ -3232,6 +3408,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  /* BUTTONS */
  $('newBtn').addEventListener('click',()=>{
+  stopDecisionTimer();
 
   if(confirm('Start a new game? Scores will reset.')){
    totalScores=[0,0,0,0];
@@ -3259,6 +3436,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  $('choose31').addEventListener('click',()=>beginSelectedGame(31));
  $('choose51').addEventListener('click',()=>beginSelectedGame(51));
  $('restartAfterWin').addEventListener('click',()=>{
+  stopDecisionTimer();
   $('modal').classList.remove('show');
   $('restartAfterWin').style.display='none';
   $('gameModeModal').classList.add('show');
