@@ -1875,7 +1875,7 @@ body{background:#071e16}
    <button class="tool" id="scoreBtn">🏆</button>
   </div>
  </div>
- <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">60</span> सेकंड</div>
+ <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">20</span> सेकंड</div>
 
  <div class="notice" id="notice">
   Review your first 5 cards and choose Hukum or PASS.
@@ -2088,8 +2088,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  const $=id=>document.getElementById(id);
 
- // Human decision timer: 60 seconds for each bidding table and each card turn.
- const DECISION_SECONDS=60;
+ // Human decision timer: 20 seconds for each bidding table and each card turn.
+ const DECISION_SECONDS=20;
  let decisionTimerId=null;
  let decisionSecondsLeft=DECISION_SECONDS;
  let decisionTimerContext=null;
@@ -2157,10 +2157,7 @@ window.addEventListener('DOMContentLoaded',()=>{
    return;
   }
   if(bidStage===3){
-   // If the right table has a complete user selection, confirm it independently.
-   if(selectedFinalHukumSuit&&selectedFinalHukumBid!==null&&!finalHukumConfirmed){
-    $('confirmHukumOnlyBtn')?.click();
-   }
+   // Timeout completes only the unfinished table(s). The two selections stay independent.
    if(!runChoiceConfirmed){
     if(selectedRunTarget===null){
      let autoRun=Math.max(2,Math.min(13,estimateHandStrength(hands[0],trumpSuit)));
@@ -2169,8 +2166,10 @@ window.addEventListener('DOMContentLoaded',()=>{
      if(last===0){const others=bidTargets.reduce((sum,v,i)=>sum+(i===0?0:(Number(v)||0)),0);autoRun=Math.max(autoRun,12-others);}
      selectedRunTarget=Math.max(2,Math.min(13,autoRun));
     }
-    $('confirmRunOnlyBtn')?.click();
+    runChoiceConfirmed=true;
    }
+   finishHumanRunAndHukumChoice();
+   return;
   }
  }
 
@@ -2716,19 +2715,24 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(selectedRunTarget===null){preview.textContent='Pehle left table se apna Run 2–13 select karein.';return;}
     if(selectedRunTarget<2||selectedRunTarget>13){preview.textContent='Har player 2 se 13 Run ke beech apna alag target chun sakta hai.';return;}
     runChoiceConfirmed=true;$('confirmRunOnlyBtn').textContent=`Run ${selectedRunTarget} Confirmed ✓`;
-    preview.textContent='Aapka Run alag se confirm ho gaya. Ab game isi Run aur maujooda Hukum ke saath shuru hoga. Naya Hukum tabhi lagega jab aap right table ko pehle confirm karenge.';
+    preview.textContent='Aapka Run confirm ho gaya. Ab isi pehle se tay Hukum ke saath game shuru ho raha hai.';
     finishHumanRunAndHukumChoice();
    });
    $('confirmHukumOnlyBtn').addEventListener('click',()=>{
-    if(!selectedFinalHukumSuit){preview.textContent='Right table mein pehle ek Hukum rang select karein.';return;}
-    if(selectedFinalHukumBid===null){preview.textContent='Right table mein Color Bol 10, 11, 12 ya 13 select karein.';return;}
+    if(!selectedFinalHukumSuit){preview.textContent='Right table mein pehle koi bhi ek Hukum rang chunein.';return;}
+    if(selectedFinalHukumBid===null){preview.textContent='Right table mein 10, 11, 12 ya 13 mein se number chunein.';return;}
     finalHukumConfirmed=true;$('confirmHukumOnlyBtn').textContent='Hukum Color Confirmed ✓';
-    preview.textContent='Final Hukum Color alag se confirm ho gaya. Yeh Run selection ko change nahi karta. Run confirm karte hi yahi Hukum lagega.';
+    if(runChoiceConfirmed){
+     preview.textContent='Hukum Color aur Run dono alag-alag confirm ho gaye. Game shuru ho raha hai.';
+     finishHumanRunAndHukumChoice();
+    }else{
+     preview.textContent='Aapka Hukum rang aur 10–13 confirm ho gaya. Ab left wali table mein apna Run chun kar Confirm Run dabayein. Is rang ka Hukum chaaron players par lagega.';
+     startDecisionTimer('bid');
+    }
    });
-   // Dono tables independent hain. Right-side Hukum override optional hai.
-   // Run confirm karte hi game start hoga; agar right table pehle confirm hui hai,
-   // to wahi naya Hukum lagega. Warna pehle se tay Hukum hi rahega.
-   confirm.textContent='Run aur Hukum ko alag-alag confirm karein';confirm.disabled=true;confirm.style.display='none';
+   // Either table may be confirmed first. Neither table changes the other's selection.
+   // The game begins only after both independent confirmations are complete.
+   confirm.textContent='Sirf Confirm Run dabakar game shuru karein';confirm.disabled=true;confirm.style.display='none';
 
   }
  }
@@ -2998,17 +3002,12 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function finishHumanRunAndHukumChoice(){
+  // Confirm Run is the only required human action here. The right-side
+  // Final Hukum Color table is intentionally not consulted or modified.
+  // Keep the Hukum already selected in the first-five-card stage (or default ♠).
   if(bidStage!==3||!runChoiceConfirmed)return;
   stopDecisionTimer();
   if(selectedRunTarget===null||selectedRunTarget<2||selectedRunTarget>13)return;
-  // Right-side Hukum table is an independent optional override. If it was
-  // confirmed, apply that suit; otherwise keep the first selected/default Hukum.
-  if(finalHukumConfirmed&&selectedFinalHukumSuit&&selectedFinalHukumBid!==null){
-   trumpSuit=selectedFinalHukumSuit;
-   auctionWinningBid=selectedFinalHukumBid;
-   auctionCalls[currentAuctionPlayer]=`${getSuitName(trumpSuit)} Final Hukum Bol: ${selectedFinalHukumBid}`;
-   playerAuctionInfo[currentAuctionPlayer]='Final Hukum Color chooser';
-  }
   auctionWinningSuit=trumpSuit;
   bidTargets[currentAuctionPlayer]=selectedRunTarget;
   bids[currentAuctionPlayer]=`${selectedRunTarget} Run`;
@@ -3216,7 +3215,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  }
 
- /* BOT CARD CHOICE */
+ /* BOT CARD CHOICE — BID-AWARE, STRATEGIC CARD CONSERVATION */
  function botChoice(p){
   const legal=legalCards(p);
   if(!legal.length)return null;
@@ -3225,31 +3224,48 @@ window.addEventListener('DOMContentLoaded',()=>{
   const won=Number(tricksWon[p]||0);
   const stillNeeded=Math.max(0,target-won);
   const tricksLeft=hands[p].length;
+  const byLow=[...legal].sort((a,b)=>a.v-b.v);
+  const byHigh=[...legal].sort((a,b)=>b.v-a.v);
 
-  // Evaluate which legal cards would currently win this trick.
-  const winningCards=trick.length?legal.filter(c=>
+  // On a lead, choose a card in line with the remaining Bol target.
+  if(trick.length===0){
+   if(stillNeeded<=0)return byLow[0];
+   if(stillNeeded>=tricksLeft)return byHigh[0];
+   // Keep premium cards for later; use a moderate card when the target
+   // is approaching, rather than always leading the smallest card.
+   if(stillNeeded>=tricksLeft-1 && byHigh.length>1)return byHigh[1];
+   return byLow[0];
+  }
+
+  // Find the cards that would win this trick right now.
+  const winningCards=legal.filter(c=>
    getCurrentWinner([...trick,{p,card:c}]).p===p
-  ):[];
+  ).sort((a,b)=>a.v-b.v);
+  const losingCards=legal.filter(c=>!winningCards.includes(c)).sort((a,b)=>a.v-b.v);
 
-  // If the bot has already made its Bol, avoid taking unnecessary tricks.
-  // If it still needs tricks, take the cheapest card that can secure one.
-  if(stillNeeded===0){
-   const nonWinning=legal.filter(c=>!winningCards.includes(c));
-   if(nonWinning.length)return nonWinning.sort((a,b)=>a.v-b.v)[0];
-   return legal.sort((a,b)=>a.v-b.v)[0];
+  // The bot has already met its Bol: avoid spending a winning card if
+  // the game rules allow a legal losing/discard card.
+  if(stillNeeded<=0){
+   if(losingCards.length)return losingCards[0];
+   return byLow[0];
   }
 
   if(winningCards.length){
-   // Save high cards: use the lowest winning card, not an oversized card.
-   return winningCards.sort((a,b)=>a.v-b.v)[0];
+   // If one more trick is enough, take it with the cheapest winning card
+   // (e.g. use 7 instead of Queen/Ace when 7 already beats the table).
+   // If several tricks are still required and few turns remain, step up
+   // to a stronger winner (e.g. Queen, then Ace) instead of wasting time.
+   if(stillNeeded>=tricksLeft)return winningCards[winningCards.length-1];
+   if(stillNeeded>=tricksLeft-1 && winningCards.length>1){
+    return winningCards[Math.floor((winningCards.length-1)/2)];
+   }
+   return winningCards[0];
   }
 
-  // No guaranteed win available: conserve strong cards when enough tricks remain,
-  // but use the strongest legal option when the remaining target is urgent.
-  if(stillNeeded>=tricksLeft){
-   return legal.sort((a,b)=>b.v-a.v)[0];
-  }
-  return legal.sort((a,b)=>a.v-b.v)[0];
+  // No card can take the current trick. Preserve strong cards unless
+  // the remaining Bol target makes a high-card attempt urgent.
+  if(stillNeeded>=tricksLeft)return byHigh[0];
+  return byLow[0];
  }
 
  /* BOT TURN */
