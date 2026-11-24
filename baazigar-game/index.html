@@ -2234,48 +2234,68 @@ body{background:#071e16}
 </style>
 
 
-<style id="mobile-scoreboard-below-game-final-fix">
-/* On phones, keep the complete game as the first full-height section.
-   Put TOTAL SCORE strictly after it in document flow, never over the playing table. */
+<style id="compact-player-labels">
+.seat .score{font-size:12px !important;line-height:1.2 !important;padding:5px 6px !important;white-space:nowrap !important;}
+@media(max-width:700px){.seat .score{font-size:10px !important;padding:4px 3px !important;}}
+</style>
+<style id="scoreboard-layout-restored">
+/* Desktop: game table left, scoreboard and Mehfil panel on the right. */
+@media (min-width:701px){
+  html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+  body>.app-layout{
+    display:grid !important;
+    grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr) !important;
+    align-items:stretch !important;gap:0 !important;padding:12px !important;
+    width:100% !important;min-height:100vh !important;
+  }
+  body>.app-layout>.table{
+    display:block !important;position:relative !important;
+    width:100% !important;height:calc(100vh - 24px) !important;
+    min-height:600px !important;grid-column:1 !important;
+  }
+  body>.app-layout>.mehfil-panel{
+    display:flex !important;position:relative !important;inset:auto !important;
+    grid-column:2 !important;grid-row:1 !important;
+    flex-direction:column !important;justify-content:flex-start !important;
+    min-width:0 !important;min-height:calc(100vh - 24px) !important;
+    width:auto !important;height:auto !important;overflow:hidden !important;
+  }
+  body>.app-layout>.mehfil-panel>.scoreboard{
+    display:block !important;position:relative !important;inset:auto !important;
+    width:100% !important;max-width:680px !important;margin:0 auto 4px !important;
+    transform:none !important;z-index:5 !important;
+  }
+}
+/* Phone: game first; scroll down to the separate score panel. */
 @media (max-width:700px){
-  html, body {
-    display:block !important; width:100% !important; height:auto !important;
-    min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important;
-    position:static !important;
-    -webkit-overflow-scrolling:touch !important;
+  html,body{display:block !important;width:100% !important;height:auto !important;min-height:100% !important;overflow-x:hidden !important;overflow-y:auto !important}
+  body>.app-layout{
+    display:flex !important;flex-direction:column !important;align-items:stretch !important;
+    width:100% !important;height:auto !important;min-height:0 !important;
+    overflow:visible !important;gap:0 !important;padding:0 !important;margin:0 !important;
   }
-  body > .app-layout {
-    display:flex !important; flex-direction:column !important; align-items:stretch !important;
-    position:relative !important; width:100% !important; height:auto !important;
-    min-height:0 !important; overflow:visible !important; gap:0 !important;
-    padding:0 !important; margin:0 !important;
+  body>.app-layout>.table{
+    display:block !important;position:relative !important;order:0 !important;
+    flex:0 0 100dvh !important;width:100% !important;height:100dvh !important;
+    min-height:560px !important;max-height:none !important;margin:0 !important;
+    transform:none !important;z-index:1 !important;
   }
-  body > .app-layout > .table {
-    display:block !important; position:relative !important; inset:auto !important;
-    order:0 !important; flex:0 0 100svh !important;
-    width:100% !important; height:100svh !important; height:100dvh !important;
-    min-height:560px !important; max-height:none !important;
-    margin:0 !important; transform:none !important; z-index:1 !important;
-  }
-  body > .app-layout > .mehfil-panel {
-    display:flex !important; position:relative !important; inset:auto !important;
-    order:1 !important; flex:0 0 auto !important;
-    width:100% !important; height:auto !important; min-height:0 !important;
-    max-height:none !important; margin:0 !important; transform:none !important;
-    overflow:visible !important; z-index:2 !important;
-    flex-direction:column !important; gap:12px !important;
+  body>.app-layout>.mehfil-panel{
+    display:flex !important;position:relative !important;inset:auto !important;order:1 !important;
+    flex:0 0 auto !important;flex-direction:column !important;
+    width:100% !important;height:auto !important;min-height:0 !important;max-height:none !important;
+    margin:0 !important;transform:none !important;overflow:visible !important;z-index:2 !important;
     padding:18px 12px 28px !important;
   }
-  body > .app-layout > .mehfil-panel > .scoreboard {
-    display:block !important; position:relative !important; inset:auto !important;
-    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
-    width:100% !important; max-width:none !important; height:auto !important;
-    margin:0 0 10px !important; transform:none !important;
-    visibility:visible !important; opacity:1 !important; z-index:2 !important;
+  body>.app-layout>.mehfil-panel>.scoreboard{
+    display:block !important;position:relative !important;inset:auto !important;order:0 !important;
+    flex:0 0 auto !important;width:100% !important;max-width:none !important;height:auto !important;
+    margin:0 0 10px !important;transform:none !important;visibility:visible !important;
+    opacity:1 !important;z-index:2 !important;
   }
-  body > .app-layout > .mehfil-panel > .mehfil-kicker {order:1 !important;}
-  body > .app-layout > .mehfil-panel > .mehfil-art {order:2 !important;}
-  body > .app-layout > .mehfil-panel > .mehfil-footer {order:3 !important;}
+  body>.app-layout>.mehfil-panel>.mehfil-kicker{order:1 !important}
+  body>.app-layout>.mehfil-panel>.mehfil-art{order:2 !important}
+  body>.app-layout>.mehfil-panel>.mehfil-footer{order:3 !important}
 }
 </style>
 
@@ -3923,8 +3943,3 @@ window.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
-
-
-/* Compact, readable player labels: show only Bol and Won for every seat. */
-.seat .score{font-size:12px !important;line-height:1.2 !important;padding:5px 6px !important;white-space:nowrap !important;}
-@media(max-width:700px){.seat .score{font-size:10px !important;padding:4px 3px !important;}}
