@@ -2486,6 +2486,7 @@ body > .app-layout { box-sizing:border-box !important; }
    <button class="tool" id="confirmBidBtn" style="width:100%;margin-top:5px" disabled>Confirm</button>
   </div>
  </div>
+</div>
 <section class="mehfil-panel" aria-label="Minus Taas Ki Mehfil introduction">
  <aside class="scoreboard" aria-label="Live scoreboard">
   <h3>🏆 TOTAL SCORE</h3>
@@ -4026,5 +4027,41 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 });
 </script>
+
+<style id="final-opponent-seat-label-position">
+/* Keep the three opponents' name/score plates clear of their card backs. */
+@media (min-width:701px){
+  .table .seat.left{
+    left:120px !important;
+    right:auto !important;
+    top:50% !important;
+    width:138px !important;
+    transform:translateY(-50%) !important;
+    z-index:90 !important;
+  }
+  .table .seat.right{
+    right:120px !important;
+    left:auto !important;
+    top:50% !important;
+    width:138px !important;
+    transform:translateY(-50%) !important;
+    z-index:90 !important;
+  }
+  .table .seat.top{
+    z-index:90 !important;
+  }
+  .table .seat.left .name,
+  .table .seat.left .score,
+  .table .seat.right .name,
+  .table .seat.right .score{
+    width:100% !important;
+    box-sizing:border-box !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-align:center !important;
+  }
+}
+</style>
+
 </body>
 </html>
