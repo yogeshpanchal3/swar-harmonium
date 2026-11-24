@@ -2004,6 +2004,37 @@ body{background:#071e16}
 }
 
 </style>
+
+<style id="mobile-modal-card-visibility-fix">
+/* Keep the player's cards visible below bidding windows on phones.
+   The modal content scrolls internally instead of covering the hand. */
+@media (max-width:700px) and (orientation:portrait){
+  #bidModal.modal.show, #modal.modal.show{
+    align-items:flex-start !important;
+    justify-items:center !important;
+    padding: max(10px, 4dvh) 8px 8px !important;
+    overflow-y:auto !important;
+  }
+  #bidModal .dialog, #modal .dialog{
+    max-height:61dvh !important;
+    height:auto !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    margin:0 auto !important;
+  }
+  #bidModal .dialog.run-choice-compact{
+    max-height:61dvh !important;
+  }
+  /* Preserve the two-row hand at the bottom of the table, outside the modal. */
+  .hand.bottom#hand0{z-index:30 !important;}
+}
+@media (max-width:700px) and (orientation:landscape){
+  #bidModal.modal.show, #modal.modal.show{
+    align-items:flex-start !important; padding:5px !important; overflow-y:auto !important;
+  }
+  #bidModal .dialog, #modal .dialog{max-height:72dvh !important;overflow-y:auto !important;}
+}
+</style>
 </head>
 
 <body>
