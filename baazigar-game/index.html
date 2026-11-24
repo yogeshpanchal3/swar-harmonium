@@ -2384,6 +2384,56 @@ body > .app-layout { box-sizing:border-box !important; }
 }
 </style>
 
+
+<style id="phone-scoreboard-after-scroll-final">
+/* Phone only: keep the live score table in normal document flow BELOW the game.
+   It must never overlay the cards or appear behind the game background. */
+@media screen and (max-width:700px){
+  html, body{
+    display:block !important; width:100% !important; height:auto !important;
+    min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important;
+    position:static !important;
+  }
+  body > .app-layout{
+    display:flex !important; flex-direction:column !important;
+    align-items:stretch !important; width:100% !important;
+    height:auto !important; min-height:0 !important;
+    margin:0 !important; padding:0 !important; gap:0 !important;
+    overflow:visible !important; position:static !important;
+  }
+  body > .app-layout > .table{
+    display:block !important; position:relative !important;
+    order:0 !important; flex:0 0 auto !important;
+    width:100% !important; height:100svh !important;
+    min-height:600px !important; max-height:none !important;
+    margin:0 !important; overflow:hidden !important;
+  }
+  body > .app-layout > .mehfil-panel{
+    display:flex !important; position:static !important; inset:auto !important;
+    order:1 !important; flex:0 0 auto !important;
+    flex-direction:column !important; align-self:stretch !important;
+    box-sizing:border-box !important; width:100% !important;
+    height:auto !important; min-height:0 !important; max-height:none !important;
+    margin:0 !important; padding:20px 12px 30px !important; gap:14px !important;
+    overflow:visible !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important;
+    border-radius:0 !important; z-index:auto !important;
+  }
+  body > .app-layout > .mehfil-panel > .scoreboard{
+    display:block !important; position:static !important; inset:auto !important;
+    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
+    box-sizing:border-box !important; width:100% !important;
+    max-width:none !important; height:auto !important; max-height:none !important;
+    margin:0 0 10px !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important;
+    overflow:visible !important; z-index:auto !important;
+  }
+  body > .app-layout > .mehfil-panel > .mehfil-kicker{order:1 !important}
+  body > .app-layout > .mehfil-panel > .mehfil-art{order:2 !important}
+  body > .app-layout > .mehfil-panel > .mehfil-footer{order:3 !important}
+}
+</style>
+
 </head>
 
 <body>
