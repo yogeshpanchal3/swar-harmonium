@@ -2299,6 +2299,91 @@ body{background:#071e16}
 }
 </style>
 
+
+<style id="FINAL_LAYOUT_OVERRIDE_2026">
+/* One authoritative layout override: desktop split-screen, phone vertical scroll. */
+html, body { margin:0 !important; width:100% !important; min-width:0 !important; }
+body > .app-layout { box-sizing:border-box !important; }
+@media (min-width:701px) {
+  html, body { height:100% !important; min-height:100% !important; overflow:hidden !important; }
+  body > .app-layout {
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.12fr) minmax(320px, .88fr) !important;
+    grid-template-rows:minmax(0, 1fr) !important;
+    align-items:stretch !important;
+    width:100vw !important; height:100vh !important; min-height:0 !important;
+    padding:10px !important; gap:10px !important; margin:0 !important;
+    overflow:hidden !important;
+  }
+  body > .app-layout > .table {
+    grid-column:1 !important; grid-row:1 !important;
+    display:block !important; position:relative !important;
+    width:100% !important; height:100% !important; min-width:0 !important;
+    min-height:0 !important; max-height:none !important; margin:0 !important;
+    overflow:hidden !important; z-index:1 !important;
+  }
+  body > .app-layout > .mehfil-panel {
+    grid-column:2 !important; grid-row:1 !important;
+    display:flex !important; position:relative !important; inset:auto !important;
+    flex-direction:column !important; justify-content:flex-start !important;
+    align-self:stretch !important; width:100% !important; height:100% !important;
+    min-width:0 !important; min-height:0 !important; max-height:none !important;
+    margin:0 !important; padding:clamp(12px,1.8vw,28px) !important;
+    overflow-y:auto !important; overflow-x:hidden !important;
+    visibility:visible !important; opacity:1 !important; transform:none !important;
+    z-index:2 !important;
+    background:radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%) !important;
+    border:2px solid #b9954b !important; border-radius:8px !important;
+  }
+  body > .app-layout > .mehfil-panel > .scoreboard {
+    display:block !important; position:relative !important; inset:auto !important;
+    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
+    width:100% !important; max-width:none !important; height:auto !important;
+    margin:0 auto 12px !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important; z-index:3 !important;
+  }
+}
+@media (max-width:700px) {
+  html, body {
+    display:block !important; width:100% !important; height:auto !important;
+    min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+  body { margin:0 !important; }
+  body > .app-layout {
+    display:flex !important; flex-direction:column !important; align-items:stretch !important;
+    width:100% !important; height:auto !important; min-height:0 !important;
+    margin:0 !important; padding:0 !important; gap:0 !important; overflow:visible !important;
+  }
+  body > .app-layout > .table {
+    display:block !important; position:relative !important; order:0 !important;
+    flex:0 0 100svh !important; width:100% !important;
+    height:100svh !important; min-height:600px !important; max-height:none !important;
+    margin:0 !important; overflow:hidden !important; transform:none !important; z-index:1 !important;
+  }
+  body > .app-layout > .mehfil-panel {
+    display:flex !important; position:relative !important; inset:auto !important; order:1 !important;
+    flex:0 0 auto !important; flex-direction:column !important; align-self:stretch !important;
+    width:100% !important; height:auto !important; min-height:0 !important; max-height:none !important;
+    margin:0 !important; padding:18px 12px 28px !important; gap:12px !important;
+    overflow:visible !important; transform:none !important; visibility:visible !important;
+    opacity:1 !important; z-index:2 !important;
+    background:radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%) !important;
+    border:2px solid #b9954b !important; border-radius:8px !important;
+  }
+  body > .app-layout > .mehfil-panel > .scoreboard {
+    display:block !important; position:relative !important; inset:auto !important;
+    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
+    width:100% !important; max-width:none !important; height:auto !important;
+    margin:0 0 8px !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important; z-index:3 !important;
+  }
+  body > .app-layout > .mehfil-panel > .mehfil-kicker { order:1 !important; }
+  body > .app-layout > .mehfil-panel > .mehfil-art { order:2 !important; }
+  body > .app-layout > .mehfil-panel > .mehfil-footer { order:3 !important; }
+}
+</style>
+
 </head>
 
 <body>
