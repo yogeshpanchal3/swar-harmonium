@@ -174,8 +174,8 @@ button{font:inherit;cursor:pointer}
  font-size:clamp(36px,4.5vw,58px);
  opacity:.96;
 }
-.card.red{color:#d71920}
-.card.black{color:#111}
+.card.red{color:#c51f36}
+.card.black{color:#193b32}
 /* Selected Hukum suit: subtle 2px border on matching cards only */
 .hand.bottom .card.trump-card{border:2px solid #d6a51d; box-shadow:0 0 0 1px #fff4c7,0 3px 7px #0005;}
 
@@ -2770,6 +2770,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   if(back)return `<div class="card back"></div>`;
 
+  // Reference-image suit colours: Paan and Eent red; Chidi and Hukam deep green.
   let red=c.s==='♥'||c.s==='♦';
 
   return `
@@ -2781,10 +2782,18 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  function sortHand(h){
-  // Keep the active Hukum suit at the FAR RIGHT of every player's hand.
-  // The other three suits retain their usual order.
-  const displayOrder=suits.filter(s=>s!==trumpSuit);
-  if(trumpSuit)displayOrder.push(trumpSuit);
+  // Hukum is always the far-right suit. Suit colours alternate left-to-right.
+  // Immediate-left mapping: Paan->Chidi, Eent->Chidi, Chidi->Paan, Hukam->Eent.
+  if(!trumpSuit){
+   h.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||a.v-b.v);
+   return;
+  }
+  const isRedSuit=s=>s==='♥'||s==='♦';
+  const nextToTrump={'♥':'♣','♦':'♣','♣':'♥','♠':'♦'}[trumpSuit];
+  const remaining=suits.filter(s=>s!==trumpSuit&&s!==nextToTrump);
+  const sameColourAsTrump=remaining.find(s=>isRedSuit(s)===isRedSuit(trumpSuit));
+  const oppositeColour=remaining.find(s=>isRedSuit(s)!==isRedSuit(trumpSuit));
+  const displayOrder=[oppositeColour,sameColourAsTrump,nextToTrump,trumpSuit];
   h.sort((a,b)=>
    displayOrder.indexOf(a.s)-displayOrder.indexOf(b.s)||a.v-b.v
   );
@@ -3415,6 +3424,7 @@ window.addEventListener('DOMContentLoaded',()=>{
    // The human still declares Run and chooses only the 10–13 Hukum Bol number;
    // the Hukum suit itself is fixed and cannot be changed in this all-PASS case.
    fallbackAuction=false;trumpSuit='♠';auctionWinningSuit='♠';auctionWinner=roundStarter;makerId=roundStarter;
+   hands.forEach(sortHand);
    colorChooser=-1;chooserCommitmentLocked=true;
    bids=['-','-','-','-'];bidTargets=[0,0,0,0];
    playerAuctionInfo=['PASS — default Hukum','PASS — default Hukum','PASS — default Hukum','PASS — default Hukum'];
