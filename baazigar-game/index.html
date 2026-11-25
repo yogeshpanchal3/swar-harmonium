@@ -2465,7 +2465,7 @@ body > .app-layout { box-sizing:border-box !important; }
   </div>
  </div>
  <div id="coinHud">🪙 100 Coins • Baazi: 50</div>
- <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">20</span> सेकंड</div>
+ <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">40</span> सेकंड</div>
 
  <div class="notice" id="notice">
   Review your first 5 cards and choose Hukum or PASS.
@@ -2702,8 +2702,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  const $=id=>document.getElementById(id);
 
- // Human decision timer: 20 seconds for each bidding table and each card turn.
- const DECISION_SECONDS=20;
+ // Human decision timer: 40 seconds for each bidding table and each card turn.
+ const DECISION_SECONDS=40;
  let decisionTimerId=null;
  let decisionSecondsLeft=DECISION_SECONDS;
  let decisionTimerContext=null;
@@ -4234,5 +4234,13 @@ window.addEventListener('DOMContentLoaded',()=>{
 }
 </style>
 
+
+<style id="baazigar-coin-hud-side-fix">
+/* Keep the Coins display on the side of the game table, away from the centered Hukum/Chidi indicator. */
+#coinHud{left:auto !important;right:104px !important;top:12px !important;transform:none !important;z-index:115 !important;}
+@media(max-width:700px){
+  #coinHud{left:auto !important;right:8px !important;top:46px !important;transform:none !important;font-size:10px !important;padding:4px 7px !important;}
+}
+</style>
 </body>
 </html>
