@@ -175,9 +175,9 @@ button{font:inherit;cursor:pointer}
  opacity:.96;
 }
 .card.red{color:#c51f36}
-.card.black{color:#193b32}
+.card.black{color:#111111}
 /* Selected Hukum suit: subtle 2px border on matching cards only */
-.hand.bottom .card.trump-card{border:2px solid #d6a51d; box-shadow:0 0 0 1px #fff4c7,0 3px 7px #0005;}
+.hand.bottom .card.trump-card{border:3px solid #d6a51d !important; box-shadow:0 0 0 2px #fff0b8,0 0 9px #d6a51d99,0 3px 7px #0005 !important;}
 
 .hand.bottom .card{
  margin-left:clamp(-27px,-1.8vw,-13px);
@@ -376,7 +376,7 @@ button{font:inherit;cursor:pointer}
  overflow:hidden;
 }
 .stage1-suit[data-suit="♠"],.color-pick[data-suit="♠"],.final-hukum-suit[data-suit="♠"]{
- color:#17365f !important;background:linear-gradient(145deg,#f1f5ff,#cbd8f0) !important;border-color:#526d9c !important;
+ color:#111111 !important;background:linear-gradient(145deg,#f4f4f4,#d7d7d7) !important;border-color:#333333 !important;
 }
 .stage1-suit[data-suit="♥"],.color-pick[data-suit="♥"],.final-hukum-suit[data-suit="♥"]{
  color:#bd1535 !important;background:linear-gradient(145deg,#fff0f2,#ffc8d1) !important;border-color:#dc4966 !important;
@@ -385,7 +385,7 @@ button{font:inherit;cursor:pointer}
  color:#a94b08 !important;background:linear-gradient(145deg,#fff6e6,#ffd9a5) !important;border-color:#d58a32 !important;
 }
 .stage1-suit[data-suit="♣"],.color-pick[data-suit="♣"],.final-hukum-suit[data-suit="♣"]{
- color:#11653b !important;background:linear-gradient(145deg,#effff4,#bce8cb) !important;border-color:#37945e !important;
+ color:#111111 !important;background:linear-gradient(145deg,#f4f4f4,#d7d7d7) !important;border-color:#333333 !important;
 }
 .stage1-suit:hover,.color-pick:hover,.final-hukum-suit:hover{
  transform:translateY(-3px) scale(1.015) !important;
@@ -2434,6 +2434,20 @@ body > .app-layout { box-sizing:border-box !important; }
 }
 </style>
 
+
+<style id="baazigar-profile-coins-style">
+#profileModal{z-index:300;background:rgba(3,10,20,.94);backdrop-filter:blur(7px)}
+#profileModal .profile-dialog{width:min(92vw,480px);max-height:90vh;overflow:auto;padding:24px;background:linear-gradient(145deg,#fff8df,#eaf3ff);border:3px solid #d6ad50;border-radius:20px;box-shadow:0 20px 60px #000b;color:#14283a}
+#profileModal h2{text-align:center;margin:4px 0 8px;font-size:26px}
+#profileModal .profile-field{display:block;font-weight:800;margin:15px 0 7px}
+#profileModal input,#profileModal select{box-sizing:border-box;width:100%;padding:13px;border:2px solid #c5a75d;border-radius:10px;font-size:16px;background:#fff;color:#14283a}
+#profileModal .profile-balance{margin:14px 0;padding:12px;border-radius:12px;background:#173e5b;color:#fff;display:flex;justify-content:space-between;align-items:center}
+#profileModal .profile-balance strong{color:#ffd66b;font-size:22px}
+#profileModal .profile-start{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#173e5b,#246b82);color:#fff;font-size:17px;font-weight:900;margin-top:14px;cursor:pointer}
+#coinHud{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:110;background:#142f43;color:#ffe08a;border:1px solid #d6ad50;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:900;white-space:nowrap}
+@media(max-width:700px){#coinHud{top:44px;font-size:11px}}
+</style>
+
 </head>
 
 <body>
@@ -2450,6 +2464,7 @@ body > .app-layout { box-sizing:border-box !important; }
    <button class="tool" id="scoreBtn">🏆</button>
   </div>
  </div>
+ <div id="coinHud">🪙 100 Coins • Baazi: 50</div>
  <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">20</span> सेकंड</div>
 
  <div class="notice" id="notice">
@@ -2501,6 +2516,23 @@ body > .app-layout { box-sizing:border-box !important; }
  <div class="hand bottom" id="hand0"></div>
 
  <div class="message" id="message" style="display:none"></div>
+
+
+ <!-- PLAYER PROFILE AND COIN ENTRY -->
+ <div class="modal show" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="dialog profile-dialog">
+   <div style="text-align:center;font-size:38px">♠ ♥ ♦ ♣</div>
+   <h2 id="profileTitle">BAAZIGAR</h2>
+   <p style="text-align:center;margin:0;color:#536579">Apna naam aur baazi ke Coins chunein</p>
+   <label class="profile-field" for="playerNameInput">Aapka naam</label>
+   <input id="playerNameInput" maxlength="20" autocomplete="nickname" placeholder="Apna naam likhein">
+   <div class="profile-balance"><span>Aapka Coin Balance</span><strong id="profileCoinBalance">100 🪙</strong></div>
+   <label class="profile-field" for="stakeSelect">Kitne Coins ki baazi?</label>
+   <select id="stakeSelect"></select>
+   <p id="coinRefillNote" style="font-size:12px;color:#536579;margin:8px 0 0">Coins 50 se kam hone par 100 playing Coins automatically milenge.</p>
+   <button type="button" class="profile-start" id="profileContinue">Aage Badhein</button>
+  </div>
+ </div>
 
  <!-- GAME TARGET SELECTION MODAL -->
  <div class="modal show" id="gameModeModal" role="dialog" aria-modal="true" aria-labelledby="gameModeTitle">
@@ -2576,7 +2608,13 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  const suits=['♠','♥','♣','♦']; // Display order: Hukum, Paan, Chidi, Eent
  const ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
- let names=['You','Aarav','Priya','Kabir'];
+ let playerProfileName=localStorage.getItem('baazigarPlayerName')||'';
+ let coinBalance=Math.max(0,Number(localStorage.getItem('baazigarCoinBalance')||0));
+ let selectedStake=50;
+ let stakeCharged=false;
+ let coinGameSettled=false;
+ if(coinBalance<50){coinBalance+=100;localStorage.setItem('baazigarCoinBalance',String(coinBalance));}
+ let names=[playerProfileName||'You','Aarav','Priya','Kabir'];
 
  // Fresh Indian names for the three AI seats on every new game.
  const indianNames=[
@@ -2592,7 +2630,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   let pool=shuffle([...indianNames]);
   let chosen=pool.slice(0,3);
   if(chosen.join('|')===previous.join('|')) chosen=pool.slice(3,6);
-  names=['You',...chosen];
+  names=[playerProfileName||'You',...chosen];
+  const bottomName=document.querySelector('.seat.bottom .name');if(bottomName)bottomName.textContent=names[0];
   try{localStorage.setItem('baazigarLastBotNames',JSON.stringify(chosen));}catch(e){}
   const seatNameIds=['','botNameTop','botNameLeft','botNameRight'];
   for(let p=1;p<=3;p++){
@@ -2682,6 +2721,31 @@ window.addEventListener('DOMContentLoaded',()=>{
   box.style.display='flex';
   box.classList.toggle('warning',decisionSecondsLeft<=10);
  }
+ function saveCoinBalance(){localStorage.setItem('baazigarCoinBalance',String(coinBalance));updateCoinUI();}
+ function updateCoinUI(){
+  const balanceEl=$('profileCoinBalance');if(balanceEl)balanceEl.textContent=coinBalance+' 🪙';
+  const hud=$('coinHud');if(hud)hud.textContent=`🪙 ${coinBalance} Coins • Baazi: ${selectedStake}`;
+  const select=$('stakeSelect');if(select){const current=Number(select.value)||selectedStake;select.innerHTML='';for(let n=50;n<=500;n+=50){if(n<=coinBalance){const o=document.createElement('option');o.value=String(n);o.textContent=n+' Coins';select.appendChild(o);}}if(!select.options.length){const o=document.createElement('option');o.value='50';o.textContent='50 Coins';select.appendChild(o);}select.value=String(Math.min(current,Math.floor(coinBalance/50)*50)||50);selectedStake=Number(select.value);}
+ }
+ function settleCoinGame(winnerIndex){
+  if(coinGameSettled||!stakeCharged)return;coinGameSettled=true;
+  if(winnerIndex===0){coinBalance+=selectedStake*2;$('notice').textContent+=` Aap jeete! ${selectedStake*2} Coins wapas mile.`;}
+  else{$('notice').textContent+=` Aapki ${selectedStake} Coins ki baazi haar gayi.`;}
+  saveCoinBalance();
+ }
+ function openProfileModal(){
+  if(coinBalance<50){coinBalance+=100;saveCoinBalance();}
+  $('playerNameInput').value=playerProfileName;updateCoinUI();$('profileModal').classList.add('show');
+ }
+ $('profileContinue').addEventListener('click',()=>{
+  const val=$('playerNameInput').value.trim();if(!val){alert('Apna naam likhein.');$('playerNameInput').focus();return;}
+  playerProfileName=val.slice(0,20);localStorage.setItem('baazigarPlayerName',playerProfileName);names[0]=playerProfileName;
+  selectedStake=Number($('stakeSelect').value)||50;if(selectedStake>coinBalance){alert('Aapke paas itne Coins nahi hain.');return;}
+  const bottomName=document.querySelector('.seat.bottom .name');if(bottomName)bottomName.textContent=playerProfileName;
+  $('profileModal').classList.remove('show');$('gameModeModal').classList.add('show');render();
+ });
+ $('stakeSelect').addEventListener('change',e=>{selectedStake=Number(e.target.value)||50;updateCoinUI();});
+
  function startDecisionTimer(context){
   stopDecisionTimer();
   const token=++decisionTimerToken;
@@ -2702,6 +2766,23 @@ window.addEventListener('DOMContentLoaded',()=>{
  function startHumanTurnTimer(){
   if(phase==='play'&&turn===0&&!gameOver&&!animationBusy)startDecisionTimer('card');
   else stopDecisionTimer();
+ }
+ // Automatically play the human player's final remaining card when it is legal.
+ // Bots already play automatically through botLoop(); this covers the human seat.
+ function autoPlayFinalHumanCard(){
+  if(phase!=='play'||turn!==0||gameOver||animationBusy||hands[0].length!==1)return false;
+  const onlyCard=legalCards(0);
+  if(onlyCard.length!==1)return false;
+  stopDecisionTimer();
+  clearTimeout(botTimer);
+  $('message').textContent='Aapka aakhri card apne aap table par ja raha hai.';
+  $('notice').textContent='Aakhri bacha hua card automatically play ho raha hai.';
+  setTimeout(()=>{
+   if(phase!=='play'||turn!==0||gameOver||animationBusy||hands[0].length!==1)return;
+   const currentLegal=legalCards(0);
+   if(currentLegal.length===1)playCard(0,currentLegal[0]);
+  },450);
+  return true;
  }
  function handleDecisionTimeout(context){
   const box=$('turnCountdown');if(box){box.style.display='none';box.classList.remove('warning');}
@@ -2770,7 +2851,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   if(back)return `<div class="card back"></div>`;
 
-  // Reference-image suit colours: Paan and Eent red; Chidi and Hukam deep green.
+  // Standard playing-card colours: both black suits (Hukam/Chidi) are black;
+  // both red suits (Paan/Eent) are red. Suit symbols remain distinct.
   let red=c.s==='♥'||c.s==='♦';
 
   return `
@@ -2781,22 +2863,35 @@ window.addEventListener('DOMContentLoaded',()=>{
   `;
  }
 
+ function getActiveHukumForSorting(){
+  // The suit chosen by the first-five-card Hukum chooser is authoritative
+  // while bids are being declared; after that, use the locked trumpSuit.
+  const chooserSuit=(colorChooser>=0 && firstHukumChoices[colorChooser] && firstHukumChoices[colorChooser]!=='PASS')
+   ? firstHukumChoices[colorChooser] : null;
+  return chooserSuit || trumpSuit || null;
+ }
+
  function sortHand(h){
-  // Hukum is always the far-right suit. Suit colours alternate left-to-right.
-  // Immediate-left mapping: Paan->Chidi, Eent->Chidi, Chidi->Paan, Hukam->Eent.
-  if(!trumpSuit){
-   h.sort((a,b)=>suits.indexOf(a.s)-suits.indexOf(b.s)||a.v-b.v);
-   return;
-  }
-  const isRedSuit=s=>s==='♥'||s==='♦';
-  const nextToTrump={'♥':'♣','♦':'♣','♣':'♥','♠':'♦'}[trumpSuit];
-  const remaining=suits.filter(s=>s!==trumpSuit&&s!==nextToTrump);
-  const sameColourAsTrump=remaining.find(s=>isRedSuit(s)===isRedSuit(trumpSuit));
-  const oppositeColour=remaining.find(s=>isRedSuit(s)!==isRedSuit(trumpSuit));
-  const displayOrder=[oppositeColour,sameColourAsTrump,nextToTrump,trumpSuit];
-  h.sort((a,b)=>
-   displayOrder.indexOf(a.s)-displayOrder.indexOf(b.s)||a.v-b.v
-  );
+  // Keep all four suits grouped, with the selected Hukum suit always at the far RIGHT.
+  // Arrange the other three suits so black/red colours alternate wherever possible.
+  // ♠ Hukam and ♣ Chidi are black; ♥ Paan and ♦ Eent are red.
+  // The chosen Hukum suit is always last and receives the existing trump-card border.
+  // Cards within each suit are ordered by rank.
+  const activeHukum=getActiveHukumForSorting();
+  const orderByHukum={
+   '♥':['♣','♦','♠','♥'], // Chidi, Eent, Hukam, Paan
+   '♦':['♣','♥','♠','♦'], // Chidi, Paan, Hukam, Eent
+   '♠':['♦','♣','♥','♠'], // Eent, Chidi, Paan, Hukam
+   '♣':['♦','♠','♥','♣']  // Eent, Hukam, Paan, Chidi
+  };
+  const suitOrder=activeHukum&&orderByHukum[activeHukum]
+   ? orderByHukum[activeHukum]
+   : ['♦','♣','♥','♠'];
+  const suitIndex=s=>{
+   const i=suitOrder.indexOf(s);
+   return i<0?suitOrder.length:i;
+  };
+  h.sort((a,b)=>suitIndex(a.s)-suitIndex(b.s)||a.v-b.v);
  }
 
  /* START GAME */
@@ -3000,6 +3095,10 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  /* RENDER */
  function render(){
+
+  // Re-apply the dynamic Hukum grouping on every render so a suit chosen
+  // during bidding is never left in its old default position.
+  hands.forEach(sortHand);
 
   for(let p=0;p<4;p++){
 
@@ -3257,8 +3356,8 @@ window.addEventListener('DOMContentLoaded',()=>{
      <div style="margin:7px 0 10px;padding:12px 10px;border:2px solid #d4a84d;border-radius:12px;background:linear-gradient(135deg,#fff8e7,#fff0c9);color:#173d5d;font-size:14px;font-weight:800;line-height:1.5;box-shadow:0 2px 8px rgba(23,61,93,.14)">
       <div style="font-size:15px">रंग चुनने वाला: <span style="color:#9a4b20">${chooserName==='Kisi ne nahi'?'किसी ने नहीं':chooserName}</span></div>
       <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:3px">
-       <span style="font-size:76px;line-height:.95;font-weight:900;color:${trumpSuit==='♥'?'#d51f3b':trumpSuit==='♦'?'#c65b13':trumpSuit==='♣'?'#147343':'#17365f'};text-shadow:0 2px 3px rgba(0,0,0,.16)">${trumpSuit}</span>
-       <span style="font-size:28px;font-weight:900;color:${trumpSuit==='♥'?'#c5162e':trumpSuit==='♦'?'#a94b08':trumpSuit==='♣'?'#11653b':'#17365f'}">${noOneChoseColor?'हुकुम में बोलें':(trumpSuit==='♥'?'पान में बोलें':trumpSuit==='♦'?'ईंट में बोलें':trumpSuit==='♣'?'चिड़ी में बोलें':'हुकुम में बोलें')}</span>
+       <span style="font-size:76px;line-height:.95;font-weight:900;color:${trumpSuit==='♥'?'#d51f3b':trumpSuit==='♦'?'#c65b13':trumpSuit==='♣'?'#111111':'#111111'};text-shadow:0 2px 3px rgba(0,0,0,.16)">${trumpSuit}</span>
+       <span style="font-size:28px;font-weight:900;color:${trumpSuit==='♥'?'#c5162e':trumpSuit==='♦'?'#a94b08':trumpSuit==='♣'?'#111111':'#111111'}">${noOneChoseColor?'हुकुम में बोलें':(trumpSuit==='♥'?'पान में बोलें':trumpSuit==='♦'?'ईंट में बोलें':trumpSuit==='♣'?'चिड़ी में बोलें':'हुकुम में बोलें')}</span>
       </div>
       ${noOneChoseColor?'<div style="font-size:12px;margin-top:5px;color:#674b12">कोई रंग नहीं चुना गया — डिफॉल्ट हुकुम रहेगा</div>':''}
      </div>
@@ -3269,7 +3368,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     <section class="bid-panel" style="width:100%;box-sizing:border-box;text-align:center">
      <h3>FINAL HUKUM COLOR • 10–13</h3>
      <div class="bid-color-grid" style="grid-template-columns:1fr 1fr">${[['♠','Hukam'],['♥','Paan'],['♦','Eent'],['♣','Chidi']].map(([su,n])=>{
-      const style=su==='♥'?'background:#ffe1e1;color:#c5162e;border:2px solid #d94a59':su==='♦'?'background:#fff0d6;color:#b65312;border:2px solid #d58b32':su==='♣'?'background:#ddf4e5;color:#126638;border:2px solid #37945a':'background:#e5eaf4;color:#182d4f;border:2px solid #596b8b';
+      const style=su==='♥'?'background:#ffe1e1;color:#c5162e;border:2px solid #d94a59':su==='♦'?'background:#fff0d6;color:#b65312;border:2px solid #d58b32':su==='♣'?'background:#eeeeee;color:#111111;border:2px solid #333333':'background:#eeeeee;color:#111111;border:2px solid #333333';
       return `<button type="button" class="tool final-hukum-suit" data-suit="${su}" style="${style}">${su} ${n}</button>`;
      }).join('')}</div>
      <div class="bid-number-grid" style="grid-template-columns:repeat(4,1fr);margin-top:8px">${[10,11,12,13].map(n=>`<button type="button" class="tool final-hukum-number" data-val="${n}">${n}</button>`).join('')}</div>
@@ -3527,6 +3626,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   const lines=names.map((n,i)=>`${n}: Bol ${bidTargets[i]}, Won 0, +${bidTargets[i]} points, Total Score ${totalScores[i]}`);
   $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Skip — Bol Points Added';
   if(winnerIndex>=0){
+   settleCoinGame(winnerIndex);
    gameOver=true;phase='over';stopDecisionTimer();
    $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne ${targetScore} points complete kar liye!</strong><br><br>${lines.join('<br>')}<br><br>Game Khatam!`;
    $('restartAfterWin').style.display='block';celebrationSound();
@@ -3773,9 +3873,11 @@ window.addEventListener('DOMContentLoaded',()=>{
 
    }else{
 
-    startHumanTurnTimer();
-    $('message').textContent='Your turn — choose a card.';
-    $('notice').textContent='Click one of your raised cards to play it.';
+    if(!autoPlayFinalHumanCard()){
+     startHumanTurnTimer();
+     $('message').textContent='Your turn — choose a card.';
+     $('notice').textContent='Click one of your raised cards to play it.';
+    }
 
    }
 
@@ -3926,12 +4028,14 @@ window.addEventListener('DOMContentLoaded',()=>{
 
     if(turn===0){
 
-     startHumanTurnTimer();
-     $('message').textContent=
-      'Your turn — lead the trick.';
+     if(!autoPlayFinalHumanCard()){
+      startHumanTurnTimer();
+      $('message').textContent=
+       'Your turn — lead the trick.';
 
-     $('notice').textContent=
-      'Click any raised card to play.';
+      $('notice').textContent=
+       'Click any raised card to play.';
+     }
 
     }else{
 
@@ -3976,6 +4080,7 @@ window.addEventListener('DOMContentLoaded',()=>{
    return `${n}: Bol ${target}, Won ${tricksWon[i]}, ${result} (${delta}), Total Score ${totalScores[i]}`;
   });
   if(winnerIndex>=0){
+   settleCoinGame(winnerIndex);
    gameOver=true;
    phase='over';
    $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne sabse pehle ${targetScore} points complete kar liye!</strong><br><br>${roundLines.join('<br>')}<br><br>Game Khatam!`;
@@ -4023,12 +4128,16 @@ window.addEventListener('DOMContentLoaded',()=>{
    round=1;
    roundStarter=0;
    targetScore=null;
-   $('gameModeModal').classList.add('show');
+   $('gameModeModal').classList.remove('show');
+   openProfileModal();
   }
 
  });
 
  function beginSelectedGame(points){
+  if(!playerProfileName){openProfileModal();return;}
+  if(selectedStake>coinBalance){if(coinBalance<50){coinBalance+=100;saveCoinBalance();}if(selectedStake>coinBalance){alert('Is baazi ke liye aapke paas kaafi Coins nahi hain.');openProfileModal();return;}}
+  coinBalance-=selectedStake;saveCoinBalance();stakeCharged=true;coinGameSettled=false;
   targetScore=points;
   round=1;
   roundStarter=0;
@@ -4044,7 +4153,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   stopDecisionTimer();
   $('modal').classList.remove('show');
   $('restartAfterWin').style.display='none';
-  $('gameModeModal').classList.add('show');
+  openProfileModal();
  });
 
  $('helpBtn').addEventListener('click',()=>{
@@ -4083,7 +4192,9 @@ window.addEventListener('DOMContentLoaded',()=>{
  });
 
  assignFreshPlayerNames();
- $('gameModeModal').classList.add('show');
+ const savedName=$('playerNameInput');if(savedName)savedName.value=playerProfileName;updateCoinUI();
+ $('gameModeModal').classList.remove('show');
+ $('profileModal').classList.add('show');
 
 });
 </script>
