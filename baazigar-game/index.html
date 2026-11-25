@@ -333,6 +333,10 @@ button{font:inherit;cursor:pointer}
 .celebration .party-line{font-size:13px;color:#654b20;margin:4px 0}
 .celebration .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .celebration .confetti i{position:absolute;top:-15px;width:7px;height:12px;border-radius:2px;animation:confettiFall 2.6s linear infinite;left:var(--x);background:var(--c);animation-delay:var(--d)}
+.celebration .balloons{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.celebration .balloons i{position:absolute;bottom:-65px;left:var(--x);width:25px;height:32px;border-radius:50% 50% 46% 46%;background:var(--c);box-shadow:inset -5px -5px 0 #0002;animation:balloonRise 2.1s ease-out var(--d) forwards}
+.celebration .balloons i:after{content:"";position:absolute;left:11px;bottom:-12px;width:1px;height:14px;background:#777}
+@keyframes balloonRise{0%{transform:translateY(0) scale(.8);opacity:0}15%{opacity:1}78%{transform:translateY(-185px) scale(1);opacity:1}90%{transform:translateY(-195px) scale(1.35);opacity:.9}100%{transform:translateY(-205px) scale(1.8);opacity:0}}
 @keyframes confettiFall{to{transform:translateY(240px) rotate(620deg);opacity:.1}}
 @keyframes trophyBounce{to{transform:translateY(-7px) rotate(5deg)}}
 /* NEW GAME MODE PICKER: colorful 31 / 51 target selection */
@@ -3808,28 +3812,39 @@ window.addEventListener('DOMContentLoaded',()=>{
  function celebrationSound(){
   const ctx=getAudioContext();if(!ctx)return;
   const start=ctx.currentTime;
-  // A short crowd-like applause made from layered filtered noise claps.
-  for(let n=0;n<15;n++){
-   const t=start+n*.105+(Math.random()*.035);
-   const len=Math.floor(ctx.sampleRate*.11),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
-   for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
-   const src=ctx.createBufferSource();src.buffer=buf;
-   const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1100+Math.random()*1000;bp.Q.value=.7;
-   const g=ctx.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+.105);
-   src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+.12);
-  }
-  // Three bright firework launches/pops.
-  [0,0.48,0.96].forEach((delay,i)=>{
-   const t=start+delay,osc=ctx.createOscillator(),g=ctx.createGain();osc.type='sine';osc.frequency.setValueAtTime(420+i*90,t);osc.frequency.exponentialRampToValueAtTime(1150+i*120,t+.22);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.05);g.gain.exponentialRampToValueAtTime(.0001,t+.28);osc.connect(g);g.connect(ctx.destination);osc.start(t);osc.stop(t+.3);
-   const len=Math.floor(ctx.sampleRate*.16),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);for(let j=0;j<len;j++)d[j]=(Math.random()*2-1)*(1-j/len);
-   const src=ctx.createBufferSource(),hp=ctx.createBiquadFilter(),pg=ctx.createGain();src.buffer=buf;hp.type='highpass';hp.frequency.value=1800;pg.gain.setValueAtTime(.0001,t+.2);pg.gain.exponentialRampToValueAtTime(.19,t+.215);pg.gain.exponentialRampToValueAtTime(.0001,t+.36);src.connect(hp);hp.connect(pg);pg.connect(ctx.destination);src.start(t+.2);src.stop(t+.37);
+  // Loud celebratory firework booms with bass thumps and bright crackling bursts.
+  [0,0.62,1.24,1.92,2.58].forEach((delay,index)=>{
+   const t=start+delay;
+   const boom=ctx.createOscillator(),boomGain=ctx.createGain();
+   boom.type='sine';boom.frequency.setValueAtTime(105+index*9,t);boom.frequency.exponentialRampToValueAtTime(38,t+.42);
+   boomGain.gain.setValueAtTime(.0001,t);boomGain.gain.exponentialRampToValueAtTime(.72,t+.018);boomGain.gain.exponentialRampToValueAtTime(.0001,t+.52);
+   boom.connect(boomGain);boomGain.connect(ctx.destination);boom.start(t);boom.stop(t+.54);
+   const length=Math.floor(ctx.sampleRate*.48),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+   for(let j=0;j<length;j++)data[j]=(Math.random()*2-1)*Math.pow(1-j/length,1.25);
+   const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();noise.buffer=buffer;filter.type='lowpass';filter.frequency.setValueAtTime(5200,t+.08);filter.frequency.exponentialRampToValueAtTime(650,t+.48);
+   gain.gain.setValueAtTime(.0001,t+.07);gain.gain.exponentialRampToValueAtTime(.48,t+.10);gain.gain.exponentialRampToValueAtTime(.0001,t+.5);
+   noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(t+.07);noise.stop(t+.51);
+   // Sharp sparkling crackles after each boom.
+   for(let k=0;k<11;k++){
+    const ct=t+.12+Math.random()*.28,osc=ctx.createOscillator(),og=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(900+Math.random()*2600,ct);osc.frequency.exponentialRampToValueAtTime(250+Math.random()*400,ct+.055);
+    og.gain.setValueAtTime(.0001,ct);og.gain.exponentialRampToValueAtTime(.12,ct+.004);og.gain.exponentialRampToValueAtTime(.0001,ct+.065);osc.connect(og);og.connect(ctx.destination);osc.start(ct);osc.stop(ct+.07);
+   }
   });
+  // Short applause layer underneath the fireworks.
+  for(let n=0;n<24;n++){
+   const t=start+n*.095+(Math.random()*.025),len=Math.floor(ctx.sampleRate*.085),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+   for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+   const src=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=buf;bp.type='bandpass';bp.frequency.value=1300+Math.random()*1300;bp.Q.value=.8;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+.085);src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+.09);
+  }
  }
+
  function celebrationMarkup(winners){
   const namesText=winners.length?winners.map(i=>names[i]).join(' & '):'Is round mein kisi ka Bol poora nahi hua';
   const sub=winners.length?'BAAZI JEETNE PAR BADHAI HO!':'Agli baazi mein phir koshish karein!';
-  const confetti=Array.from({length:26},(_,i)=>`<i style="--x:${(i*37)%100}%;--d:${(i%9)*-.22}s;--c:${['#e53e3e','#f5b700','#168b55','#3478d4','#a34acb'][i%5]}"></i>`).join('');
-  return `<div class="celebration"><div class="confetti">${confetti}</div><div class="trophy">🏆</div><h3>CONGRATULATIONS!</h3><div class="winner-names">${namesText}</div><div class="party-line">${sub}</div><div class="party-line">👏 तालियाँ • 🎉 पटाखे • 🎊 शाबाशी!</div></div>`;
+  const colors=['#e53e3e','#f5b700','#168b55','#3478d4','#a34acb','#ff7b36'];
+  const confetti=Array.from({length:34},(_,i)=>`<i style="--x:${(i*37)%100}%;--d:${(i%9)*-.22}s;--c:${colors[i%colors.length]}"></i>`).join('');
+  const balloons=Array.from({length:12},(_,i)=>`<i style="--x:${(i*23)%96}%;--d:${(i%6)*.12}s;--c:${colors[i%colors.length]}"></i>`).join('');
+  return `<div class="celebration"><div class="confetti">${confetti}</div><div class="balloons">${balloons}</div><div class="trophy">🏆</div><h3>शाबाश!</h3><div class="winner-names">${namesText}</div><div class="party-line">${sub}</div><div class="party-line">👏 तालियाँ • 🎉 पटाखे • 🎊 शाबाशी!</div></div>`;
  }
 
  /* PLAY CARD IMMEDIATELY ON CLICK */
