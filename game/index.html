@@ -1,0 +1,4261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minus Taas Ki Mehfil</title>
+
+<style>
+:root{
+ --felt:#08752e;
+ --blue:#b8dcff;
+ --ink:#153c5d;
+ --gold:#ffd45b;
+}
+*{box-sizing:border-box}
+html,body{
+ margin:0;width:100%;height:100%;
+ overflow:hidden;
+ font-family:Arial,Helvetica,sans-serif;
+ background:#064b20;color:white;
+}
+button{font:inherit;cursor:pointer}
+
+.table{
+ position:relative;width:100vw;height:100dvh;
+ min-height:560px;overflow:hidden;
+ background:
+  radial-gradient(ellipse at center,#16883a 0%,#08702d 58%,#03491d 100%) padding-box,
+  linear-gradient(135deg,#fff1ad 0%,#b47b22 16%,#f8df91 32%,#805018 50%,#e7c36d 68%,#9b681d 84%,#fff0a8 100%) border-box;
+ border:12px solid transparent;
+ box-shadow:
+  inset 0 0 50px #002e12,
+  inset 0 0 0 3px #fff4,
+  0 0 0 3px #684515,
+  0 0 14px #0009;
+}
+.table:before{
+ content:"";position:absolute;inset:10px;
+ border:2px solid #ffe9a0a8;
+ border-radius:18px;pointer-events:none;
+ box-shadow:inset 0 0 0 1px #ffffff26;
+}
+.table:after{
+ content:"";position:absolute;inset:4px;
+ border:1px solid #fff8;
+ border-radius:14px;pointer-events:none;
+}
+
+.topbar{
+ position:absolute;top:14px;left:16px;right:16px;
+ display:flex;justify-content:space-between;
+ z-index:50;pointer-events:none;
+}
+.topbar>div{display:flex;gap:8px;pointer-events:auto}
+
+.tool{
+ border:1px solid #333;border-radius:12px;
+ background:#f6f6f6;color:#183d5d;
+ padding:9px 12px;box-shadow:0 2px 4px #0005;
+ font-weight:bold;transition:.2s;
+}
+.tool{font-size:18px;min-width:42px}
+.tool.active{background:#ffd45b;color:#153c5d}
+
+.status{
+ position:absolute;top:70px;left:50%;
+ transform:translateX(-50%);z-index:45;
+ background:var(--blue);color:var(--ink);
+ border:2px solid #123c62;border-radius:12px;
+ padding:8px 18px;min-width:310px;
+ text-align:center;font-weight:bold;
+ box-shadow:0 3px 5px #0004;
+}
+.status small{display:block;font-size:12px;margin-top:3px}
+
+.notice{
+ position:absolute;top:76px;left:16px;
+ z-index:45;background:white;color:#222;
+ border:1px solid #333;border-radius:10px;
+ padding:12px 16px;font-size:14px;
+ font-weight:bold;max-width:260px;
+ box-shadow:0 2px 5px #0004;
+}
+
+/* PLAYER SEATS */
+.seat{
+ position:absolute;z-index:50;
+ text-align:center;min-width:125px;
+}
+.seat .avatar{
+ font-size:35px;
+ filter:drop-shadow(0 2px 2px #0005);
+ margin-bottom:-5px;
+}
+.seat .trump-marker{
+ display:none; width:max-content; margin:0 auto 4px; padding:3px 9px;
+ border:1px solid #b78a16; border-radius:7px; background:#fff4c7;
+ color:#8a5200; font-size:19px; font-weight:900; line-height:1.1;
+ box-shadow:0 1px 3px #0004;
+}
+.seat .name{
+ background:var(--blue);color:#15466e;
+ border:1px solid #163d60;border-radius:10px;
+ padding:9px 12px;font-weight:bold;
+ box-shadow:0 2px 4px #0004;white-space:nowrap;
+}
+.seat .score{
+ background:#a7d4ff;color:#17486f;
+ border:1px solid #163d60;border-top:0;
+ border-radius:0 0 8px 8px;
+ padding:5px;font-size:13px;font-weight:bold;
+}
+.seat.top{top:26px;left:50%;transform:translateX(-50%)}
+.seat.left{left:12px;top:43%;transform:translateY(-50%)}
+.seat.right{right:12px;top:43%;transform:translateY(-50%)}
+.seat.bottom{
+ bottom:190px;left:50%;
+ transform:translateX(-50%);
+}
+
+/* PLAYER HANDS */
+.hand{
+ position:absolute;z-index:10;
+ display:flex;justify-content:center;
+ align-items:flex-end;
+}
+.hand.top{
+ top:8px;left:50%;transform:translateX(-50%);
+ width:360px;height:145px;
+}
+.hand.left{
+ left:10px;top:50%;transform:translateY(-50%);
+ width:170px;height:360px;flex-direction:column;
+}
+.hand.right{
+ right:10px;top:50%;transform:translateY(-50%);
+ width:170px;height:360px;flex-direction:column;
+}
+.hand.bottom{
+ bottom:-3px;left:50%;transform:translateX(-50%);
+ width:min(94vw,1120px);height:220px;
+ align-items:flex-end;
+}
+
+/* CARDS */
+.card{
+ position:relative;flex:0 0 auto;
+ width:clamp(60px,6.5vw,91px);
+ height:clamp(91px,9.6vw,132px);
+ background:#fff;border:1.5px solid #1b1b1b;
+ border-radius:10px;color:#111;
+ box-shadow:0 3px 7px #0005;
+ user-select:none;
+ transition:
+  transform .3s ease,
+  filter .25s ease,
+  opacity .25s ease;
+ overflow:hidden;
+}
+.card .corner{
+ position:absolute;top:6px;left:7px;
+ font-size:clamp(17px,1.8vw,25px);
+ font-weight:800;line-height:1;
+}
+.card .corner span{
+ display:block;
+ font-size:clamp(15px,1.5vw,21px);
+ margin-top:3px;
+}
+.card .pip{
+ position:absolute;inset:0;
+ display:grid;place-items:center;
+ font-size:clamp(36px,4.5vw,58px);
+ opacity:.96;
+}
+.card.red{color:#c51f36}
+.card.black{color:#111111}
+/* Selected Hukum suit: subtle 2px border on matching cards only */
+.hand.bottom .card.trump-card{border:3px solid #d6a51d !important; box-shadow:0 0 0 2px #fff0b8,0 0 9px #d6a51d99,0 3px 7px #0005 !important;}
+
+.hand.bottom .card{
+ margin-left:clamp(-27px,-1.8vw,-13px);
+ cursor:pointer;
+}
+.hand.bottom .card:first-child{margin-left:0}
+
+/* LEGAL CARDS */
+.hand.bottom .card.legal{
+ transform:translateY(-9px);
+ filter:none;
+ opacity:1;
+ z-index:15;
+}
+
+/* INVALID CARDS - 5% LIGHT BLUR */
+.hand.bottom .card.illegal{
+ transform:translateY(0);
+ filter:blur(.35px);
+ opacity:.97;
+ cursor:not-allowed;
+}
+
+/* CARD CLICK HIGHLIGHT */
+.hand.bottom .card.legal:hover{
+ transform:translateY(-14px);
+}
+
+/* OPPONENT CARDS */
+.hand.top .card{
+ width:58px;height:85px;
+ margin-left:-24px;
+}
+.hand.top .card:first-child{margin-left:0}
+
+.hand.left .card,.hand.right .card{
+ width:82px;height:116px;
+ margin-top:-67px;
+ transform:rotate(90deg);
+}
+.hand.left .card:first-child,
+.hand.right .card:first-child{margin-top:0}
+
+/* CARD BACK */
+.back{
+ background:repeating-linear-gradient(
+ 45deg,#f8faff 0 4px,#dce8f8 4px 6px
+ );
+ border:5px solid white;
+ outline:1px solid #1a2c4d;
+}
+.back:before{
+ content:"";position:absolute;inset:4px;
+ border:2px solid #1a3766;border-radius:4px;
+ background:repeating-linear-gradient(
+ 135deg,#fff 0 3px,#244878 3px 5px
+ );
+}
+.back:after{
+ content:"✥";position:absolute;inset:0;
+ display:grid;place-items:center;
+ color:#173d70;font-size:30px;
+ text-shadow:0 1px white;
+}
+
+/* CENTER */
+.center{
+ position:absolute;left:50%;top:48%;
+ transform:translate(-50%,-50%);
+ width:min(460px,58vw);height:360px;
+ z-index:5;
+}
+.play-slot{
+ position:absolute;width:100px;height:142px;
+ display:grid;place-items:center;
+}
+.play-slot .card{
+ width:clamp(70px,7.5vw,100px);
+ height:clamp(103px,10.5vw,142px);
+}
+#slot1{
+ top:0;left:50%;
+ transform:translateX(-50%);
+}
+#slot3{
+ right:0;top:50%;
+ transform:translateY(-50%);
+}
+#slot0{
+ bottom:0;left:50%;
+ transform:translateX(-50%);
+}
+#slot2{
+ left:0;top:50%;
+ transform:translateY(-50%);
+}
+
+/* NO NAMES UNDER CENTER CARDS */
+.play-slot label{display:none!important}
+
+/* CARD ARRIVAL */
+.play-slot .card{
+ animation:cardEnter .35s ease-out;
+}
+@keyframes cardEnter{
+ from{
+  opacity:0;
+  transform:scale(.88) translateY(-10px);
+ }
+ to{opacity:1}
+}
+
+/* ALL CARDS MOVE TO WINNER TOGETHER */
+.play-slot .card.collect-top,
+.play-slot .card.collect-right,
+.play-slot .card.collect-bottom,
+.play-slot .card.collect-left{
+ transition:
+  transform .65s cubic-bezier(.25,.8,.25,1),
+  opacity .65s ease-in-out;
+ opacity:0;
+ z-index:60;
+}
+.play-slot .card.collect-top{
+ transform:translateY(-230px) scale(.55);
+}
+.play-slot .card.collect-right{
+ transform:translateX(250px) scale(.55);
+}
+.play-slot .card.collect-bottom{
+ transform:translateY(230px) scale(.55);
+}
+.play-slot .card.collect-left{
+ transform:translateX(-250px) scale(.55);
+}
+
+/* MESSAGE */
+.message{
+ position:absolute;left:50%;
+ top:calc(48% + 145px);
+ transform:translateX(-50%);
+ z-index:45;background:#082f1dcc;
+ padding:8px 14px;border-radius:10px;
+ font-size:14px;text-align:center;
+ max-width:85vw;
+}
+
+/* ROUND WINNER CELEBRATION */
+.celebration{position:relative;overflow:hidden;margin:10px -4px 14px;padding:14px 10px 12px;border-radius:14px;background:linear-gradient(135deg,#fff4c4,#ffe08a 48%,#fff7d8);border:2px solid #d4a437;box-shadow:0 5px 18px #9b741c44}
+.celebration .trophy{font-size:42px;animation:trophyBounce .75s ease-in-out infinite alternate}
+.celebration h3{margin:5px 0;color:#8b5700;font-size:23px;letter-spacing:.5px}
+.celebration .winner-names{font-weight:800;color:#17486f;font-size:17px;margin:5px 0}
+.celebration .party-line{font-size:13px;color:#654b20;margin:4px 0}
+.celebration .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.celebration .confetti i{position:absolute;top:-15px;width:7px;height:12px;border-radius:2px;animation:confettiFall 2.6s linear infinite;left:var(--x);background:var(--c);animation-delay:var(--d)}
+.celebration .balloons{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.celebration .balloons i{position:absolute;bottom:-65px;left:var(--x);width:25px;height:32px;border-radius:50% 50% 46% 46%;background:var(--c);box-shadow:inset -5px -5px 0 #0002;animation:balloonRise 2.1s ease-out var(--d) forwards}
+.celebration .balloons i:after{content:"";position:absolute;left:11px;bottom:-12px;width:1px;height:14px;background:#777}
+@keyframes balloonRise{0%{transform:translateY(0) scale(.8);opacity:0}15%{opacity:1}78%{transform:translateY(-185px) scale(1);opacity:1}90%{transform:translateY(-195px) scale(1.35);opacity:.9}100%{transform:translateY(-205px) scale(1.8);opacity:0}}
+@keyframes confettiFall{to{transform:translateY(240px) rotate(620deg);opacity:.1}}
+@keyframes trophyBounce{to{transform:translateY(-7px) rotate(5deg)}}
+/* NEW GAME MODE PICKER: colorful 31 / 51 target selection */
+#gameModeModal{z-index:140;background:rgba(1,13,24,.88);backdrop-filter:blur(5px)}
+#gameModeModal .mode-dialog{max-width:560px;padding:25px 22px;background:linear-gradient(145deg,#fff8df,#e8f4ff 55%,#fff);border:3px solid #d6ad50;box-shadow:0 0 0 5px #173e5b,0 18px 45px #0009}
+.mode-dialog h2{font-size:clamp(22px,4vw,30px);color:#123d60;margin:0 0 8px}
+.mode-dialog .mode-subtitle{font-size:15px;color:#526779;margin:0 0 20px}
+.mode-options{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mode-option{border:2px solid #d5a63e;border-radius:18px;padding:18px 12px;cursor:pointer;color:#173b59;background:linear-gradient(145deg,#fff,#ffedb5);box-shadow:0 6px 14px #183b5b25;transition:transform .15s,box-shadow .15s}
+.mode-option:last-child{background:linear-gradient(145deg,#e7f5ff,#b9e0ff);border-color:#3c8dc1}
+.mode-option:hover{transform:translateY(-3px);box-shadow:0 10px 18px #183b5b35}
+.mode-option strong{display:block;font-size:clamp(30px,6vw,42px);line-height:1.1}
+.mode-option span{display:block;font-size:14px;font-weight:800;margin-top:6px}
+.mode-dialog .mode-foot{font-size:12px;color:#65788a;margin:17px 0 0}
+@media(max-width:520px){#gameModeModal .mode-dialog{padding:20px 13px}.mode-options{gap:10px}.mode-option{padding:17px 7px}.mode-option span{font-size:12px}}
+/* MODALS */
+.modal{
+ position:absolute;inset:0;
+ background:#0009;display:none;
+ place-items:center;z-index:100;padding:20px;
+}
+.modal.show{display:grid}
+.dialog{
+ background:white;color:#173b59;
+ border-radius:18px;padding:24px;
+ max-width:440px;width:100%;
+ box-shadow:0 10px 35px #0008;text-align:center;
+}
+.dialog h2{margin:0 0 12px}
+.dialog p{line-height:1.5}
+.dialog button{margin:6px}
+/* SUIT-COLOR BUTTONS: vivid suit colors, gold borders and gentle motion */
+.stage1-suit,.color-pick,.final-hukum-suit{
+ border:2px solid #b58b37 !important;
+ border-radius:12px !important;
+ font-weight:900 !important;
+ letter-spacing:.2px;
+ transition:transform .18s ease,box-shadow .18s ease,filter .18s ease,border-color .18s ease !important;
+ box-shadow:0 3px 0 rgba(65,45,12,.22),0 4px 10px rgba(0,0,0,.12) !important;
+ position:relative;
+ overflow:hidden;
+}
+.stage1-suit[data-suit="♠"],.color-pick[data-suit="♠"],.final-hukum-suit[data-suit="♠"]{
+ color:#111111 !important;background:linear-gradient(145deg,#f4f4f4,#d7d7d7) !important;border-color:#333333 !important;
+}
+.stage1-suit[data-suit="♥"],.color-pick[data-suit="♥"],.final-hukum-suit[data-suit="♥"]{
+ color:#bd1535 !important;background:linear-gradient(145deg,#fff0f2,#ffc8d1) !important;border-color:#dc4966 !important;
+}
+.stage1-suit[data-suit="♦"],.color-pick[data-suit="♦"],.final-hukum-suit[data-suit="♦"]{
+ color:#a94b08 !important;background:linear-gradient(145deg,#fff6e6,#ffd9a5) !important;border-color:#d58a32 !important;
+}
+.stage1-suit[data-suit="♣"],.color-pick[data-suit="♣"],.final-hukum-suit[data-suit="♣"]{
+ color:#111111 !important;background:linear-gradient(145deg,#f4f4f4,#d7d7d7) !important;border-color:#333333 !important;
+}
+.stage1-suit:hover,.color-pick:hover,.final-hukum-suit:hover{
+ transform:translateY(-3px) scale(1.015) !important;
+ filter:saturate(1.18) brightness(1.025);
+ box-shadow:0 5px 0 rgba(65,45,12,.18),0 9px 18px rgba(0,0,0,.2) !important;
+}
+.stage1-suit.active,.color-pick.active,.final-hukum-suit.active{
+ outline:3px solid #ffd34e !important;
+ outline-offset:2px;
+ border-color:#9b6b08 !important;
+ transform:translateY(-2px) scale(1.025) !important;
+ box-shadow:0 0 0 5px rgba(255,211,78,.24),0 0 18px rgba(255,211,78,.65),0 4px 10px #0003 !important;
+ animation:suitSelectedGlow 1.35s ease-in-out infinite alternate;
+}
+@keyframes suitSelectedGlow{
+ from{filter:brightness(1);}
+ to{filter:brightness(1.12) saturate(1.16);}
+}
+@media(prefers-reduced-motion:reduce){
+ .stage1-suit,.color-pick,.final-hukum-suit{transition:none !important;animation:none !important}
+ .stage1-suit:hover,.color-pick:hover,.final-hukum-suit:hover{transform:none !important}
+}
+
+/* SIDE-BY-SIDE FINAL BID TABLES */
+#bidModal .dialog{max-width:820px;width:min(94vw,820px)}
+.bid-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.bid-panel{border:1px solid #9aa9b7;border-radius:13px;padding:13px;background:#f8fbff;min-width:0}
+.bid-panel h3{margin:0 0 10px;font-size:17px;color:#153c5d}
+.bid-panel .tool{font-size:16px;padding:9px 6px;margin:0;min-width:0}
+.bid-number-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bid-color-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.bid-panel .tool.active{background:#ffd45b;color:#153c5d;border-color:#9b7614}
+.bid-panel .hint{font-size:12px;line-height:1.4;color:#526477;min-height:34px;margin:8px 0 0}
+@media(max-width:620px){
+ #bidModal{overflow-y:auto;align-items:center}
+ #bidModal .dialog{max-height:92vh;overflow-y:auto;padding:15px;width:96vw}
+ .bid-choice-grid{grid-template-columns:1fr 1fr;gap:7px}
+ .bid-panel{padding:8px 6px}
+ .bid-panel h3{font-size:13px}
+ .bid-panel .tool{font-size:13px;padding:8px 3px}
+ .bid-number-grid{gap:5px}
+ .bid-color-grid{gap:5px}
+ .bid-panel .hint{font-size:10px}
+}
+
+/* COMPACT GAME TABLE + LIVE SCOREBOARD */
+.scoreboard{
+ position:absolute;right:18px;top:125px;width:clamp(205px,19vw,285px);
+ z-index:35;background:rgba(245,250,255,.96);color:#153c5d;
+ border:2px solid #173f63;border-radius:13px;overflow:hidden;
+ box-shadow:0 4px 12px #001b0d88;
+}
+.scoreboard h3{margin:0;padding:11px 10px;text-align:center;background:#b8dcff;color:#153c5d;font-size:17px;border-bottom:1px solid #52799a}
+.scoreboard table{width:100%;border-collapse:collapse;font-size:12px;text-align:center;table-layout:auto}
+.scoreboard th{background:#e1efff;padding:8px 3px;font-size:11px;white-space:nowrap}
+.scoreboard td{padding:9px 3px;border-top:1px solid #c5d6e6;font-weight:bold;font-size:11px}
+.scoreboard tr.current td{background:#fff2c7}
+.scoreboard .player-name{text-align:left;padding-left:10px;white-space:nowrap}
+/* Keep the playing surface in the left section, leaving room for scores. */
+.status{left:39%;min-width:270px}
+.seat.top,.seat.bottom{left:39%}
+.seat.right{right:calc(22% + 12px)}
+.hand.top,.hand.bottom{left:39%}
+.hand.right{right:calc(22% + 10px)}
+.center{left:39%;width:min(420px,40vw)}
+
+/* MOBILE */
+@media(max-width:700px){
+ .scoreboard{right:7px;top:115px;width:clamp(150px,31vw,205px)}
+ .scoreboard h3{font-size:13px;padding:7px 4px}
+ .scoreboard table{font-size:9px}
+ .scoreboard th{font-size:8px;padding:5px 1px}
+ .scoreboard td{font-size:9px;padding:6px 1px}
+ .scoreboard .player-name{padding-left:5px}
+ .status{left:38%;min-width:155px;max-width:42vw;font-size:11px}
+ .seat.top,.seat.bottom{left:38%}
+ .seat.right{right:calc(31% + 3px)}
+ .hand.top,.hand.bottom{left:38%}
+ .hand.right{right:calc(31% - 20px)}
+ .center{left:38%;width:38vw}
+
+ .table{border-width:4px;min-height:500px}
+
+ .notice{
+  top:66px;left:8px;font-size:11px;
+  max-width:155px;padding:8px;
+ }
+
+ .status{
+  top:65px;min-width:185px;
+  padding:6px 8px;font-size:13px;
+ }
+
+ .seat{min-width:90px}
+ .seat .avatar{font-size:26px}
+ .seat .name{font-size:11px;padding:6px 7px}
+ .seat .score{font-size:10px;padding:3px}
+
+ .seat.top{top:18px}
+ .seat.left{left:3px;top:42%}
+ .seat.right{right:3px;top:42%}
+ .seat.bottom{bottom:155px}
+
+ .hand.top{
+  width:230px;height:95px;top:2px;
+ }
+ .hand.top .card{
+  width:39px;height:59px;margin-left:-17px;
+ }
+
+ .hand.left{
+  left:-20px;width:100px;height:240px;
+ }
+ .hand.right{
+  right:-20px;width:100px;height:240px;
+ }
+ .hand.left .card,.hand.right .card{
+  width:56px;height:80px;margin-top:-47px;
+ }
+
+ .hand.bottom{
+  width:98vw;height:165px;bottom:0;
+  justify-content:flex-start;
+  padding-left:8px;overflow:visible;
+ }
+ .hand.bottom .card{
+  width:clamp(43px,11vw,62px);
+  height:clamp(67px,17vw,91px);
+  border-radius:7px;margin-left:-18px;
+ }
+ .hand.bottom .card .corner{
+  font-size:15px;top:4px;left:5px;
+ }
+ .hand.bottom .card .corner span{font-size:13px}
+ .hand.bottom .card .pip{font-size:32px}
+
+ .center{
+  top:46%;width:250px;height:290px;
+ }
+ .play-slot{width:70px;height:103px}
+ .play-slot .card{width:70px;height:103px}
+
+ #slot1{top:0}
+ #slot0{bottom:0}
+ #slot2{left:0}
+ #slot3{right:0}
+
+ .play-slot .card.collect-top{
+  transform:translateY(-180px) scale(.55);
+ }
+ .play-slot .card.collect-right{
+  transform:translateX(160px) scale(.55);
+ }
+ .play-slot .card.collect-bottom{
+  transform:translateY(180px) scale(.55);
+ }
+ .play-slot .card.collect-left{
+  transform:translateX(-160px) scale(.55);
+ }
+
+ .message{
+  top:calc(46% + 155px);
+  font-size:11px;
+ }
+}
+
+
+/* MOBILE LAYOUT REWORK: fit the full game to a phone screen */
+@media (max-width:700px){
+  html,body{width:100%;height:100%;height:100dvh;overflow:hidden}
+  .table{
+    width:100vw;height:100dvh;min-height:0;
+    border-width:3px;overflow:hidden;
+  }
+  .table:before{inset:6px;border-radius:14px}
+
+  .topbar{top:7px;left:8px;right:8px}
+  .topbar>div{gap:5px}
+  .tool{min-width:36px;padding:7px 9px;font-size:16px;border-radius:9px}
+
+  /* Keep info and score readable without covering the players */
+  .notice{
+    top:55px;left:8px;max-width:43vw;width:43vw;
+    padding:7px 8px;font-size:10px;line-height:1.25;
+  }
+  .scoreboard{
+    top:55px;right:8px;width:49vw;max-width:245px;
+    border-width:1px;border-radius:9px;
+  }
+  .scoreboard h3{font-size:12px;padding:5px 3px}
+  .scoreboard table{font-size:9px}
+  .scoreboard th{font-size:8px;padding:4px 1px}
+  .scoreboard td{font-size:9px;padding:5px 1px}
+  .scoreboard .player-name{padding-left:4px}
+
+  .status{
+    top:150px;left:50%;transform:translateX(-50%);
+    width:calc(100vw - 24px);min-width:0;max-width:420px;
+    padding:6px 8px;font-size:12px;line-height:1.2;
+  }
+  .status small{font-size:10px}
+
+  .seat{min-width:76px}
+  .seat .avatar{font-size:23px;margin-bottom:-3px}
+  .seat .trump-marker{font-size:14px;padding:2px 6px;margin-bottom:2px}
+  .seat .name{font-size:11px;padding:5px 7px;border-radius:7px}
+  .seat .score{font-size:9px;padding:3px 2px;white-space:nowrap}
+
+  .seat.top{top:205px;left:50%;transform:translateX(-50%)}
+  .seat.left{left:5px;top:49%;transform:translateY(-50%)}
+  .seat.right{right:5px;top:49%;transform:translateY(-50%)}
+  .seat.bottom{bottom:clamp(105px,12vh,155px);left:50%;transform:translateX(-50%)}
+
+  .hand.top{
+    top:205px;left:50%;transform:translateX(-50%);
+    width:190px;height:75px;
+  }
+  .hand.top .card{width:34px;height:51px;margin-left:-15px;border-radius:5px}
+  .hand.left,.hand.right{
+    top:50%;width:58px;height:210px;
+    transform:translateY(-50%);
+  }
+  .hand.left{left:0}
+  .hand.right{right:0}
+  .hand.left .card,.hand.right .card{
+    width:42px;height:61px;margin-top:-38px;border-radius:5px;
+  }
+
+  .hand.bottom{
+    left:0;bottom:0;transform:none;
+    width:100vw;height:clamp(100px,14vh,145px);
+    justify-content:center;align-items:flex-end;
+    padding:0 5px 5px;overflow:visible;
+  }
+  .hand.bottom .card{
+    width:clamp(29px,8.2vw,52px);
+    height:clamp(48px,13.5vw,82px);
+    margin-left:clamp(-17px,-3.2vw,-10px);
+    border-radius:6px;
+  }
+  .hand.bottom .card:first-child{margin-left:0}
+  .hand.bottom .card .corner{font-size:clamp(11px,3.2vw,16px);top:3px;left:3px}
+  .hand.bottom .card .corner span{font-size:clamp(10px,2.8vw,14px);margin-top:1px}
+  .hand.bottom .card .pip{font-size:clamp(22px,6vw,34px)}
+  .hand.bottom .card.legal{transform:translateY(-6px)}
+  .hand.bottom .card.legal:hover{transform:translateY(-8px)}
+
+  .center{
+    top:52%;left:50%;transform:translate(-50%,-50%);
+    width:min(190px,48vw);height:220px;
+  }
+  .play-slot{width:55px;height:80px}
+  .play-slot .card{width:55px;height:80px;border-radius:6px}
+  .play-slot .card .corner{font-size:13px;top:3px;left:4px}
+  .play-slot .card .corner span{font-size:11px}
+  .play-slot .card .pip{font-size:27px}
+  .play-slot .card.collect-top{transform:translateY(-115px) scale(.55)}
+  .play-slot .card.collect-right{transform:translateX(100px) scale(.55)}
+  .play-slot .card.collect-bottom{transform:translateY(115px) scale(.55)}
+  .play-slot .card.collect-left{transform:translateX(-100px) scale(.55)}
+
+  .message{
+    top:calc(52% + 125px);left:50%;max-width:75vw;
+    font-size:10px;padding:6px 9px;
+  }
+
+  .dialog{padding:16px;max-width:94vw}
+  #bidModal .dialog{max-height:90dvh}
+}
+
+
+/* PORTRAIT PHONE FIX: readable 13-card hand and separated player areas */
+@media (max-width:700px) and (orientation:portrait){
+  html,body{
+    width:100%;height:100%;height:100dvh;overflow:hidden;
+    overscroll-behavior:none;
+  }
+  .table{
+    width:100vw;height:100dvh;min-height:0;
+    border-width:5px;overflow:hidden;
+  }
+  .table:before{inset:6px;border-radius:12px}
+  .table:after{inset:2px;border-radius:10px}
+
+  .topbar{top:5px;left:6px;right:6px}
+  .topbar>div{gap:5px}
+  .tool{min-width:34px;padding:6px 8px;font-size:15px;border-radius:9px}
+
+  /* Top information row */
+  .notice{
+    top:52px;left:7px;width:37vw;max-width:155px;
+    padding:6px 7px;font-size:9px;line-height:1.2;
+    z-index:46;
+  }
+  .scoreboard{
+    top:50px;right:6px;width:45vw;max-width:190px;
+    border-width:1px;border-radius:8px;
+  }
+  .scoreboard h3{font-size:11px;padding:4px 2px}
+  .scoreboard table{font-size:8px;table-layout:fixed}
+  .scoreboard th{font-size:7px;padding:3px 1px}
+  .scoreboard td{font-size:8px;padding:4px 1px;overflow-wrap:anywhere}
+  .scoreboard .player-name{padding-left:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Status stays in the middle and never covers the scoreboard */
+  .status{
+    top:42%;left:50%;transform:translate(-50%,-50%);
+    width:auto;min-width:0;max-width:70vw;
+    padding:5px 8px;font-size:10px;line-height:1.2;
+    z-index:42;
+  }
+  .status small{font-size:9px}
+
+  /* Seats */
+  .seat{min-width:0;width:clamp(76px,25vw,105px);z-index:32}
+  .seat .avatar{font-size:21px;margin-bottom:-3px}
+  .seat .trump-marker{font-size:12px;padding:2px 5px;margin-bottom:2px}
+  .seat .name{font-size:10px;padding:4px 5px;border-radius:7px;overflow:hidden;text-overflow:ellipsis}
+  .seat .score{font-size:8px;padding:3px 1px;white-space:nowrap;overflow:hidden}
+  .seat.top{
+    top:clamp(145px,22vh,205px);left:50%;
+    transform:translateX(-50%);
+  }
+  .seat.left{left:4px;top:49%;transform:translateY(-50%)}
+  .seat.right{right:4px;top:49%;transform:translateY(-50%)}
+  .seat.bottom{
+    left:50%;bottom:clamp(74px,10vh,100px);
+    transform:translateX(-50%);
+  }
+
+  /* Opponent hands: keep card backs behind the name plates */
+  .hand.top{
+    top:clamp(115px,17vh,155px);left:50%;
+    transform:translateX(-50%);
+    width:92vw;height:54px;overflow:hidden;
+    justify-content:center;align-items:flex-start;
+  }
+  .hand.top .card{
+    width:clamp(22px,6vw,30px);height:42px;
+    margin-left:clamp(-12px,-2.6vw,-8px);
+    border-radius:4px;flex-shrink:0;
+  }
+  .hand.top .card:first-child{margin-left:0}
+
+  .hand.left,.hand.right{
+    top:50%;width:48px;height:clamp(190px,30vh,270px);
+    transform:translateY(-50%);
+    justify-content:flex-start;align-items:center;
+    overflow:hidden;
+  }
+  .hand.left{left:0}
+  .hand.right{right:0}
+  .hand.left .card,.hand.right .card{
+    width:35px;height:50px;
+    margin-top:-31px;transform:none;
+    border-radius:4px;flex-shrink:0;
+  }
+  .hand.left .card:first-child,.hand.right .card:first-child{margin-top:0}
+
+  /* User's 13 cards: calculate overlap so every card stays on screen */
+  .hand.bottom{
+    left:0;right:0;bottom:0;width:100%;
+    height:clamp(86px,13vh,112px);
+    transform:none;justify-content:center;align-items:flex-end;
+    padding:0 3px 5px;overflow:visible;
+    z-index:25;
+  }
+  .hand.bottom .card{
+    width:clamp(24px,7.25vw,43px);
+    height:clamp(43px,12.2vw,68px);
+    margin-left:clamp(-15px,-2.25vw,-8px);
+    border-radius:5px;flex:0 1 auto;
+  }
+  .hand.bottom .card:first-child{margin-left:0}
+  .hand.bottom .card .corner{
+    top:3px;left:3px;font-size:clamp(10px,3vw,15px);
+  }
+  .hand.bottom .card .corner span{
+    font-size:clamp(9px,2.6vw,13px);margin-top:1px;
+  }
+  .hand.bottom .card .pip{font-size:clamp(19px,5.6vw,31px)}
+  .hand.bottom .card.legal{transform:translateY(-5px)}
+  .hand.bottom .card.legal:hover{transform:translateY(-5px)}
+
+  /* Four cards in the centre */
+  .center{
+    top:52%;left:50%;transform:translate(-50%,-50%);
+    width:min(160px,44vw);height:180px;
+  }
+  .play-slot{width:45px;height:66px}
+  .play-slot .card{width:45px;height:66px;border-radius:5px}
+  .play-slot .card .corner{font-size:11px;top:3px;left:3px}
+  .play-slot .card .corner span{font-size:9px}
+  .play-slot .card .pip{font-size:22px}
+  .play-slot .card.collect-top{transform:translateY(-90px) scale(.55)}
+  .play-slot .card.collect-right{transform:translateX(82px) scale(.55)}
+  .play-slot .card.collect-bottom{transform:translateY(90px) scale(.55)}
+  .play-slot .card.collect-left{transform:translateX(-82px) scale(.55)}
+  .message{
+    top:calc(52% + 100px);left:50%;
+    max-width:72vw;font-size:9px;padding:5px 7px;
+  }
+
+  /* Modals fit within phone height; both bid panels remain readable */
+  .modal{padding:8px;overflow-y:auto;align-items:center}
+  .dialog{width:94vw;max-width:94vw;max-height:92dvh;overflow-y:auto;padding:14px 12px;border-radius:15px}
+  .dialog h2{font-size:21px;margin-bottom:7px}
+  .dialog p{font-size:12px;line-height:1.35;margin:7px 0}
+  #bidModal .dialog{width:96vw;max-width:96vw;max-height:92dvh;padding:10px 8px}
+  .bid-choice-grid{grid-template-columns:1fr 1fr;gap:6px}
+  .bid-panel{padding:7px 5px;border-radius:9px}
+  .bid-panel h3{font-size:11px;margin-bottom:6px}
+  .bid-panel .tool{font-size:11px;padding:7px 2px}
+  .bid-number-grid,.bid-color-grid{gap:4px}
+  .bid-panel .hint{font-size:9px;line-height:1.25;min-height:28px;margin-top:5px}
+  .dialog button{font-size:13px;padding:8px 5px;margin:4px}
+}
+
+/* Very narrow phones: slightly tighter cards without hiding their rank/suit */
+@media (max-width:380px) and (orientation:portrait){
+  .hand.bottom .card{
+    width:clamp(22px,6.9vw,27px);
+    height:clamp(40px,11.5vw,48px);
+    margin-left:-9px;
+  }
+  .hand.bottom .card:first-child{margin-left:0}
+  .hand.bottom .card .corner{font-size:10px;top:2px;left:2px}
+  .hand.bottom .card .corner span{font-size:9px}
+  .hand.bottom .card .pip{font-size:18px}
+  .scoreboard{width:43vw}
+  .seat .score{font-size:7px}
+}
+
+
+/* TOTAL SCORE panel: live scores are displayed above the Minus Taas Ki Mehfil artwork. */
+.mehfil-panel{justify-content:flex-start;gap:14px;padding-top:clamp(18px,2.2vw,30px)}
+.mehfil-panel .scoreboard{
+  display:block !important;position:relative;inset:auto;width:100%;max-width:680px;
+  margin:0 auto 4px;z-index:5;background:rgba(239,247,255,.97);color:#153c5d;
+  border:2px solid #cda85c;border-radius:13px;overflow:hidden;
+  box-shadow:0 5px 16px #0005;
+}
+.mehfil-panel .scoreboard h3{margin:0;padding:9px 10px;text-align:center;background:linear-gradient(90deg,#ffe6a1,#c99a43);color:#17364c;font-size:17px;border-bottom:1px solid #98702f;letter-spacing:.5px}
+.mehfil-panel .scoreboard table{width:100%;border-collapse:collapse;font-size:13px;text-align:center;table-layout:fixed}
+.mehfil-panel .scoreboard th{background:#dcecff;padding:7px 5px;font-size:11px;white-space:nowrap}
+.mehfil-panel .scoreboard td{padding:8px 5px;border-top:1px solid #c5d6e6;font-weight:700;font-size:12px}
+.mehfil-panel .scoreboard tr.current td{background:#fff0bd}
+.mehfil-panel .scoreboard .player-name{text-align:left;padding-left:12px;white-space:nowrap}
+.mehfil-panel .mehfil-kicker{margin-top:4px;margin-bottom:12px}
+@media(max-width:700px){
+ .mehfil-panel{gap:12px;padding:20px 14px 28px}
+ .mehfil-panel .scoreboard{max-width:none;margin-bottom:2px}
+ .mehfil-panel .scoreboard h3{font-size:15px;padding:8px 5px}
+ .mehfil-panel .scoreboard table{font-size:11px}
+ .mehfil-panel .scoreboard th{font-size:10px;padding:6px 2px}
+ .mehfil-panel .scoreboard td{font-size:10px;padding:7px 2px}
+ .mehfil-panel .scoreboard .player-name{padding-left:7px}
+}
+
+
+/* Responsive game + original Minus Taas Ki Mehfil intro panel */
+html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+body{background:#071e16}
+.app-layout{
+  width:100%;min-height:100vh;
+  display:grid;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);
+  align-items:stretch;gap:0;padding:12px;
+  background:radial-gradient(ellipse at top,#172a25 0%,#101815 65%,#080d0b 100%);
+}
+.app-layout>.table{
+  width:100%;height:calc(100vh - 24px);min-height:600px;
+  border-radius:3px;
+}
+.mehfil-panel{
+  min-width:0;min-height:calc(100vh - 24px);position:relative;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(18px,3vw,46px);
+  overflow:hidden;color:#fff5d8;
+  background:
+    radial-gradient(circle at 80% 20%,#f0c56b22 0 2px,transparent 3px),
+    radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%);
+  border:1px solid #cda85c;border-left:0;
+  box-shadow:inset 0 0 0 5px #d6b56a22,inset 0 0 55px #020a12aa;
+}
+.mehfil-kicker{font-size:10px;letter-spacing:3px;color:#e9c878;font-weight:800;margin-bottom:22px}
+.mehfil-art{
+  min-height:390px;position:relative;display:flex;align-items:center;
+  padding:clamp(20px,3vw,42px);
+  border:1px solid #cda85c;border-radius:22px;
+  background:linear-gradient(135deg,#163e4d 0%,#102d47 52%,#0a1c31 100%);
+  box-shadow:0 16px 35px #0008,inset 0 0 35px #c79d4a14;
+  overflow:hidden;
+}
+.mehfil-art:before,.mehfil-art:after{
+  content:"";position:absolute;pointer-events:none;border:1px solid #d6b56a55;border-radius:16px;
+}
+.mehfil-art:before{inset:8px}
+.mehfil-art:after{inset:14px;border-style:dashed;opacity:.45}
+.mehfil-copy{position:relative;z-index:3;max-width:68%}
+.mehfil-eyebrow{font-size:10px;letter-spacing:2px;color:#f1d58e;font-weight:800}
+.mehfil-copy h1{font-size:clamp(36px,5.2vw,76px);line-height:.9;margin:18px 0 12px;font-weight:1000;letter-spacing:-2px;color:#ffe08a;text-shadow:0 4px 0 #7b4b17,0 9px 18px #0009}
+.mehfil-copy h1 span{display:block;font-size:.48em;line-height:1.15;letter-spacing:1px;color:#fff5df;margin-top:9px}
+.mehfil-copy p{font-size:clamp(13px,1.4vw,18px);color:#e8e4d7;margin:18px 0}
+.mehfil-rule{width:74px;height:3px;background:#e4bd67;margin:20px 0}
+.mehfil-tags{display:flex;flex-wrap:wrap;gap:7px}
+.mehfil-tags span{padding:7px 10px;border:1px solid #d9b76a88;border-radius:20px;color:#f5d98f;font-size:11px;font-weight:800;background:#081c2c88}
+.mehfil-note{font-size:12px;color:#c7d4d5;margin-top:22px;line-height:1.5}
+.mehfil-cards{position:absolute;right:7%;top:50%;width:36%;height:230px;transform:translateY(-50%)}
+.mehfil-card{
+  position:absolute;width:clamp(82px,10vw,140px);height:clamp(125px,15vw,205px);
+  border:5px solid #fff8e8;border-radius:12px;background:linear-gradient(145deg,#fff 0%,#f4ead7 100%);
+  box-shadow:0 12px 24px #0009;color:#122b40;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.mehfil-card b{position:absolute;top:8px;left:10px;font-size:clamp(20px,2.4vw,34px)}
+.mehfil-card span{font-size:clamp(44px,5vw,68px)}
+.mehfil-card.card-one{left:0;top:25px;transform:rotate(-18deg);color:#bd2834}
+.mehfil-card.card-two{left:31%;top:0;transform:rotate(1deg)}
+.mehfil-card.card-three{right:0;top:28px;transform:rotate(17deg);color:#bd2834}
+.mehfil-seal{
+  position:absolute;right:6%;bottom:9%;z-index:4;width:62px;height:62px;border-radius:50%;
+  display:grid;place-content:center;text-align:center;background:linear-gradient(145deg,#ffe59b,#b47a25);
+  border:3px solid #fff0bd;color:#57350e;font-weight:1000;font-size:21px;box-shadow:0 5px 12px #0008;
+}
+.mehfil-seal small{font-size:8px;letter-spacing:1px}
+.mehfil-footer{text-align:center;color:#c9b77f;font-size:9px;letter-spacing:2px;margin-top:22px}
+.mehfil-footer span{color:#f6d77e;margin:0 7px}
+
+/* On phones the game is the first full screen; intro panel is below and reached by scrolling. */
+@media(max-width:700px){
+  html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+  .app-layout{display:flex;flex-direction:column;gap:0;padding:0;min-height:0}
+  .app-layout>.table{
+    flex:0 0 100svh;width:100vw;height:100svh;height:100dvh;
+    min-height:560px;border-radius:0;
+  }
+  .mehfil-panel{
+    flex:0 0 auto;width:100%;min-height:82svh;
+    padding:24px 18px 30px;border-left:1px solid #cda85c;
+    border-top:0;
+  }
+  .mehfil-kicker{font-size:9px;letter-spacing:2px;margin-bottom:16px}
+  .mehfil-art{min-height:440px;padding:24px 18px;align-items:flex-start}
+  .mehfil-copy{max-width:100%;padding-top:4px}
+  .mehfil-copy h1{font-size:clamp(43px,12vw,68px);margin-top:15px}
+  .mehfil-copy h1 span{font-size:.43em}
+  .mehfil-copy p{font-size:14px;max-width:90%}
+  .mehfil-cards{top:auto;bottom:34px;right:8%;width:75%;height:175px;transform:none;opacity:.96}
+  .mehfil-card{width:90px;height:135px}
+  .mehfil-card b{font-size:22px}
+  .mehfil-card span{font-size:48px}
+  .mehfil-seal{right:7%;bottom:7%;width:52px;height:52px;font-size:18px}
+  .mehfil-footer{font-size:8px;line-height:1.6;letter-spacing:1px}
+}
+
+
+/* BOT HAND SPACING: keep all opponent cards inside the table and leave clear room behind Radhika. */
+@media (min-width:701px){
+  /* Samar - top row */
+  .hand.top{
+    width:min(430px,46%);
+    height:120px;
+    top:12px;
+  }
+  .hand.top .card{
+    width:46px;
+    height:68px;
+    margin-left:-20px;
+    border-radius:7px;
+  }
+  .hand.top .card:first-child{margin-left:0}
+
+  /* Ananya - left row: smaller cards, tucked neatly toward the outer edge */
+  .hand.left{
+    left:-12px;
+    width:135px;
+    height:330px;
+  }
+  .hand.left .card{
+    width:58px;
+    height:84px;
+    margin-top:-52px;
+    border-radius:8px;
+    transform:rotate(90deg) scale(.88);
+    transform-origin:center;
+  }
+  .hand.left .card:first-child{margin-top:0}
+
+  /* Radhika - right row: smaller and shifted farther back into the free space */
+  .hand.right{
+    right:-34px;
+    width:135px;
+    height:330px;
+  }
+  .hand.right .card{
+    width:58px;
+    height:84px;
+    margin-top:-52px;
+    border-radius:8px;
+    transform:rotate(90deg) scale(.82);
+    transform-origin:center;
+  }
+  .hand.right .card:first-child{margin-top:0}
+}
+
+
+/* FINAL DESKTOP POSITION FIX: right opponent mirrors left opponent; user hand centered inside table */
+@media (min-width:701px){
+  /* Priya/Radhika side cards should sit close to the seat, matching Shreya's layout */
+  .hand.right{
+    right:calc(22% + 10px) !important;
+    left:auto !important;
+    width:135px !important;
+    height:330px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+  .hand.right .card{
+    width:58px !important;
+    height:84px !important;
+    margin-top:-52px !important;
+    transform:rotate(90deg) scale(.88) !important;
+    transform-origin:center !important;
+  }
+  .hand.right .card:first-child{margin-top:0 !important}
+
+  /* Keep all 13 of the user's cards centered within the green game table */
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    width:96% !important;
+    max-width:96% !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+    box-sizing:border-box !important;
+    overflow:visible !important;
+  }
+}
+
+
+/* Align each opponent's card stack exactly with that player's seat center */
+@media (min-width:701px){
+  /* Kavya: centered above the top seat */
+  .hand.top{
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;
+  }
+
+  /* Rohan: center card stack on the left seat */
+  .hand.left{
+    left:-12px !important;
+    right:auto !important;
+    width:135px !important;
+    transform:translateY(-50%) !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+
+  /* Aditya: mirror Rohan so the stack is centered on the right seat,
+     instead of being pushed toward the middle of the table */
+  .hand.right{
+    right:-12px !important;
+    left:auto !important;
+    width:135px !important;
+    transform:translateY(-50%) !important;
+    justify-content:center !important;
+    align-items:center !important;
+  }
+}
+
+
+/* Keep played trick cards in a balanced cross at the exact center of the green table.
+   This also prevents the left-side played card from covering Rohan's name/seat. */
+@media (min-width:701px){
+  .center{
+    left:50% !important;
+    top:48% !important;
+    width:min(420px,48vw) !important;
+    height:340px !important;
+    transform:translate(-50%,-50%) !important;
+  }
+  #slot1{
+    top:0 !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+  }
+  #slot0{
+    bottom:0 !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+  }
+  #slot2{
+    left:0 !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+  #slot3{
+    right:0 !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+}
+/* On phones, keep the four played cards centered in the game table too. */
+@media (max-width:700px){
+  .center{
+    left:50% !important;
+    top:52% !important;
+    width:min(190px,52vw) !important;
+    height:180px !important;
+    transform:translate(-50%,-50%) !important;
+  }
+  #slot1{left:50% !important;right:auto !important;top:0 !important;transform:translateX(-50%) !important}
+  #slot0{left:50% !important;right:auto !important;bottom:0 !important;transform:translateX(-50%) !important}
+  #slot2{left:0 !important;right:auto !important;top:50% !important;transform:translateY(-50%) !important}
+  #slot3{right:0 !important;left:auto !important;top:50% !important;transform:translateY(-50%) !important}
+}
+
+
+/* Distinct app sections: green game table and classic blue Mehfil panel */
+.app-layout{gap:12px !important;padding:12px !important}
+.app-layout>.table{
+  border:8px solid #b7a46a !important;
+  box-shadow:0 0 0 2px #6f501f,0 8px 22px #0008,inset 0 0 50px #002e12 !important;
+}
+.mehfil-panel{
+  border:2px solid #b9954b !important;
+  border-radius:8px !important;
+  box-shadow:inset 0 0 0 5px #d6b56a22,inset 0 0 55px #020a12aa,0 8px 22px #0008 !important;
+}
+@media(max-width:700px){
+  .app-layout{gap:12px !important;padding:0 !important}
+  .app-layout>.table{border:5px solid #b7a46a !important}
+  .mehfil-panel{border:2px solid #b9954b !important;border-radius:8px !important}
+}
+
+
+/* Both side-by-side tables use the same MINUS TAAS KI MEHFIL teal background */
+.app-layout>.table{
+  background:
+    radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%) padding-box,
+    linear-gradient(135deg,#fff1ad 0%,#b47b22 16%,#f8df91 32%,#805018 50%,#e7c36d 68%,#9b681d 84%,#fff0a8 100%) border-box !important;
+  box-shadow:inset 0 0 50px #020a12aa,inset 0 0 0 3px #fff4,0 0 0 3px #684515,0 0 14px #0009 !important;
+}
+
+
+/* Player labels: align with each player's own hand, keep every card unobstructed */
+@media (min-width:701px){
+  /* Top player's name goes below the top row of cards */
+  .seat.top{
+    top:112px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:125px !important;
+  }
+
+  /* Side names sit just inside their vertical card stacks, centered on the stack */
+  .seat.left{
+    left:112px !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:125px !important;
+  }
+  .seat.right{
+    right:112px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:125px !important;
+  }
+
+  /* Reduce player-name text and label size by about 10% */
+  .seat .name{
+    font-size:90% !important;
+    padding:8px 10px !important;
+    box-sizing:border-box !important;
+  }
+}
+
+/* Keep labels centered and compact on phones too; avoid covering cards */
+@media (max-width:700px){
+  .seat .name{
+    font-size:90% !important;
+    padding:4px 4px !important;
+    box-sizing:border-box !important;
+  }
+  .seat.top{
+    top:clamp(135px,20vh,185px) !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+  }
+  .seat.left{
+    left:clamp(82px,21vw,112px) !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+  .seat.right{
+    right:clamp(82px,21vw,112px) !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+  }
+}
+
+
+/* CLEAN PLAYER LABELS: hide robot/person icons and center all name plates */
+.seat .avatar{display:none !important}
+
+/* Remove the floating "Your turn — choose a card" prompt */
+.message{display:none !important}
+
+.seat{min-width:0 !important;text-align:center !important}
+.seat .name{
+  font-size:90% !important;
+  padding:8px 10px !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+}
+.seat .score{
+  font-size:90% !important;
+  padding:4px 5px !important;
+  line-height:1.15 !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+}
+
+/* Desktop: top and bottom labels centered; side labels beside their own card stacks */
+@media(min-width:701px){
+  .seat.top{
+    top:154px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:125px !important;
+  }
+  .seat.left{
+    left:104px !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:112px !important;
+  }
+  .seat.right{
+    right:104px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:112px !important;
+  }
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:190px !important;
+    transform:translateX(-50%) !important;
+    width:150px !important;
+  }
+}
+
+/* Phones: keep all four name/score labels centered in their own seat areas */
+@media(max-width:700px){
+  .seat .name{font-size:90% !important;padding:4px 5px !important}
+  .seat .score{font-size:90% !important;padding:3px 2px !important}
+  .seat.top{
+    top:clamp(165px,24vh,220px) !important;
+    left:50% !important;right:auto !important;
+    transform:translateX(-50%) !important;
+    width:clamp(76px,25vw,105px) !important;
+  }
+  .seat.left{
+    left:60px !important;right:auto !important;
+    top:49% !important;transform:translateY(-50%) !important;
+    width:clamp(76px,23vw,100px) !important;
+  }
+  .seat.right{
+    right:60px !important;left:auto !important;
+    top:49% !important;transform:translateY(-50%) !important;
+    width:clamp(76px,23vw,100px) !important;
+  }
+  .seat.bottom{
+    left:50% !important;right:auto !important;
+    bottom:clamp(74px,10vh,100px) !important;
+    transform:translateX(-50%) !important;
+    width:clamp(110px,40vw,155px) !important;
+  }
+}
+
+
+/* FINAL SEAT + HAND REFINEMENT */
+@media (min-width:701px){
+  /* Trump/suit marker returns to the top edge, above the top player's cards */
+  .seat.top .trump-marker{
+    display:block;
+    position:absolute;
+    top:-132px;
+    left:50%;
+    transform:translateX(-50%);
+    margin:0;
+    white-space:nowrap;
+    z-index:60;
+  }
+  /* Top player's name and score sit immediately below their card row */
+  .seat.top{
+    top:154px !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:175px !important;
+  }
+
+  /* Side players: labels sit beside their own card stacks without narrow wrapping */
+  .seat.left{
+    left:106px !important;
+    right:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:155px !important;
+  }
+  .seat.right{
+    right:106px !important;
+    left:auto !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    width:155px !important;
+  }
+
+  /* You: centered above the hand, with enough width for a readable score */
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:190px !important;
+    transform:translateX(-50%) !important;
+    width:225px !important;
+  }
+
+  .seat .name{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    padding:7px 8px !important;
+  }
+  .seat .score{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+    line-height:1.15 !important;
+    padding:4px 5px !important;
+  }
+
+  /* Slightly larger 13-card hand, centered and lifted from the bottom edge */
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:8px !important;
+    width:96% !important;
+    height:126px !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    padding:0 6px 4px !important;
+    overflow:visible !important;
+  }
+  .hand.bottom .card{
+    width:clamp(58px,6.4vw,68px) !important;
+    height:clamp(92px,11vh,110px) !important;
+    flex:0 1 auto !important;
+    margin-left:-13px !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+}
+
+/* Phone layout: retain compact arrangement while centering the player's labels */
+@media (max-width:700px){
+  .seat.top .trump-marker{
+    display:block;
+    position:absolute;
+    top:-34px;
+    left:50%;
+    transform:translateX(-50%);
+    margin:0;
+    font-size:12px;
+    padding:2px 5px;
+    white-space:nowrap;
+    z-index:60;
+  }
+  .seat.top{
+    top:clamp(165px,24vh,220px) !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:clamp(100px,30vw,140px) !important;
+  }
+  .seat.left{
+    left:clamp(60px,17vw,92px) !important;
+    right:auto !important;
+    top:49% !important;
+    transform:translateY(-50%) !important;
+    width:clamp(100px,27vw,125px) !important;
+  }
+  .seat.right{
+    right:clamp(60px,17vw,92px) !important;
+    left:auto !important;
+    top:49% !important;
+    transform:translateY(-50%) !important;
+    width:clamp(100px,27vw,125px) !important;
+  }
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:clamp(92px,12vh,125px) !important;
+    transform:translateX(-50%) !important;
+    width:clamp(150px,48vw,205px) !important;
+  }
+  .seat .name{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+  }
+  .seat .score{
+    width:100% !important;
+    font-size:90% !important;
+    text-align:center !important;
+    white-space:normal !important;
+    line-height:1.12 !important;
+    padding:3px 3px !important;
+  }
+  .hand.bottom{
+    bottom:5px !important;
+    height:clamp(100px,15vh,125px) !important;
+    padding-bottom:5px !important;
+    align-items:flex-end !important;
+  }
+}
+
+
+/* USER-MARKED BLACK AREAS: put labels and cards directly in these zones */
+@media (min-width:701px){
+  /* Top player label */
+  .seat.top{
+    top:112px !important;
+    left:50% !important;
+    right:auto !important;
+    width:118px !important;
+    transform:translateX(-50%) !important;
+    z-index:55 !important;
+  }
+
+  /* Left and right player labels: centered in the marked rectangles */
+  .seat.left{
+    left:80px !important;
+    right:auto !important;
+    top:50% !important;
+    width:105px !important;
+    transform:translateY(-50%) !important;
+    z-index:55 !important;
+  }
+  .seat.right{
+    right:80px !important;
+    left:auto !important;
+    top:50% !important;
+    width:105px !important;
+    transform:translateY(-50%) !important;
+    z-index:55 !important;
+  }
+
+  /* You label: centered in the lower marked rectangle, above the hand */
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:164px !important;
+    width:152px !important;
+    transform:translateX(-50%) !important;
+    z-index:55 !important;
+  }
+
+  .seat .name,.seat .score{
+    display:block !important;
+    width:100% !important;
+    text-align:center !important;
+    white-space:normal !important;
+    overflow-wrap:normal !important;
+    line-height:1.12 !important;
+  }
+  .seat .name{font-size:90% !important;padding:6px 4px !important}
+  .seat .score{font-size:90% !important;padding:3px 3px !important}
+
+  /* Move the player's 13 cards into the full lower marked strip.
+     Do not allow flex-shrink: each card keeps a readable size. */
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:10px !important;
+    width:calc(100% - 44px) !important;
+    height:150px !important;
+    transform:translateX(-50%) !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    flex-wrap:nowrap !important;
+    padding:0 3px 5px !important;
+    overflow:visible !important;
+    z-index:20 !important;
+  }
+  .hand.bottom .card{
+    width:clamp(48px,6.2vw,66px) !important;
+    height:clamp(86px,13vh,116px) !important;
+    flex:0 0 auto !important;
+    margin-left:clamp(-12px,-1vw,-6px) !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+}
+
+/* On phones, preserve the same four-seat arrangement and keep the hand inside view */
+@media (max-width:700px){
+  .seat.top{
+    top:clamp(145px,22vh,190px) !important;
+    left:50% !important;right:auto !important;
+    width:clamp(95px,29vw,125px) !important;
+    transform:translateX(-50%) !important;
+  }
+  .seat.left{
+    left:clamp(54px,14vw,78px) !important;
+    right:auto !important;top:49% !important;
+    width:clamp(90px,25vw,112px) !important;
+    transform:translateY(-50%) !important;
+  }
+  .seat.right{
+    right:clamp(54px,14vw,78px) !important;
+    left:auto !important;top:49% !important;
+    width:clamp(90px,25vw,112px) !important;
+    transform:translateY(-50%) !important;
+  }
+  .seat.bottom{
+    left:50% !important;right:auto !important;
+    bottom:clamp(112px,16vh,145px) !important;
+    width:clamp(130px,43vw,175px) !important;
+    transform:translateX(-50%) !important;
+  }
+  .seat .name,.seat .score{
+    display:block !important;width:100% !important;
+    text-align:center !important;white-space:normal !important;
+    line-height:1.12 !important;
+  }
+  .hand.bottom{
+    left:50% !important;right:auto !important;
+    bottom:8px !important;width:calc(100% - 16px) !important;
+    height:clamp(110px,17vh,140px) !important;
+    transform:translateX(-50%) !important;
+    justify-content:center !important;align-items:flex-end !important;
+    flex-wrap:nowrap !important;overflow:visible !important;
+    padding:0 2px 4px !important;
+  }
+  .hand.bottom .card{
+    width:clamp(24px,7.2vw,46px) !important;
+    height:clamp(48px,13vh,84px) !important;
+    flex:0 0 auto !important;
+    margin-left:clamp(-12px,-1.7vw,-5px) !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+  .hand.bottom .card .corner{font-size:clamp(10px,2.8vw,15px) !important}
+  .hand.bottom .card .corner span{font-size:clamp(9px,2.4vw,13px) !important}
+  .hand.bottom .card .pip{font-size:clamp(18px,5vw,31px) !important}
+}
+
+
+/* FINAL FIX: You's 13-card hand fills the lower table width */
+@media (min-width:701px){
+  .hand.bottom{
+    left:50% !important;
+    right:auto !important;
+    width:calc(100% - 28px) !important;
+    bottom:14px !important;
+    height:150px !important;
+    transform:translateX(-50%) !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    gap:0 !important;
+    padding:0 2px 4px !important;
+    overflow:visible !important;
+  }
+  .hand.bottom .card{
+    box-sizing:border-box !important;
+    width:clamp(74px,7.6vw,82px) !important;
+    min-width:clamp(74px,7.6vw,82px) !important;
+    max-width:clamp(74px,7.6vw,82px) !important;
+    height:clamp(112px,14vh,130px) !important;
+    flex:0 0 clamp(74px,7.6vw,82px) !important;
+    margin-left:-8px !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+}
+
+
+/* LATEST UI FIX: show trump marker, relocate round status, compact player labels */
+.notice{display:none !important;}
+.status{
+  top:76px !important;
+  left:16px !important;
+  right:auto !important;
+  transform:none !important;
+  width:min(260px,29vw) !important;
+  min-width:0 !important;
+  max-width:260px !important;
+  padding:9px 12px !important;
+  text-align:left !important;
+  z-index:47 !important;
+}
+.status small{font-size:11px !important;}
+.seat .trump-marker{
+  display:block !important;
+  width:max-content !important;
+  margin:0 auto 3px !important;
+  position:relative !important;
+  z-index:55 !important;
+}
+/* Reduce only name and Bol/Won plates by about 30%, without shrinking avatars/cards */
+.seat .name{
+  font-size:11px !important;
+  padding:6px 8px !important;
+  line-height:1.05 !important;
+  border-radius:7px !important;
+}
+.seat .score{
+  font-size:9px !important;
+  padding:3px 4px !important;
+  line-height:1.1 !important;
+  border-radius:0 0 6px 6px !important;
+}
+@media(max-width:700px){
+  .status{
+    top:53px !important;left:8px !important;right:auto !important;
+    width:42vw !important;max-width:180px !important;
+    padding:6px 7px !important;font-size:10px !important;
+    line-height:1.15 !important;
+  }
+  .status small{font-size:9px !important;}
+  .seat .name{font-size:8px !important;padding:3px 4px !important;}
+  .seat .score{font-size:6px !important;padding:2px 2px !important;}
+  .seat .trump-marker{font-size:12px !important;padding:2px 5px !important;}
+  .seat.top{top:clamp(145px,22vh,205px) !important;}
+}
+
+
+
+/* FINAL POSITION FIX: keep You label just above the cards, not too high */
+@media (min-width:701px){
+  .seat.bottom{
+    bottom:172px !important;
+    z-index:70 !important;
+  }
+  .seat.top .trump-marker{
+    display:block !important;
+    position:absolute !important;
+    top:-112px !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    z-index:100 !important;
+    margin:0 !important;
+    white-space:nowrap !important;
+  }
+}
+@media (max-width:700px){
+  .seat.bottom{
+    bottom:clamp(118px,16vh,145px) !important;
+    z-index:70 !important;
+  }
+  .seat.top .trump-marker{
+    display:block !important;
+    position:absolute !important;
+    top:-108px !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    z-index:100 !important;
+    margin:0 !important;
+    white-space:nowrap !important;
+  }
+}
+/* HUKUM / SELECTED SUIT MARKER: fixed to the game table top, not the player seat */
+.table > .trump-marker{
+  display:none;
+  position:absolute !important;
+  top:12px !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  z-index:220 !important;
+  width:max-content !important;
+  margin:0 !important;
+  padding:4px 11px !important;
+  border:1px solid #b78a16 !important;
+  border-radius:8px !important;
+  background:#fff1b8 !important;
+  color:#805000 !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+  box-shadow:0 2px 5px #0006 !important;
+  pointer-events:none !important;
+}
+@media(max-width:700px){
+  .table > .trump-marker{top:8px !important;font-size:14px !important;padding:3px 8px !important;}
+}
+
+
+/* MOBILE: keep the game as the first screen and place the Mehfil panel below it in normal page flow.
+   The document, not an inner fixed-height wrapper, owns vertical scrolling. */
+@media (max-width:700px){
+  html, body{
+    width:100% !important;
+    height:auto !important;
+    min-height:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body{display:block !important;}
+  .app-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    gap:0 !important;
+    padding:0 !important;
+  }
+  .app-layout > .table{
+    position:relative !important;
+    flex:0 0 100dvh !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:560px !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+  .app-layout > .mehfil-panel{
+    position:relative !important;
+    display:flex !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:82svh !important;
+    max-height:none !important;
+    margin:0 !important;
+    overflow:visible !important;
+    border-top:2px solid #b9954b !important;
+  }
+}
+
+
+
+/* MOBILE ONLY: move side-player name/score plates to the outer edges so they never cover played cards. */
+@media (max-width:700px) and (orientation:portrait){
+  .seat.left,.seat.right{
+    width:clamp(58px,18vw,76px) !important;
+    min-width:0 !important;
+    top:49% !important;
+    transform:translateY(-50%) !important;
+    z-index:18 !important;
+  }
+  .seat.left{left:2px !important;right:auto !important}
+  .seat.right{right:2px !important;left:auto !important}
+  .seat.left .name,.seat.right .name{
+    width:100% !important;
+    padding:4px 2px !important;
+    font-size:9px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  .seat.left .score,.seat.right .score{
+    width:100% !important;
+    padding:3px 1px !important;
+    font-size:7px !important;
+    line-height:1.05 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+  }
+  /* Played cards must remain visually above the side labels if they approach. */
+  .center{z-index:26 !important}
+}
+
+/* LAPTOP / DESKTOP VIEWPORT FIT: keep the complete game and side panel inside
+   the visible browser area at normal 100% zoom. */
+@media (min-width:701px){
+  html,body{
+    width:100%;height:100%;min-height:0;
+    overflow:hidden !important;
+  }
+  .app-layout{
+    box-sizing:border-box !important;
+    width:100vw !important;height:100vh !important;height:100dvh !important;
+    min-height:0 !important;
+    padding:clamp(4px,.65vw,10px) !important;
+    gap:clamp(6px,.65vw,10px) !important;
+    grid-template-columns:minmax(0,1.14fr) minmax(290px,.86fr) !important;
+    align-items:stretch !important;
+    overflow:hidden !important;
+  }
+  .app-layout>.table{
+    box-sizing:border-box !important;
+    width:100% !important;height:100% !important;
+    min-width:0 !important;min-height:0 !important;
+    max-height:100% !important;
+  }
+  .app-layout>.mehfil-panel{
+    box-sizing:border-box !important;
+    width:100% !important;height:100% !important;
+    min-width:0 !important;min-height:0 !important;
+    max-height:100% !important;
+    padding:clamp(12px,2vw,30px) !important;
+    justify-content:center !important;
+  }
+  .mehfil-art{
+    min-height:0 !important;
+    height:min(58vh,480px) !important;
+    padding:clamp(14px,2.2vw,34px) !important;
+  }
+  .mehfil-kicker{margin-bottom:clamp(8px,1.6vh,18px) !important}
+  .mehfil-footer{margin-top:clamp(8px,1.6vh,18px) !important}
+  .modal{max-height:100dvh !important;overflow-y:auto !important}
+  .dialog{max-height:calc(100dvh - 24px) !important;overflow-y:auto !important}
+}
+
+/* Short laptop displays (e.g. 1366x768): compact the card rows and artwork
+   without requiring browser zoom-out. */
+@media (min-width:701px) and (max-height:820px){
+  .app-layout{padding:5px !important;gap:6px !important}
+  .app-layout>.table{border-width:6px !important}
+  .hand.bottom{height:clamp(96px,16vh,124px) !important;bottom:8px !important}
+  .hand.bottom .card{height:clamp(82px,13vh,104px) !important;width:clamp(48px,5.2vw,68px) !important}
+  .hand.top{height:clamp(72px,12vh,96px) !important}
+  .hand.top .card{height:clamp(54px,9vh,68px) !important;width:clamp(34px,3.6vw,46px) !important}
+  .hand.left,.hand.right{height:clamp(220px,42vh,300px) !important}
+  .hand.left .card,.hand.right .card{height:clamp(58px,10vh,78px) !important;width:clamp(42px,4.5vw,58px) !important}
+  .mehfil-art{height:min(54vh,390px) !important}
+  .mehfil-copy h1{font-size:clamp(32px,4.5vw,62px) !important}
+  .mehfil-cards{height:clamp(150px,27vh,205px) !important}
+  .mehfil-card{height:clamp(105px,17vh,150px) !important;width:clamp(68px,8vw,112px) !important}
+}
+
+@media (min-width:701px) and (max-height:680px){
+  .mehfil-panel{padding:8px 14px !important}
+  .mehfil-art{height:48vh !important;padding:12px !important}
+  .mehfil-kicker,.mehfil-footer{font-size:8px !important;margin:5px 0 !important}
+  .hand.bottom{height:88px !important}
+  .hand.bottom .card{height:74px !important}
+}
+
+
+/* Per-turn decision countdown */
+.turn-countdown{position:absolute;top:clamp(58px,7vh,82px);right:clamp(12px,2vw,24px);z-index:40;display:none;align-items:center;gap:8px;padding:8px 14px;border:2px solid #d4a84d;border-radius:12px;background:linear-gradient(135deg,#fff4ce,#ffd66b);color:#173d5d;font-weight:900;font-size:clamp(17px,1.7vw,23px);box-shadow:0 3px 12px rgba(0,0,0,.28);font-variant-numeric:tabular-nums}
+.turn-countdown.warning{background:linear-gradient(135deg,#ffe4e4,#ff9b9b);border-color:#c52b36;color:#8e101b;animation:timerPulse .7s infinite alternate}
+@keyframes timerPulse{from{transform:scale(1)}to{transform:scale(1.045)}}
+
+
+/* Compact final Run/Hukum selector so the player's hand remains visible. */
+#bidModal .dialog.run-choice-compact{
+ width:min(96vw,900px) !important;max-width:900px !important;
+ max-height:86vh !important;overflow-y:auto !important;
+ padding:16px 17px !important;border-radius:16px !important;
+}
+#bidModal .dialog.run-choice-compact #bidStageContent>div{
+ gap:11px !important;align-items:start !important;
+}
+#bidModal .dialog.run-choice-compact .bid-panel{
+ padding:11px !important;border-radius:11px !important;
+}
+#bidModal .dialog.run-choice-compact .bid-panel h3{
+ font-size:16.5px !important;margin:0 0 9px !important;line-height:1.15 !important;
+}
+#bidModal .dialog.run-choice-compact .bid-number-grid,
+#bidModal .dialog.run-choice-compact .bid-color-grid{gap:6px !important;margin-bottom:6px !important}
+#bidModal .dialog.run-choice-compact .bid-panel .tool{
+ font-size:15px !important;padding:8px 6px !important;min-height:37px !important;
+}
+#bidModal .dialog.run-choice-compact #bidStageContent .bid-panel>div[style*="border:2px solid"]{
+ padding:7px 7px !important;margin:4px 0 6px !important;font-size:12px !important;
+}
+#bidModal .dialog.run-choice-compact #bidStageContent .bid-panel>div[style*="border:2px solid"] span[style*="font-size:76px"]{
+ font-size:50px !important;
+}
+#bidModal .dialog.run-choice-compact #bidStageContent .bid-panel>div[style*="border:2px solid"] span[style*="font-size:28px"]{
+ font-size:21px !important;
+}
+#bidModal .dialog.run-choice-compact #bidPreview{font-size:13px !important;margin:5px 0 !important}
+@media(max-width:700px){
+ #bidModal .dialog.run-choice-compact{width:96vw !important;max-width:96vw !important;max-height:82dvh !important;padding:10px 8px !important}
+ #bidModal .dialog.run-choice-compact .bid-panel{padding:8px 6px !important}
+ #bidModal .dialog.run-choice-compact .bid-panel h3{font-size:12px !important}
+ #bidModal .dialog.run-choice-compact .bid-panel .tool{font-size:12px !important;padding:7px 3px !important}
+ #bidModal .dialog.run-choice-compact #bidStageContent .bid-panel>div[style*="border:2px solid"] span[style*="font-size:76px"]{font-size:40px !important}
+ #bidModal .dialog.run-choice-compact #bidStageContent .bid-panel>div[style*="border:2px solid"] span[style*="font-size:28px"]{font-size:17px !important}
+}
+
+
+/* PHONE HAND FIX: keep all 13 cards legible instead of flex-shrinking them. */
+@media (max-width:700px) and (orientation:portrait){
+  .hand.bottom{
+    height:clamp(112px,16vh,142px) !important;
+    padding:0 4px 6px !important;
+    justify-content:flex-start !important;
+    overflow-x:auto !important; overflow-y:visible !important;
+    flex-wrap:nowrap !important;
+    scrollbar-width:thin;
+    z-index:60 !important;
+  }
+  .hand.bottom .card{
+    flex:0 0 clamp(42px,10vw,50px) !important;
+    width:clamp(42px,10vw,50px) !important;
+    min-width:clamp(42px,10vw,50px) !important;
+    height:clamp(76px,16vw,88px) !important;
+    margin-left:clamp(-17px,-3.6vw,-14px) !important;
+    border-radius:6px !important;
+  }
+  .hand.bottom .card:first-child{margin-left:0 !important}
+  .hand.bottom .card .corner{font-size:clamp(14px,3.8vw,18px) !important;top:4px !important;left:4px !important}
+  .hand.bottom .card .corner span{font-size:clamp(12px,3.1vw,15px) !important}
+  .hand.bottom .card .pip{font-size:clamp(27px,7vw,36px) !important}
+  #bidModal .dialog.run-choice-compact{max-height:76dvh !important}
+}
+@media (max-width:380px) and (orientation:portrait){
+  .hand.bottom .card{flex-basis:42px !important;width:42px !important;min-width:42px !important;height:72px !important}
+}
+
+
+
+/* MOBILE SCOREBOARD: show the same live Total Score panel below the game when scrolling */
+@media (max-width:700px){
+  html, body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior-y:contain;
+  }
+  body{display:block !important}
+  .app-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+  .app-layout > .table{
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:560px !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+  .app-layout > .mehfil-panel{
+    display:flex !important;
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:16px 12px 24px !important;
+    margin:0 !important;
+    gap:12px !important;
+  }
+  .mehfil-panel > .scoreboard{
+    display:block !important;
+    position:relative !important;
+    inset:auto !important;
+    order:0 !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    max-width:none !important;
+    margin:0 auto 8px !important;
+    z-index:5 !important;
+  }
+  .mehfil-panel > .mehfil-kicker{order:1 !important}
+  .mehfil-panel > .mehfil-art{order:2 !important}
+  .mehfil-panel > .mehfil-footer{order:3 !important}
+}
+
+</style>
+<style>
+
+/* PHONE HAND: 6 cards in the upper row, 7 cards in the lower row */
+@media (max-width:700px){
+  .hand.bottom#hand0{
+    left:50% !important;
+    right:auto !important;
+    bottom:4px !important;
+    width:calc(100% - 16px) !important;
+    height:clamp(158px,19vh,178px) !important;
+    transform:translateX(-50%) !important;
+    display:grid !important;
+    grid-template-columns:repeat(7,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(2,minmax(0,1fr)) !important;
+    column-gap:3px !important;
+    row-gap:5px !important;
+    justify-content:stretch !important;
+    align-items:end !important;
+    padding:3px 2px 4px !important;
+    overflow:visible !important;
+    z-index:30 !important;
+  }
+  .hand.bottom#hand0 .card{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:clamp(66px,8.8vh,78px) !important;
+    margin:0 !important;
+    flex:none !important;
+    border-radius:6px !important;
+    align-self:end !important;
+  }
+  /* First six cards sit in the upper row, around the old You-score area */
+  .hand.bottom#hand0 .card:nth-child(1){grid-row:1;grid-column:1}
+  .hand.bottom#hand0 .card:nth-child(2){grid-row:1;grid-column:2}
+  .hand.bottom#hand0 .card:nth-child(3){grid-row:1;grid-column:3}
+  .hand.bottom#hand0 .card:nth-child(4){grid-row:1;grid-column:4}
+  .hand.bottom#hand0 .card:nth-child(5){grid-row:1;grid-column:5}
+  .hand.bottom#hand0 .card:nth-child(6){grid-row:1;grid-column:6}
+  /* Remaining seven cards form the lower row */
+  .hand.bottom#hand0 .card:nth-child(n+7){grid-row:2}
+  .hand.bottom#hand0 .card:nth-child(7){grid-column:1}
+  .hand.bottom#hand0 .card:nth-child(8){grid-column:2}
+  .hand.bottom#hand0 .card:nth-child(9){grid-column:3}
+  .hand.bottom#hand0 .card:nth-child(10){grid-column:4}
+  .hand.bottom#hand0 .card:nth-child(11){grid-column:5}
+  .hand.bottom#hand0 .card:nth-child(12){grid-column:6}
+  .hand.bottom#hand0 .card:nth-child(13){grid-column:7}
+  .hand.bottom#hand0 .card .corner{
+    top:3px !important;left:4px !important;
+    font-size:clamp(12px,3.3vw,16px) !important;
+  }
+  .hand.bottom#hand0 .card .corner span{
+    font-size:clamp(11px,2.9vw,14px) !important;
+  }
+  .hand.bottom#hand0 .card .pip{
+    font-size:clamp(25px,7vw,34px) !important;
+  }
+  /* Keep You and Bol/Won label above the upper row, not underneath cards */
+  .seat.bottom{
+    left:50% !important;
+    right:auto !important;
+    bottom:clamp(176px,21vh,196px) !important;
+    width:clamp(118px,38vw,155px) !important;
+    transform:translateX(-50%) !important;
+    z-index:75 !important;
+  }
+  .seat.bottom .name,.seat.bottom .score{
+    padding:2px 4px !important;
+    font-size:clamp(9px,2.5vw,11px) !important;
+    line-height:1.05 !important;
+  }
+}
+
+
+
+/* MOBILE SCOREBOARD: show the same live Total Score panel below the game when scrolling */
+@media (max-width:700px){
+  html, body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior-y:contain;
+  }
+  body{display:block !important}
+  .app-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+  .app-layout > .table{
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:560px !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+  .app-layout > .mehfil-panel{
+    display:flex !important;
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:16px 12px 24px !important;
+    margin:0 !important;
+    gap:12px !important;
+  }
+  .mehfil-panel > .scoreboard{
+    display:block !important;
+    position:relative !important;
+    inset:auto !important;
+    order:0 !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    max-width:none !important;
+    margin:0 auto 8px !important;
+    z-index:5 !important;
+  }
+  .mehfil-panel > .mehfil-kicker{order:1 !important}
+  .mehfil-panel > .mehfil-art{order:2 !important}
+  .mehfil-panel > .mehfil-footer{order:3 !important}
+}
+
+</style>
+
+<style id="mobile-modal-card-visibility-fix">
+/* Keep the player's cards visible below bidding windows on phones.
+   The modal content scrolls internally instead of covering the hand. */
+@media (max-width:700px) and (orientation:portrait){
+  #bidModal.modal.show, #modal.modal.show{
+    align-items:flex-start !important;
+    justify-items:center !important;
+    padding: max(10px, 4dvh) 8px 8px !important;
+    overflow-y:auto !important;
+  }
+  #bidModal .dialog, #modal .dialog{
+    max-height:61dvh !important;
+    height:auto !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    margin:0 auto !important;
+  }
+  #bidModal .dialog.run-choice-compact{
+    max-height:61dvh !important;
+  }
+  /* Preserve the two-row hand at the bottom of the table, outside the modal. */
+  .hand.bottom#hand0{z-index:30 !important;}
+}
+@media (max-width:700px) and (orientation:landscape){
+  #bidModal.modal.show, #modal.modal.show{
+    align-items:flex-start !important; padding:5px !important; overflow-y:auto !important;
+  }
+  #bidModal .dialog, #modal .dialog{max-height:72dvh !important;overflow-y:auto !important;}
+}
+
+
+/* MOBILE SCOREBOARD: show the same live Total Score panel below the game when scrolling */
+@media (max-width:700px){
+  html, body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior-y:contain;
+  }
+  body{display:block !important}
+  .app-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+  .app-layout > .table{
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:560px !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+  .app-layout > .mehfil-panel{
+    display:flex !important;
+    position:relative !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:16px 12px 24px !important;
+    margin:0 !important;
+    gap:12px !important;
+  }
+  .mehfil-panel > .scoreboard{
+    display:block !important;
+    position:relative !important;
+    inset:auto !important;
+    order:0 !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    max-width:none !important;
+    margin:0 auto 8px !important;
+    z-index:5 !important;
+  }
+  .mehfil-panel > .mehfil-kicker{order:1 !important}
+  .mehfil-panel > .mehfil-art{order:2 !important}
+  .mehfil-panel > .mehfil-footer{order:3 !important}
+}
+
+</style>
+
+<style id="mobile-scoreboard-sibling-layout-fix">
+@media (max-width:700px){
+  html, body{height:auto !important; min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important;}
+  body{display:block !important; width:100% !important;}
+  .app-layout{display:flex !important; flex-direction:column !important; width:100% !important; height:auto !important; min-height:0 !important; overflow:visible !important; padding:0 !important; gap:0 !important;}
+  .app-layout > .table{flex:0 0 auto !important; width:100% !important; height:100dvh !important; min-height:560px !important; max-height:none !important; overflow:hidden !important;}
+  .app-layout > .mehfil-panel{display:flex !important; flex:0 0 auto !important; position:relative !important; inset:auto !important; width:100% !important; height:auto !important; min-height:0 !important; max-height:none !important; overflow:visible !important; flex-direction:column !important; padding:16px 12px 24px !important; margin:0 !important; gap:12px !important; order:1 !important;}
+  .app-layout > .mehfil-panel > .scoreboard{display:block !important; position:relative !important; inset:auto !important; order:0 !important; flex:0 0 auto !important; width:100% !important; max-width:none !important; margin:0 auto 8px !important; z-index:5 !important; visibility:visible !important; opacity:1 !important;}
+  .app-layout > .mehfil-panel > .mehfil-kicker{order:1 !important;}
+  .app-layout > .mehfil-panel > .mehfil-art{order:2 !important;}
+  .app-layout > .mehfil-panel > .mehfil-footer{order:3 !important;}
+}
+</style>
+
+
+<style id="compact-player-labels">
+.seat .score{font-size:12px !important;line-height:1.2 !important;padding:5px 6px !important;white-space:nowrap !important;}
+@media(max-width:700px){.seat .score{font-size:10px !important;padding:4px 3px !important;}}
+</style>
+<style id="scoreboard-layout-restored">
+/* Desktop: game table left, scoreboard and Mehfil panel on the right. */
+@media (min-width:701px){
+  html,body{width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+  body>.app-layout{
+    display:grid !important;
+    grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr) !important;
+    align-items:stretch !important;gap:0 !important;padding:12px !important;
+    width:100% !important;min-height:100vh !important;
+  }
+  body>.app-layout>.table{
+    display:block !important;position:relative !important;
+    width:100% !important;height:calc(100vh - 24px) !important;
+    min-height:600px !important;grid-column:1 !important;
+  }
+  body>.app-layout>.mehfil-panel{
+    display:flex !important;position:relative !important;inset:auto !important;
+    grid-column:2 !important;grid-row:1 !important;
+    flex-direction:column !important;justify-content:flex-start !important;
+    min-width:0 !important;min-height:calc(100vh - 24px) !important;
+    width:auto !important;height:auto !important;overflow:hidden !important;
+  }
+  body>.app-layout>.mehfil-panel>.scoreboard{
+    display:block !important;position:relative !important;inset:auto !important;
+    width:100% !important;max-width:680px !important;margin:0 auto 4px !important;
+    transform:none !important;z-index:5 !important;
+  }
+}
+/* Phone: game first; scroll down to the separate score panel. */
+@media (max-width:700px){
+  html,body{display:block !important;width:100% !important;height:auto !important;min-height:100% !important;overflow-x:hidden !important;overflow-y:auto !important}
+  body>.app-layout{
+    display:flex !important;flex-direction:column !important;align-items:stretch !important;
+    width:100% !important;height:auto !important;min-height:0 !important;
+    overflow:visible !important;gap:0 !important;padding:0 !important;margin:0 !important;
+  }
+  body>.app-layout>.table{
+    display:block !important;position:relative !important;order:0 !important;
+    flex:0 0 100dvh !important;width:100% !important;height:100dvh !important;
+    min-height:560px !important;max-height:none !important;margin:0 !important;
+    transform:none !important;z-index:1 !important;
+  }
+  body>.app-layout>.mehfil-panel{
+    display:flex !important;position:relative !important;inset:auto !important;order:1 !important;
+    flex:0 0 auto !important;flex-direction:column !important;
+    width:100% !important;height:auto !important;min-height:0 !important;max-height:none !important;
+    margin:0 !important;transform:none !important;overflow:visible !important;z-index:2 !important;
+    padding:18px 12px 28px !important;
+  }
+  body>.app-layout>.mehfil-panel>.scoreboard{
+    display:block !important;position:relative !important;inset:auto !important;order:0 !important;
+    flex:0 0 auto !important;width:100% !important;max-width:none !important;height:auto !important;
+    margin:0 0 10px !important;transform:none !important;visibility:visible !important;
+    opacity:1 !important;z-index:2 !important;
+  }
+  body>.app-layout>.mehfil-panel>.mehfil-kicker{order:1 !important}
+  body>.app-layout>.mehfil-panel>.mehfil-art{order:2 !important}
+  body>.app-layout>.mehfil-panel>.mehfil-footer{order:3 !important}
+}
+</style>
+
+
+<style id="FINAL_LAYOUT_OVERRIDE_2026">
+/* One authoritative layout override: desktop split-screen, phone vertical scroll. */
+html, body { margin:0 !important; width:100% !important; min-width:0 !important; }
+body > .app-layout { box-sizing:border-box !important; }
+@media (min-width:701px) {
+  html, body { height:100% !important; min-height:100% !important; overflow:hidden !important; }
+  body > .app-layout {
+    display:grid !important;
+    grid-template-columns:minmax(0, 1.12fr) minmax(320px, .88fr) !important;
+    grid-template-rows:minmax(0, 1fr) !important;
+    align-items:stretch !important;
+    width:100vw !important; height:100vh !important; min-height:0 !important;
+    padding:10px !important; gap:10px !important; margin:0 !important;
+    overflow:hidden !important;
+  }
+  body > .app-layout > .table {
+    grid-column:1 !important; grid-row:1 !important;
+    display:block !important; position:relative !important;
+    width:100% !important; height:100% !important; min-width:0 !important;
+    min-height:0 !important; max-height:none !important; margin:0 !important;
+    overflow:hidden !important; z-index:1 !important;
+  }
+  body > .app-layout > .mehfil-panel {
+    grid-column:2 !important; grid-row:1 !important;
+    display:flex !important; position:relative !important; inset:auto !important;
+    flex-direction:column !important; justify-content:flex-start !important;
+    align-self:stretch !important; width:100% !important; height:100% !important;
+    min-width:0 !important; min-height:0 !important; max-height:none !important;
+    margin:0 !important; padding:clamp(12px,1.8vw,28px) !important;
+    overflow-y:auto !important; overflow-x:hidden !important;
+    visibility:visible !important; opacity:1 !important; transform:none !important;
+    z-index:2 !important;
+    background:radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%) !important;
+    border:2px solid #b9954b !important; border-radius:8px !important;
+  }
+  body > .app-layout > .mehfil-panel > .scoreboard {
+    display:block !important; position:relative !important; inset:auto !important;
+    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
+    width:100% !important; max-width:none !important; height:auto !important;
+    margin:0 auto 12px !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important; z-index:3 !important;
+  }
+}
+@media (max-width:700px) {
+  html, body {
+    display:block !important; width:100% !important; height:auto !important;
+    min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+  body { margin:0 !important; }
+  body > .app-layout {
+    display:flex !important; flex-direction:column !important; align-items:stretch !important;
+    width:100% !important; height:auto !important; min-height:0 !important;
+    margin:0 !important; padding:0 !important; gap:0 !important; overflow:visible !important;
+  }
+  body > .app-layout > .table {
+    display:block !important; position:relative !important; order:0 !important;
+    flex:0 0 100svh !important; width:100% !important;
+    height:100svh !important; min-height:600px !important; max-height:none !important;
+    margin:0 !important; overflow:hidden !important; transform:none !important; z-index:1 !important;
+  }
+  body > .app-layout > .mehfil-panel {
+    display:flex !important; position:relative !important; inset:auto !important; order:1 !important;
+    flex:0 0 auto !important; flex-direction:column !important; align-self:stretch !important;
+    width:100% !important; height:auto !important; min-height:0 !important; max-height:none !important;
+    margin:0 !important; padding:18px 12px 28px !important; gap:12px !important;
+    overflow:visible !important; transform:none !important; visibility:visible !important;
+    opacity:1 !important; z-index:2 !important;
+    background:radial-gradient(ellipse at 75% 30%,#1a5960 0%,#102d3b 48%,#091b2a 100%) !important;
+    border:2px solid #b9954b !important; border-radius:8px !important;
+  }
+  body > .app-layout > .mehfil-panel > .scoreboard {
+    display:block !important; position:relative !important; inset:auto !important;
+    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
+    width:100% !important; max-width:none !important; height:auto !important;
+    margin:0 0 8px !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important; z-index:3 !important;
+  }
+  body > .app-layout > .mehfil-panel > .mehfil-kicker { order:1 !important; }
+  body > .app-layout > .mehfil-panel > .mehfil-art { order:2 !important; }
+  body > .app-layout > .mehfil-panel > .mehfil-footer { order:3 !important; }
+}
+</style>
+
+
+<style id="phone-scoreboard-after-scroll-final">
+/* Phone only: keep the live score table in normal document flow BELOW the game.
+   It must never overlay the cards or appear behind the game background. */
+@media screen and (max-width:700px){
+  html, body{
+    display:block !important; width:100% !important; height:auto !important;
+    min-height:100% !important; overflow-x:hidden !important; overflow-y:auto !important;
+    position:static !important;
+  }
+  body > .app-layout{
+    display:flex !important; flex-direction:column !important;
+    align-items:stretch !important; width:100% !important;
+    height:auto !important; min-height:0 !important;
+    margin:0 !important; padding:0 !important; gap:0 !important;
+    overflow:visible !important; position:static !important;
+  }
+  body > .app-layout > .table{
+    display:block !important; position:relative !important;
+    order:0 !important; flex:0 0 auto !important;
+    width:100% !important; height:100svh !important;
+    min-height:600px !important; max-height:none !important;
+    margin:0 !important; overflow:hidden !important;
+  }
+  body > .app-layout > .mehfil-panel{
+    display:flex !important; position:static !important; inset:auto !important;
+    order:1 !important; flex:0 0 auto !important;
+    flex-direction:column !important; align-self:stretch !important;
+    box-sizing:border-box !important; width:100% !important;
+    height:auto !important; min-height:0 !important; max-height:none !important;
+    margin:0 !important; padding:20px 12px 30px !important; gap:14px !important;
+    overflow:visible !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important;
+    border-radius:0 !important; z-index:auto !important;
+  }
+  body > .app-layout > .mehfil-panel > .scoreboard{
+    display:block !important; position:static !important; inset:auto !important;
+    order:0 !important; flex:0 0 auto !important; align-self:stretch !important;
+    box-sizing:border-box !important; width:100% !important;
+    max-width:none !important; height:auto !important; max-height:none !important;
+    margin:0 0 10px !important; transform:none !important;
+    visibility:visible !important; opacity:1 !important;
+    overflow:visible !important; z-index:auto !important;
+  }
+  body > .app-layout > .mehfil-panel > .mehfil-kicker{order:1 !important}
+  body > .app-layout > .mehfil-panel > .mehfil-art{order:2 !important}
+  body > .app-layout > .mehfil-panel > .mehfil-footer{order:3 !important}
+}
+</style>
+
+
+<style id="baazigar-profile-coins-style">
+#profileModal{z-index:300;background:rgba(3,10,20,.94);backdrop-filter:blur(7px)}
+#profileModal .profile-dialog{width:min(92vw,480px);max-height:90vh;overflow:auto;padding:24px;background:linear-gradient(145deg,#fff8df,#eaf3ff);border:3px solid #d6ad50;border-radius:20px;box-shadow:0 20px 60px #000b;color:#14283a}
+#profileModal h2{text-align:center;margin:4px 0 8px;font-size:26px}
+#profileModal .profile-field{display:block;font-weight:800;margin:15px 0 7px}
+#profileModal input,#profileModal select{box-sizing:border-box;width:100%;padding:13px;border:2px solid #c5a75d;border-radius:10px;font-size:16px;background:#fff;color:#14283a}
+#profileModal .profile-balance{margin:14px 0;padding:12px;border-radius:12px;background:#173e5b;color:#fff;display:flex;justify-content:space-between;align-items:center}
+#profileModal .profile-balance strong{color:#ffd66b;font-size:22px}
+#profileModal .profile-start{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#173e5b,#246b82);color:#fff;font-size:17px;font-weight:900;margin-top:14px;cursor:pointer}
+#coinHud{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:110;background:#142f43;color:#ffe08a;border:1px solid #d6ad50;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:900;white-space:nowrap}
+@media(max-width:700px){#coinHud{top:44px;font-size:11px}}
+</style>
+
+</head>
+
+<body>
+<div class="app-layout">
+<div class="table">
+
+ <div class="topbar">
+  <div>
+   <button class="tool" id="helpBtn">ℹ️</button>
+   <button class="tool" id="newBtn">↻</button>
+  </div>
+  <div>
+   <button class="tool" id="soundBtn">🔔</button>
+   <button class="tool" id="scoreBtn">🏆</button>
+  </div>
+ </div>
+ <div id="coinHud">🪙 100 Coins • Baazi: 50</div>
+ <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">40</span> सेकंड</div>
+
+ <div class="notice" id="notice">
+  Review your first 5 cards and choose Hukum or PASS.
+ </div>
+
+
+
+ <div class="status" id="status">
+  BAAZIGAR <small>4 players • Trick Taking</small>
+ </div>
+
+ <div class="trump-marker" id="topTrumpMarker" aria-label="Selected Hukum"></div>
+ <div class="seat top">
+  <div class="avatar">🤖</div>
+  <div class="name" id="botNameTop">Aarav</div>
+  <div class="score" id="score1">Bol: -</div>
+ </div>
+
+ <div class="seat left">
+  <div class="avatar">🤖</div>
+  <div class="name" id="botNameLeft">Priya</div>
+  <div class="score" id="score2">Bol: -</div>
+ </div>
+
+ <div class="seat right">
+  <div class="avatar">🤖</div>
+  <div class="name" id="botNameRight">Kabir</div>
+  <div class="score" id="score3">Bol: -</div>
+ </div>
+
+ <div class="seat bottom">
+  <div class="avatar">🧑</div>
+  <div class="name">You</div>
+  <div class="score" id="score0">Bol: -</div>
+ </div>
+
+ <div class="hand top" id="hand1"></div>
+ <div class="hand left" id="hand2"></div>
+ <div class="hand right" id="hand3"></div>
+
+ <div class="center" id="center">
+  <div class="play-slot" id="slot1"></div>
+  <div class="play-slot" id="slot3"></div>
+  <div class="play-slot" id="slot0"></div>
+  <div class="play-slot" id="slot2"></div>
+ </div>
+
+ <div class="hand bottom" id="hand0"></div>
+
+ <div class="message" id="message" style="display:none"></div>
+
+
+ <!-- PLAYER PROFILE AND COIN ENTRY -->
+ <div class="modal show" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="dialog profile-dialog">
+   <div style="text-align:center;font-size:38px">♠ ♥ ♦ ♣</div>
+   <h2 id="profileTitle">BAAZIGAR</h2>
+   <p style="text-align:center;margin:0;color:#536579">Apna naam aur baazi ke Coins chunein</p>
+   <label class="profile-field" for="playerNameInput">Aapka naam</label>
+   <input id="playerNameInput" maxlength="20" autocomplete="nickname" placeholder="Apna naam likhein">
+   <div class="profile-balance"><span>Aapka Coin Balance</span><strong id="profileCoinBalance">100 🪙</strong></div>
+   <label class="profile-field" for="stakeSelect">Kitne Coins ki baazi?</label>
+   <select id="stakeSelect"></select>
+   <p id="coinRefillNote" style="font-size:12px;color:#536579;margin:8px 0 0">Coins 50 se kam hone par 100 playing Coins automatically milenge.</p>
+   <button type="button" class="profile-start" id="profileContinue">Aage Badhein</button>
+  </div>
+ </div>
+
+ <!-- GAME TARGET SELECTION MODAL -->
+ <div class="modal show" id="gameModeModal" role="dialog" aria-modal="true" aria-labelledby="gameModeTitle">
+  <div class="dialog mode-dialog">
+   <div style="font-size:38px;margin-bottom:5px">🏆 🃏 🎉</div>
+   <h2 id="gameModeTitle">Aap kaunsi Baazi khelna chahte hain?</h2>
+   <p class="mode-subtitle">Game shuru karne se pehle apna target score chunein.</p>
+   <div class="mode-options">
+    <button type="button" class="mode-option" id="choose31"><strong>31</strong><span>31 POINTS KI BAAZI</span><span>Chhoti aur tez baazi ⚡</span></button>
+    <button type="button" class="mode-option" id="choose51"><strong>51</strong><span>51 POINTS KI BAAZI</span><span>Lambi aur mazedaar baazi 👑</span></button>
+   </div>
+   <p class="mode-foot">Aapke chune hue target par pahunchne wala pehla khiladi game jeetega.</p>
+  </div>
+ </div>
+
+ <!-- INFO MODAL -->
+ <div class="modal" id="modal">
+  <div class="dialog">
+   <h2 id="modalTitle">Baazigar</h2>
+   <p id="modalText"></p>
+   <button class="tool" id="restartAfterWin" style="display:none;width:100%;margin:12px 0 8px;font-weight:800" type="button">🔄 Nayi Baazi Shuru Karein</button>
+   <button class="tool" id="closeModal">Close</button>
+  </div>
+ </div>
+
+ <!-- BIDDING MODAL: THREE STAGES -->
+ <div class="modal" id="bidModal">
+  <div class="dialog">
+   <h2 id="bidTitle" style="margin-bottom:5px">Select Hukum</h2>
+   <p id="bidDescription" style="font-size:13px;margin-bottom:18px;color:#555">Pehle 5 patton ko dekhkar Hukum chunein ya Pass karein.</p>
+   <div id="bidStageContent"></div>
+   <div id="bidPreview" style="font-size:14px;font-weight:bold;color:#17486f;margin:8px 0 12px"></div>
+   <button class="tool" id="confirmBidBtn" style="width:100%;margin-top:5px" disabled>Confirm</button>
+  </div>
+ </div>
+</div>
+<section class="mehfil-panel" aria-label="Minus Taas Ki Mehfil introduction">
+ <aside class="scoreboard" aria-label="Live scoreboard">
+  <h3>🏆 TOTAL SCORE</h3>
+  <table>
+   <thead><tr><th>Player</th><th>Bol</th><th>Won</th><th>Total Score</th></tr></thead>
+   <tbody id="scoreboardBody">
+    <tr><td class="player-name">You</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">Johnny</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">B-4</td><td>-</td><td>0</td><td>0</td></tr>
+    <tr><td class="player-name">Cherry 2000</td><td>-</td><td>0</td><td>0</td></tr>
+   </tbody>
+  </table>
+ </aside>
+  <div class="mehfil-kicker">BAAZIGAR CARD TABLE • DESI TAASH EXPERIENCE</div>
+  <div class="mehfil-art">
+    <div class="mehfil-copy">
+      <div class="mehfil-eyebrow">TAASH KHELO • MEHFIL JAMAO</div>
+      <h1>MINUS <span>TAAS KI MEHFIL</span></h1>
+      <p>Har chaal mein dimaag, har baazi mein mazaa.</p>
+      <div class="mehfil-rule"></div>
+      <div class="mehfil-tags"><span>♠ HUKUM</span><span>♥ PAAN</span><span>♦ EENT</span><span>♣ CHIDI</span></div>
+      <div class="mehfil-note">Apni chaal chuno. Apna Bol lagao. Mehfil jamao.</div>
+    </div>
+    <div class="mehfil-cards" aria-hidden="true">
+      <div class="mehfil-card card-one"><b>A</b><span>♠</span></div>
+      <div class="mehfil-card card-two"><b>K</b><span>♥</span></div>
+      <div class="mehfil-card card-three"><b>Q</b><span>♦</span></div>
+    </div>
+    <div class="mehfil-seal">13<br><small>TAASH</small></div>
+  </div>
+  <div class="mehfil-footer">MINUS TAAS KI MEHFIL <span>•</span> EK NAYA DESI CARD GAME EXPERIENCE</div>
+</section>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+
+ const suits=['♠','♥','♣','♦']; // Display order: Hukum, Paan, Chidi, Eent
+ const ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+ let playerProfileName=localStorage.getItem('baazigarPlayerName')||'';
+ let coinBalance=Math.max(0,Number(localStorage.getItem('baazigarCoinBalance')||0));
+ let selectedStake=50;
+ let stakeCharged=false;
+ let coinGameSettled=false;
+ if(coinBalance<50){coinBalance+=100;localStorage.setItem('baazigarCoinBalance',String(coinBalance));}
+ let names=[playerProfileName||'You','Aarav','Priya','Kabir'];
+
+ // Fresh Indian names for the three AI seats on every new game.
+ const indianNames=[
+  'Aarav','Vivaan','Aditya','Arjun','Krishna','Rohan','Rahul','Karan','Ishaan','Dev',
+  'Yash','Samar','Manav','Reyansh','Atharv','Nikhil','Varun','Mohit','Harsh','Ankit',
+  'Priya','Ananya','Aanya','Diya','Isha','Kavya','Meera','Riya','Saanvi','Aditi',
+  'Pooja','Neha','Simran','Muskan','Tanya','Nisha','Ira','Avni','Kiara','Sneha',
+  'Anushka','Payal','Sakshi','Shreya','Mahi','Radhika','Tanvi','Jhanvi','Pari','Navya'
+ ];
+ function assignFreshPlayerNames(){
+  let previous=[];
+  try{previous=JSON.parse(localStorage.getItem('baazigarLastBotNames')||'[]');}catch(e){}
+  let pool=shuffle([...indianNames]);
+  let chosen=pool.slice(0,3);
+  if(chosen.join('|')===previous.join('|')) chosen=pool.slice(3,6);
+  names=[playerProfileName||'You',...chosen];
+  const bottomName=document.querySelector('.seat.bottom .name');if(bottomName)bottomName.textContent=names[0];
+  try{localStorage.setItem('baazigarLastBotNames',JSON.stringify(chosen));}catch(e){}
+  const seatNameIds=['','botNameTop','botNameLeft','botNameRight'];
+  for(let p=1;p<=3;p++){
+   const el=$(seatNameIds[p]);
+   if(el)el.textContent=names[p];
+  }
+ }
+
+ // Clockwise order:
+ // Cherry -> Johnny -> B-4 -> You
+ const NEXT_PLAYER=[3,2,0,1];
+ const nextPlayer=p=>NEXT_PLAYER[p];
+
+ let hands=[[],[],[],[]];
+ let fullDeck=[];
+ let trick=[];
+
+ let tricksWon=[0,0,0,0];
+ let bids=['-','-','-','-'];
+ let bidTargets=[null,null,null,null];
+ let totalScores=[0,0,0,0];
+ let gameOver=false;
+ let targetScore=null; // chosen game length: 31 or 51 points
+
+ let turn=0;
+ let trumpSuit=null;
+ let phase='bid';
+ let round=1;
+ // Opening lead rotates clockwise: You -> right -> top -> left -> You.
+ let roundStarter=0;
+ let makerId=0;
+ let animationBusy=false;
+ let botTimer=null;
+ let bidStage=1;
+ let selectedTrump=null;
+ let selectedHukumRun=null;
+ let selectedHukumSuit=null;
+ let selectedColor=null;
+ let selectedColorRun=null;
+ let firstHukumPassed=false;
+ let firstHukumChoices=['PASS','PASS','PASS','PASS'];
+ let playerAuctionInfo=['-','-','-','-'];
+ let auctionCalls=['-','-','-','-'];
+ let allPassedFirstStage=false;
+ let selectedBidType='color';
+ // Sequential bidding: the opening bidder rotates each round.
+ let auctionOrder=[];
+ let auctionIndex=0;
+ let currentAuctionPlayer=-1;
+ let colorBidQueue=[];
+ let colorBidIndex=0;
+ let fallbackBidQueue=[];
+ let fallbackBidIndex=0;
+ let minimumColorBid=5;
+ let auctionWinner=-1;
+ let colorChooser=-1;
+ let chooserCommitmentLocked=false;
+ let auctionWinningBid=0;
+ let auctionWinningSuit='♠';
+ let fallbackAuction=false;
+ let runChoiceQueue=[];
+ let runChoiceIndex=0;
+ let selectedRunTarget=null;
+ let selectedFinalHukumSuit=null;
+ let selectedFinalHukumBid=null;
+ let runChoiceConfirmed=false;
+ let finalHukumConfirmed=false;
+
+ const $=id=>document.getElementById(id);
+
+ // Human decision timer: 40 seconds for each bidding table and each card turn.
+ const DECISION_SECONDS=40;
+ let decisionTimerId=null;
+ let decisionSecondsLeft=DECISION_SECONDS;
+ let decisionTimerContext=null;
+ let decisionTimerToken=0;
+ function stopDecisionTimer(){
+  decisionTimerToken++;
+  if(decisionTimerId!==null){clearInterval(decisionTimerId);decisionTimerId=null;}
+  decisionTimerContext=null;
+  const box=$('turnCountdown');if(box){box.style.display='none';box.classList.remove('warning');}
+ }
+ function paintDecisionTimer(){
+  const box=$('turnCountdown'),value=$('turnCountdownValue');
+  if(!box||!value)return;
+  value.textContent=String(decisionSecondsLeft);
+  box.style.display='flex';
+  box.classList.toggle('warning',decisionSecondsLeft<=10);
+ }
+ function saveCoinBalance(){localStorage.setItem('baazigarCoinBalance',String(coinBalance));updateCoinUI();}
+ function updateCoinUI(){
+  const balanceEl=$('profileCoinBalance');if(balanceEl)balanceEl.textContent=coinBalance+' 🪙';
+  const hud=$('coinHud');if(hud)hud.textContent=`🪙 ${coinBalance} Coins • Baazi: ${selectedStake}`;
+  const select=$('stakeSelect');if(select){const current=Number(select.value)||selectedStake;select.innerHTML='';for(let n=50;n<=500;n+=50){if(n<=coinBalance){const o=document.createElement('option');o.value=String(n);o.textContent=n+' Coins';select.appendChild(o);}}if(!select.options.length){const o=document.createElement('option');o.value='50';o.textContent='50 Coins';select.appendChild(o);}select.value=String(Math.min(current,Math.floor(coinBalance/50)*50)||50);selectedStake=Number(select.value);}
+ }
+ function settleCoinGame(winnerIndex){
+  if(coinGameSettled||!stakeCharged)return;coinGameSettled=true;
+  if(winnerIndex===0){coinBalance+=selectedStake*2;$('notice').textContent+=` Aap jeete! ${selectedStake*2} Coins wapas mile.`;}
+  else{$('notice').textContent+=` Aapki ${selectedStake} Coins ki baazi haar gayi.`;}
+  saveCoinBalance();
+ }
+ function openProfileModal(){
+  if(coinBalance<50){coinBalance+=100;saveCoinBalance();}
+  $('playerNameInput').value=playerProfileName;updateCoinUI();$('profileModal').classList.add('show');
+ }
+ $('profileContinue').addEventListener('click',()=>{
+  const val=$('playerNameInput').value.trim();if(!val){alert('Apna naam likhein.');$('playerNameInput').focus();return;}
+  playerProfileName=val.slice(0,20);localStorage.setItem('baazigarPlayerName',playerProfileName);names[0]=playerProfileName;
+  selectedStake=Number($('stakeSelect').value)||50;if(selectedStake>coinBalance){alert('Aapke paas itne Coins nahi hain.');return;}
+  const bottomName=document.querySelector('.seat.bottom .name');if(bottomName)bottomName.textContent=playerProfileName;
+  $('profileModal').classList.remove('show');$('gameModeModal').classList.add('show');render();
+ });
+ $('stakeSelect').addEventListener('change',e=>{selectedStake=Number(e.target.value)||50;updateCoinUI();});
+
+ function startDecisionTimer(context){
+  stopDecisionTimer();
+  const token=++decisionTimerToken;
+  decisionTimerContext=context;
+  decisionSecondsLeft=DECISION_SECONDS;
+  paintDecisionTimer();
+  decisionTimerId=setInterval(()=>{
+   if(token!==decisionTimerToken){clearInterval(decisionTimerId);return;}
+   decisionSecondsLeft--;
+   paintDecisionTimer();
+   if(decisionSecondsLeft<=0){
+    clearInterval(decisionTimerId);decisionTimerId=null;
+    const expiredContext=decisionTimerContext;decisionTimerContext=null;
+    handleDecisionTimeout(expiredContext);
+   }
+  },1000);
+ }
+ function startHumanTurnTimer(){
+  if(phase==='play'&&turn===0&&!gameOver&&!animationBusy)startDecisionTimer('card');
+  else stopDecisionTimer();
+ }
+ // Automatically play the human player's final remaining card when it is legal.
+ // Bots already play automatically through botLoop(); this covers the human seat.
+ function autoPlayFinalHumanCard(){
+  if(phase!=='play'||turn!==0||gameOver||animationBusy||hands[0].length!==1)return false;
+  const onlyCard=legalCards(0);
+  if(onlyCard.length!==1)return false;
+  stopDecisionTimer();
+  clearTimeout(botTimer);
+  $('message').textContent='Aapka aakhri card apne aap table par ja raha hai.';
+  $('notice').textContent='Aakhri bacha hua card automatically play ho raha hai.';
+  setTimeout(()=>{
+   if(phase!=='play'||turn!==0||gameOver||animationBusy||hands[0].length!==1)return;
+   const currentLegal=legalCards(0);
+   if(currentLegal.length===1)playCard(0,currentLegal[0]);
+  },450);
+  return true;
+ }
+ function handleDecisionTimeout(context){
+  const box=$('turnCountdown');if(box){box.style.display='none';box.classList.remove('warning');}
+  if(context==='card'){
+   if(phase!=='play'||turn!==0||animationBusy)return;
+   const card=botChoice(0); // Same legal-card strategy used by the AI, applied to the human hand.
+   if(card){$('notice').textContent='समय पूरा हुआ — आपके लिए अपने आप एक सही पत्ता चला दिया गया।';playCard(0,card);}
+   return;
+  }
+  if(context!=='bid'||!$('bidModal').classList.contains('show')||currentAuctionPlayer!==0)return;
+  $('notice').textContent='समय पूरा हुआ — उपलब्ध पत्तों के हिसाब से चुनाव अपने आप कर दिया गया।';
+  if(bidStage===1){
+   const choice=chooseComputerFirstFiveSuit(0);
+   if(choice==='PASS'){firstHukumPassed=true;selectedTrump=null;}
+   else{firstHukumPassed=false;selectedTrump=choice;}
+   $('confirmBidBtn').click();
+   return;
+  }
+  if(bidStage===2){
+   if(fallbackAuction){
+    const best=suits.map(s=>({s,score:estimateHandStrength(hands[0],s)})).sort((a,b)=>b.score-a.score)[0];
+    selectedBidType='hukum';selectedHukumRun=Math.max(2,Math.min(13,estimateHandStrength(hands[0],best.s)));selectedColorRun=null;
+    $('confirmBidBtn').click();
+   }else{
+    selectedColorRun=Math.max(5,Math.min(13,estimateHandStrength(hands[0],firstHukumChoices[colorChooser]||trumpSuit)));
+    $('confirmBidBtn').click();
+   }
+   return;
+  }
+  if(bidStage===3){
+   // Timeout completes only the unfinished table(s). The two selections stay independent.
+   if(!runChoiceConfirmed){
+    if(selectedRunTarget===null){
+     let autoRun=Math.max(2,Math.min(13,estimateHandStrength(hands[0],trumpSuit)));
+     const order=(runChoiceQueue&&runChoiceQueue.length)?runChoiceQueue:[...auctionOrder];
+     const last=order[order.length-1];
+     if(last===0){const others=bidTargets.reduce((sum,v,i)=>sum+(i===0?0:(Number(v)||0)),0);autoRun=Math.max(autoRun,12-others);}
+     selectedRunTarget=Math.max(2,Math.min(13,autoRun));
+    }
+    runChoiceConfirmed=true;
+   }
+   finishHumanRunAndHukumChoice();
+   return;
+  }
+ }
+
+ function makeDeck(){
+  let d=[];
+  for(const s of suits){
+   for(let i=0;i<13;i++){
+    d.push({s,r:ranks[i],v:i+2});
+   }
+  }
+  return d;
+ }
+
+ function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+   let j=Math.floor(Math.random()*(i+1));
+   [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+ }
+
+ function cardHTML(c,back=false){
+
+  if(back)return `<div class="card back"></div>`;
+
+  // Standard playing-card colours: both black suits (Hukam/Chidi) are black;
+  // both red suits (Paan/Eent) are red. Suit symbols remain distinct.
+  let red=c.s==='♥'||c.s==='♦';
+
+  return `
+   <div class="card ${red?'red':'black'}">
+    <div class="corner">${c.r}<span>${c.s}</span></div>
+    <div class="pip">${c.s}</div>
+   </div>
+  `;
+ }
+
+ function getActiveHukumForSorting(){
+  // The suit chosen by the first-five-card Hukum chooser is authoritative
+  // while bids are being declared; after that, use the locked trumpSuit.
+  const chooserSuit=(colorChooser>=0 && firstHukumChoices[colorChooser] && firstHukumChoices[colorChooser]!=='PASS')
+   ? firstHukumChoices[colorChooser] : null;
+  return chooserSuit || trumpSuit || null;
+ }
+
+ function sortHand(h){
+  // Keep all four suits grouped, with the selected Hukum suit always at the far RIGHT.
+  // Arrange the other three suits so black/red colours alternate wherever possible.
+  // ♠ Hukam and ♣ Chidi are black; ♥ Paan and ♦ Eent are red.
+  // The chosen Hukum suit is always last and receives the existing trump-card border.
+  // Cards within each suit are ordered by rank.
+  const activeHukum=getActiveHukumForSorting();
+  const orderByHukum={
+   '♥':['♣','♦','♠','♥'], // Chidi, Eent, Hukam, Paan
+   '♦':['♣','♥','♠','♦'], // Chidi, Paan, Hukam, Eent
+   '♠':['♦','♣','♥','♠'], // Eent, Chidi, Paan, Hukam
+   '♣':['♦','♠','♥','♣']  // Eent, Hukam, Paan, Chidi
+  };
+  const suitOrder=activeHukum&&orderByHukum[activeHukum]
+   ? orderByHukum[activeHukum]
+   : ['♦','♣','♥','♠'];
+  const suitIndex=s=>{
+   const i=suitOrder.indexOf(s);
+   return i<0?suitOrder.length:i;
+  };
+  h.sort((a,b)=>suitIndex(a.s)-suitIndex(b.s)||a.v-b.v);
+ }
+
+ /* START GAME */
+ function startRound(){
+
+  stopDecisionTimer();
+  clearTimeout(botTimer);
+
+  hands=[[],[],[],[]];
+  trick=[];
+  turn=roundStarter;
+  trumpSuit=null;
+  phase='bid';
+  bidStage=1;
+  selectedTrump=null;
+  selectedHukumRun=null;
+  selectedHukumSuit=null;
+  selectedColor=null;
+  selectedColorRun=null;
+  bidMode=null;
+  firstHukumPassed=false;
+  firstHukumChoices=['PASS','PASS','PASS','PASS'];
+  playerAuctionInfo=['-','-','-','-'];
+  auctionCalls=['-','-','-','-'];
+  allPassedFirstStage=false;
+  colorChooser=-1;
+  chooserCommitmentLocked=false;
+  selectedBidType='color';
+  runChoiceQueue=[];runChoiceIndex=0;selectedRunTarget=null;
+  selectedFinalHukumSuit=null;selectedFinalHukumBid=null;runChoiceConfirmed=false;finalHukumConfirmed=false;
+
+  bids=['-','-','-','-'];
+  bidTargets=[null,null,null,null];
+  tricksWon=[0,0,0,0];
+
+  animationBusy=false;
+
+  $('modal').classList.remove('show');
+  $('bidModal').classList.remove('show');
+
+  fullDeck=shuffle(makeDeck());
+
+  // First deal: 5 cards to each player for the Hukum / PASS decision.
+  // The remaining 32 cards stay in the deck until Step 1 is confirmed.
+  for(let i=0;i<4;i++){
+   hands[i]=fullDeck.slice(i*5,(i*5)+5);
+  }
+
+  hands.forEach(sortHand);
+  firstHukumChoices=['PASS','PASS','PASS','PASS'];
+
+  render();
+
+  $('notice').textContent='Sabhi players apne pehle 5 patte dekhkar Hukum ya PASS chun rahe hain.';
+  $('message').style.display='none';
+
+  setTimeout(()=>{
+   startFirstChoiceAuction();
+  },500);
+ }
+
+ /* FIND CURRENT WINNER OF THE CARDS ALREADY PLAYED */
+ function getCurrentWinner(plays){
+
+  if(!plays.length)return null;
+
+  const ledSuit=plays[0].card.s;
+
+  let winner=plays[0];
+
+  for(let i=1;i<plays.length;i++){
+
+   const current=plays[i];
+
+   const winnerIsTrump=winner.card.s===trumpSuit;
+   const currentIsTrump=current.card.s===trumpSuit;
+
+   if(currentIsTrump&&!winnerIsTrump){
+
+    winner=current;
+
+   }else if(currentIsTrump&&winnerIsTrump){
+
+    if(current.card.v>winner.card.v){
+     winner=current;
+    }
+
+   }else if(!winnerIsTrump&&!currentIsTrump){
+
+    if(current.card.s===ledSuit&&
+       winner.card.s!==ledSuit){
+
+     winner=current;
+
+    }else if(current.card.s===winner.card.s&&
+             current.card.v>winner.card.v){
+
+     winner=current;
+
+    }
+
+   }
+
+  }
+
+  return winner;
+ }
+
+ /*
+  SMART LEGAL CARD RULES
+
+  1. Follow the led suit if available.
+  2. If a higher card of that suit is available,
+     player must play a higher card.
+  3. If no higher card is available,
+     a lower card of the same suit is allowed.
+  4. If player has no led suit, play trump if available.
+  5. If a higher trump is available, play higher trump.
+  6. If no led suit and no trump, any card is allowed.
+ */
+
+ function legalCards(p){
+
+  const hand=hands[p];
+
+  if(!hand.length)return [];
+
+  // First player can lead any card
+  if(trick.length===0){
+   return [...hand];
+  }
+
+  const ledSuit=trick[0].card.s;
+
+  // Find cards of the suit led
+  const sameSuit=hand.filter(c=>c.s===ledSuit);
+
+  // If player has led suit
+  if(sameSuit.length){
+
+   const currentWinner=getCurrentWinner(trick);
+
+   // SPECIAL CASE: another player has already cut the led suit with Hukum.
+   // In this one situation, if we still hold the led suit, ANY card of
+   // that led suit is legal (even a smaller one). We must still follow suit;
+   // we cannot throw a different suit or waste another Hukum card.
+   const hukumHasCut = ledSuit!==trumpSuit &&
+    trick.some(play=>play.card.s===trumpSuit);
+
+   if(hukumHasCut){
+    return sameSuit;
+   }
+
+   // In every other situation, beat the current winning card with a
+   // higher card of the led suit when one is available.
+   // Must beat the current winning card if possible
+   const higherCards=sameSuit.filter(c=>
+    c.v>currentWinner.card.v
+   );
+
+   return higherCards.length?higherCards:sameSuit;
+  }
+
+  // Player has no led suit: check whether Hukum has already cut.
+  const trumpCards=hand.filter(c=>c.s===trumpSuit);
+  const hukumAlreadyCut = ledSuit!==trumpSuit &&
+   trick.some(play=>play.card.s===trumpSuit);
+
+  if(trumpCards.length){
+
+   const currentWinner=getCurrentWinner(trick);
+
+   if(hukumAlreadyCut && currentWinner.card.s===trumpSuit){
+    // If a BIGGER Hukum (cut) is still in hand, it must be played.
+    // If only smaller Hukum cards remain, player may discard ANY suit.
+    const biggerCuts=trumpCards.filter(c=>
+     c.v>currentWinner.card.v
+    );
+
+    return biggerCuts.length ? biggerCuts : [...hand];
+   }
+
+   // Hukum has not cut yet: any Hukum must be used when player
+   // cannot follow the led suit.
+   if(currentWinner.card.s!==trumpSuit){
+    return trumpCards;
+   }
+
+   // Hukum is already winning; if a higher Hukum is available,
+   // the player must overtake it. Otherwise smaller Hukum is allowed.
+   const higherTrump=trumpCards.filter(c=>
+    c.v>currentWinner.card.v
+   );
+
+   return higherTrump.length?higherTrump:trumpCards;
+  }
+
+  // No led suit and no Hukum: any card
+  return [...hand];
+ }
+
+ /* RENDER */
+ function render(){
+
+  // Re-apply the dynamic Hukum grouping on every render so a suit chosen
+  // during bidding is never left in its old default position.
+  hands.forEach(sortHand);
+
+  for(let p=0;p<4;p++){
+
+   const el=$('hand'+p);
+   el.innerHTML='';
+
+   if(p===0){
+
+    hands[p].forEach(c=>{
+
+     let wrap=document.createElement('div');
+     wrap.innerHTML=cardHTML(c);
+
+     let node=wrap.firstElementChild;
+
+     // Highlight only cards belonging to the selected Hukum suit.
+     if(trumpSuit && c.s===trumpSuit) node.classList.add('trump-card');
+
+     if(phase==='play'&&turn===0){
+
+      const legal=legalCards(0).includes(c);
+
+      node.classList.add(legal?'legal':'illegal');
+
+     }
+
+     // Direct click: no separate Play button
+     node.addEventListener('click',()=>{
+
+      if(phase!=='play'||turn!==0||animationBusy)return;
+
+      if(!legalCards(0).includes(c)){
+
+       showInvalidMessage(c);
+       return;
+
+      }
+
+      playCard(0,c);
+
+     });
+
+     el.appendChild(node);
+
+    });
+
+   }else{
+
+    hands[p].forEach(()=>{
+
+     let wrap=document.createElement('div');
+     wrap.innerHTML=cardHTML(null,true);
+
+     el.appendChild(wrap.firstElementChild);
+
+    });
+
+   }
+
+   const displayBid=bids[p]==='pass'?'Pass':bids[p];
+   // Keep each player's seat label compact and readable: only Bol and Won.
+   $('score'+p).textContent=
+    `Bol: ${displayBid}  |  Won: ${tricksWon[p]}`;
+
+  }
+
+  const scoreboardBody=$('scoreboardBody');
+  if(scoreboardBody){
+   scoreboardBody.innerHTML=names.map((name,p)=>{
+    const bid=bids[p]??'-';
+    return `<tr class="${turn===p&&phase==='play'?'current':''}"><td class="player-name">${name}</td><td><strong>Bol: ${bid}</strong></td><td><strong>Won: ${tricksWon[p]}</strong></td><td>${totalScores[p]}</td></tr>`;
+   }).join('');
+  }
+
+  const trumpMarker=$('topTrumpMarker');
+  if(trumpMarker){
+   if(trumpSuit){
+    const suitNames={'♠':'Hukam','♥':'Paan','♦':'Eent','♣':'Chidi'};
+    trumpMarker.textContent=`${trumpSuit} ${suitNames[trumpSuit]||trumpSuit}`;
+    trumpMarker.style.display='block';
+   }else{trumpMarker.textContent='';trumpMarker.style.display='none';}
+  }
+
+  let trickNum=13-hands[0].length+1;
+  let trumpText=trumpSuit?` • Hukum: ${trumpSuit}`:'';
+
+  $('status').innerHTML=
+   `ROUND ${round} <small>${phase==='bid'?'Declare Bol':`Trick ${trickNum}/13${trumpText}`}</small>`;
+
+ }
+
+ function showInvalidMessage(c){
+
+  if(trick.length===0)return;
+
+  const ledSuit=trick[0].card.s;
+  const haveSuit=hands[0].some(x=>x.s===ledSuit);
+  const currentWinner=getCurrentWinner(trick);
+
+  if(haveSuit){
+
+   const hukumHasCut = ledSuit!==trumpSuit &&
+    trick.some(play=>play.card.s===trumpSuit);
+
+   if(c.s!==ledSuit){
+
+    $('notice').textContent=
+     `You must play ${ledSuit}.`;
+
+   }else if(hukumHasCut){
+
+    $('notice').textContent=
+     `Hukum has cut the trick. Any ${ledSuit} card is allowed.`;
+
+   }else{
+
+    $('notice').textContent=
+     `You must play a higher ${ledSuit} card if available.`;
+
+   }
+
+  }else if(c.s!==trumpSuit&&hands[0].some(x=>x.s===trumpSuit)){
+
+   const hukumAlreadyCut = ledSuit!==trumpSuit &&
+    trick.some(play=>play.card.s===trumpSuit);
+   const biggerCuts=hands[0].filter(x=>
+    x.s===trumpSuit && x.v>currentWinner.card.v
+   );
+
+   if(hukumAlreadyCut && currentWinner.card.s===trumpSuit && !biggerCuts.length){
+    $('notice').textContent=
+     `Only smaller Hukum remains. You may play any suit.`;
+   }else if(hukumAlreadyCut && currentWinner.card.s===trumpSuit && biggerCuts.length){
+    $('notice').textContent=
+     `A bigger Hukum is available. You must play the bigger cut.`;
+   }else{
+    $('notice').textContent=
+     `You have no ${ledSuit}. Play Hukum ${trumpSuit}.`;
+   }
+
+  }else{
+
+   $('notice').textContent=
+    'This card is not valid for this turn.';
+
+  }
+
+ }
+
+ /* SEQUENTIAL AUCTION SYSTEM
+    - Every round starts bidding from roundStarter, then clockwise.
+    - Each player sees their first five cards and chooses a colour or PASS.
+    - If one or more choose a colour, only those players bid for the number.
+      First eligible bid starts at 5; after each accepted bid the next minimum rises by 1.
+    - Highest bid wins and only that player's colour becomes Hukum.
+    - If everyone passes, all four compete in the Hukum 1-13 / Color 10-13 fallback auction.
+ */
+ let bidMode=null;
+ function renderBidStage(){
+  const content=$('bidStageContent');
+  const title=$('bidTitle');
+  const desc=$('bidDescription');
+  const preview=$('bidPreview');
+  const confirm=$('confirmBidBtn');
+  const bidDialog=$('bidModal').querySelector('.dialog');
+  const isFinalChoice=(bidStage===3);
+  bidDialog.classList.toggle('run-choice-compact',isFinalChoice);
+  title.style.display=isFinalChoice?'none':'';
+  desc.style.display=isFinalChoice?'none':'';
+  content.innerHTML='';
+  confirm.disabled=true;
+  confirm.style.display='block';
+  const playerName=names[currentAuctionPlayer]||'Player';
+  if(bidStage===1){
+   title.textContent=`${playerName} — Rang Chunein ya PASS`;
+   desc.textContent=`${playerName} apne pehle 5 patte dekhkar rang chunein ya PASS karein.`;
+   content.innerHTML=`
+    <div style="font-size:12px;font-weight:bold;color:#777;text-align:left;margin-bottom:8px">Bidding turn ${auctionIndex+1} of 4</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px">
+     <button type="button" class="tool stage1-suit" data-suit="♠">♠ Hukam</button>
+     <button type="button" class="tool stage1-suit" data-suit="♥">♥ Paan</button>
+     <button type="button" class="tool stage1-suit" data-suit="♦">♦ Eent</button>
+     <button type="button" class="tool stage1-suit" data-suit="♣">♣ Chidi</button>
+    </div>
+    <button class="tool" id="passHukumBtn" style="width:100%">PASS</button>`;
+   preview.textContent='Apne patte dekhkar ek rang chunein ya PASS karein.';
+   content.querySelectorAll('.stage1-suit').forEach(btn=>{
+    if(btn.dataset.suit===selectedTrump)btn.classList.add('active');
+    btn.addEventListener('click',()=>{selectedTrump=btn.dataset.suit;firstHukumPassed=false;renderBidStage()});
+   });
+   const passBtn=$('passHukumBtn');
+   if(firstHukumPassed)passBtn.classList.add('active');
+   passBtn.addEventListener('click',()=>{firstHukumPassed=true;selectedTrump=null;renderBidStage()});
+   confirm.textContent=firstHukumPassed?'Confirm PASS':selectedTrump?`Confirm ${getSuitName(selectedTrump)}`:'Select Rang / PASS';
+   confirm.disabled=!(firstHukumPassed||selectedTrump);
+  }else if(bidStage===2){
+   title.textContent=`${playerName} — Bol Chunein`;
+   if(fallbackAuction){
+    desc.textContent='Sabhi ne pehle rang par PASS kiya. Hukum 1–13 ya kisi bhi rang mein Color Bol 10–13 chunein.';
+    content.innerHTML=`
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <section class="bid-panel"><h3>♠ Hukum Bol (1–13)</h3><div class="bid-number-grid" id="hukumNumbers">${Array.from({length:13},(_,i)=>i+1).map(n=>`<button class="tool hukum-number" data-val="${n}">${n}</button>`).join('')}</div></section>
+      <section class="bid-panel"><h3>Color Bol (10–13)</h3><div class="bid-color-grid" id="colorSuitChoices">${[['♠','Hukam'],['♥','Paan'],['♦','Eent'],['♣','Chidi']].map(([s,n])=>`<button class="tool color-pick" data-suit="${s}">${s} ${n}</button>`).join('')}</div><div class="bid-number-grid" id="colorNumbers">${[10,11,12,13].map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div></section>
+     </div><button class="tool" id="fallbackPassBtn" style="width:100%;margin-top:10px">PASS</button>`;
+    content.querySelectorAll('.hukum-number').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedBidType='hukum';selectedHukumRun=Number(btn.dataset.val);selectedColorRun=null;
+     content.querySelectorAll('.hukum-number').forEach(b=>b.classList.toggle('active',b===btn));
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.remove('active'));
+     updateFallbackPreview();
+    }));
+    content.querySelectorAll('.color-pick').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedColor=btn.dataset.suit;selectedBidType='color';
+     content.querySelectorAll('.color-pick').forEach(b=>b.classList.toggle('active',b===btn));
+     updateFallbackPreview();
+    }));
+    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedColorRun=Number(btn.dataset.val);selectedBidType='color';selectedHukumRun=null;
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
+     content.querySelectorAll('.hukum-number').forEach(b=>b.classList.remove('active'));
+     updateFallbackPreview();
+    }));
+    $('fallbackPassBtn').addEventListener('click',()=>{selectedBidType='pass';selectedHukumRun=null;selectedColorRun=null;preview.textContent='Aapne fallback bidding mein PASS kiya.';confirm.disabled=false;confirm.textContent='Confirm PASS'});
+    function updateFallbackPreview(){
+     if(selectedBidType==='hukum'&&selectedHukumRun){preview.textContent=`Hukum Bol: ${selectedHukumRun}`;confirm.disabled=false;}
+     else if(selectedBidType==='color'&&selectedColor&&selectedColorRun){preview.textContent=`${getSuitName(selectedColor)} Color Run: ${selectedColorRun}`;confirm.disabled=false;}
+     else{preview.textContent='Hukum ya Color mein se ek poori bol chunein.';confirm.disabled=true;}
+     confirm.textContent='Confirm Bol';
+    }
+    updateFallbackPreview();
+   }else{
+    const suit=firstHukumChoices[colorChooser];
+    desc.textContent=`Aap pehle 5 patton ke aadhar par ${getSuitName(suit)} Hukum chun chuke hain. Pehle 5 patte dekhkar apna pehla commitment 5 se 13 Run tak chunein. Baaki players apne 13 patte dekhkar alag Run declare karenge; total Run par 13 ki limit nahi hai.`;
+    const nums=Array.from({length:9},(_,i)=>i+5);
+    content.innerHTML=`<section class="bid-panel" style="width:100%;box-sizing:border-box"><h3>${getSuitName(suit)} Hukum — Pehla Run Commitment (5–13)</h3><div class="bid-number-grid">${nums.map(n=>`<button class="tool color-number" data-val="${n}">${n}</button>`).join('')}</div></section>`;
+    content.querySelectorAll('.color-number').forEach(btn=>btn.addEventListener('click',()=>{
+     selectedColorRun=Number(btn.dataset.val);
+     content.querySelectorAll('.color-number').forEach(b=>b.classList.toggle('active',b===btn));
+     preview.textContent=`${getSuitName(suit)} Hukum: aapka pehla Run commitment ${selectedColorRun}`;
+     confirm.textContent='Confirm Run';confirm.disabled=false;
+    }));
+    preview.textContent=`Pehle 5 patton ko dekhkar 5–13 ka commitment chunein.`;
+   }
+  }else if(bidStage===3){
+   title.textContent=`${playerName} — Final Run + Final Hukum Color`;
+   const maxRun=13;
+   const noOneChoseColor=allPassedFirstStage||colorChooser<0;
+   const chooserName=noOneChoseColor?'Kisi ne nahi':(names[colorChooser]||'Player');
+   const firstColorText=noOneChoseColor?'Koi rang select nahi hua — Default Hukum (♠) rahega':`${trumpSuit} ${getSuitName(trumpSuit)}`;
+   desc.textContent=noOneChoseColor
+    ? 'Kisi bhi player ne pehle 5 patte dekhkar rang select nahi kiya. Isliye is round mein default Hukum ♠ hi rahega.'
+    : `${chooserName} ne pehle ${getSuitName(trumpSuit)} rang chuna tha. Dono tables alag-alag confirm karein: pehle apna Run, phir Final Hukum Color Bol.`;
+   content.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+    <section class="bid-panel" style="width:100%;box-sizing:border-box;text-align:center">
+     <h3>FINAL RUN • AAPKI 13-CARD HAND</h3>
+     <div style="margin:7px 0 10px;padding:12px 10px;border:2px solid #d4a84d;border-radius:12px;background:linear-gradient(135deg,#fff8e7,#fff0c9);color:#173d5d;font-size:14px;font-weight:800;line-height:1.5;box-shadow:0 2px 8px rgba(23,61,93,.14)">
+      <div style="font-size:15px">रंग चुनने वाला: <span style="color:#9a4b20">${chooserName==='Kisi ne nahi'?'किसी ने नहीं':chooserName}</span></div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:3px">
+       <span style="font-size:76px;line-height:.95;font-weight:900;color:${trumpSuit==='♥'?'#d51f3b':trumpSuit==='♦'?'#c65b13':trumpSuit==='♣'?'#111111':'#111111'};text-shadow:0 2px 3px rgba(0,0,0,.16)">${trumpSuit}</span>
+       <span style="font-size:28px;font-weight:900;color:${trumpSuit==='♥'?'#c5162e':trumpSuit==='♦'?'#a94b08':trumpSuit==='♣'?'#111111':'#111111'}">${noOneChoseColor?'हुकुम में बोलें':(trumpSuit==='♥'?'पान में बोलें':trumpSuit==='♦'?'ईंट में बोलें':trumpSuit==='♣'?'चिड़ी में बोलें':'हुकुम में बोलें')}</span>
+      </div>
+      ${noOneChoseColor?'<div style="font-size:12px;margin-top:5px;color:#674b12">कोई रंग नहीं चुना गया — डिफॉल्ट हुकुम रहेगा</div>':''}
+     </div>
+     <div class="bid-number-grid" style="grid-template-columns:repeat(4,1fr)">${Array.from({length:12},(_,i)=>i+2).map(n=>`<button type="button" class="tool run-target-number" data-val="${n}" aria-label="${n} Run">${n}</button>`).join('')}</div>
+     <div style="font-size:12px;font-weight:700;color:#9a4b20;margin-top:8px">Minimum 2 Run • Maximum 13 Run per player • Total par koi limit nahi</div>
+     <button type="button" class="tool" id="confirmRunOnlyBtn" style="width:100%;margin-top:10px">Confirm Run</button>
+    </section>
+    <section class="bid-panel" style="width:100%;box-sizing:border-box;text-align:center">
+     <h3>FINAL HUKUM COLOR • 10–13</h3>
+     <div class="bid-color-grid" style="grid-template-columns:1fr 1fr">${[['♠','Hukam'],['♥','Paan'],['♦','Eent'],['♣','Chidi']].map(([su,n])=>{
+      const style=su==='♥'?'background:#ffe1e1;color:#c5162e;border:2px solid #d94a59':su==='♦'?'background:#fff0d6;color:#b65312;border:2px solid #d58b32':su==='♣'?'background:#eeeeee;color:#111111;border:2px solid #333333':'background:#eeeeee;color:#111111;border:2px solid #333333';
+      return `<button type="button" class="tool final-hukum-suit" data-suit="${su}" style="${style}">${su} ${n}</button>`;
+     }).join('')}</div>
+     <div class="bid-number-grid" style="grid-template-columns:repeat(4,1fr);margin-top:8px">${[10,11,12,13].map(n=>`<button type="button" class="tool final-hukum-number" data-val="${n}">${n}</button>`).join('')}</div>
+     <div style="font-size:12px;font-weight:700;color:#17486f;margin-top:8px">${noOneChoseColor?'किसी ने पहले रंग नहीं चुना, इसलिए डिफॉल्ट हुकुम रहेगा। आप चाहें तो यहाँ रंग बदल सकते हैं।':'यहाँ चुना गया रंग चारों खिलाड़ियों का अंतिम हुकुम होगा। यह रन वाली टेबल से अलग है।'}</div>
+     <button type="button" class="tool" id="confirmHukumOnlyBtn" style="width:100%;margin-top:10px">Confirm Hukum Color</button>
+    </section>
+   </div>`;
+   selectedRunTarget=null;selectedFinalHukumSuit=noOneChoseColor?'♠':null;selectedFinalHukumBid=null;
+   if(noOneChoseColor){const defaultSuit=content.querySelector('.final-hukum-suit[data-suit="♠"]');if(defaultSuit)defaultSuit.classList.add('active');}
+   runChoiceConfirmed=false;finalHukumConfirmed=false;
+   content.querySelectorAll('.run-target-number').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedRunTarget=Number(btn.dataset.val);
+    runChoiceConfirmed=false;
+    content.querySelectorAll('.run-target-number').forEach(b=>b.classList.toggle('active',b===btn));
+    $('confirmRunOnlyBtn').textContent='Confirm Run';
+    preview.textContent=`Aapne ${selectedRunTarget} Run select kiya. Is table ka Confirm Run dabayein.`;
+   }));
+   content.querySelectorAll('.final-hukum-suit').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedFinalHukumSuit=btn.dataset.suit;finalHukumConfirmed=false;
+    content.querySelectorAll('.final-hukum-suit').forEach(b=>b.classList.toggle('active',b===btn));
+    $('confirmHukumOnlyBtn').textContent='Confirm Hukum Color';
+    preview.textContent=`Final Hukum rang ${getSuitName(selectedFinalHukumSuit)} select hua. Ab isi table mein 10–13 ka number select karein.`;
+   }));
+   content.querySelectorAll('.final-hukum-number').forEach(btn=>btn.addEventListener('click',()=>{
+    selectedFinalHukumBid=Number(btn.dataset.val);finalHukumConfirmed=false;
+    content.querySelectorAll('.final-hukum-number').forEach(b=>b.classList.toggle('active',b===btn));
+    $('confirmHukumOnlyBtn').textContent='Confirm Hukum Color';
+    preview.textContent=`Color Bol ${selectedFinalHukumBid} select hua. Hukum Color table ka Confirm dabayein.`;
+   }));
+   $('confirmRunOnlyBtn').addEventListener('click',()=>{
+    if(selectedRunTarget===null){preview.textContent='Pehle left table se apna Run 2–13 select karein.';return;}
+    if(selectedRunTarget<2||selectedRunTarget>13){preview.textContent='Har player 2 se 13 Run ke beech apna alag target chun sakta hai.';return;}
+    runChoiceConfirmed=true;$('confirmRunOnlyBtn').textContent=`Run ${selectedRunTarget} Confirmed ✓`;
+    preview.textContent='Aapka Run confirm ho gaya. Ab isi pehle se tay Hukum ke saath game shuru ho raha hai.';
+    finishHumanRunAndHukumChoice();
+   });
+   $('confirmHukumOnlyBtn').addEventListener('click',()=>{
+    if(!selectedFinalHukumSuit){preview.textContent='Right table mein pehle koi bhi ek Hukum rang chunein.';return;}
+    if(selectedFinalHukumBid===null){preview.textContent='Right table mein 10, 11, 12 ya 13 mein se number chunein.';return;}
+    finalHukumConfirmed=true;$('confirmHukumOnlyBtn').textContent='Hukum Color Confirmed ✓';
+    if(runChoiceConfirmed){
+     preview.textContent='Hukum Color aur Run dono alag-alag confirm ho gaye. Game shuru ho raha hai.';
+     finishHumanRunAndHukumChoice();
+    }else{
+     preview.textContent='Aapka Hukum rang aur 10–13 confirm ho gaya. Ab left wali table mein apna Run chun kar Confirm Run dabayein. Is rang ka Hukum chaaron players par lagega.';
+     startDecisionTimer('bid');
+    }
+   });
+   // Either table may be confirmed first. Neither table changes the other's selection.
+   // The game begins only after both independent confirmations are complete.
+   confirm.textContent='Sirf Confirm Run dabakar game shuru karein';confirm.disabled=true;confirm.style.display='none';
+
+  }
+ }
+ function getSuitName(s){return {'♠':'Hukam','♥':'Paan','♦':'Eent','♣':'Chidi'}[s]||s}
+ function openBidStage(stage){bidStage=stage;renderBidStage();$('bidModal').classList.add('show');if(currentAuctionPlayer===0)startDecisionTimer('bid');}
+
+ // Estimate likely tricks from a player's actual cards.
+ function estimateHandStrength(hand, trump){
+  // Estimate tricks from the actual 13-card hand. This is an independent
+  // estimate for each player: it is NOT reduced to fit a table-wide total.
+  const counts={'♠':0,'♥':0,'♦':0,'♣':0};
+  for(const c of hand)counts[c.s]++;
+  let points=0;
+  const rankPower={'A':1.00,'K':0.62,'Q':0.38,'J':0.22,'10':0.12};
+  for(const suit of suits){
+   const cards=hand.filter(c=>c.s===suit).sort((a,b)=>b.v-a.v);
+   const n=cards.length;
+   if(!n)continue;
+   // Aces are strong in every suit; K/Q/J gain value when supported by length.
+   cards.forEach((c,index)=>{
+    let v=rankPower[c.r]||0;
+    if(c.r==='K' && n>=2)v+=0.10;
+    if(c.r==='Q' && n>=3)v+=0.08;
+    if(c.r==='J' && n>=4)v+=0.05;
+    if(index>0 && c.r!=='A')v*= (n>=4?0.78:0.58);
+    if(suit===trump)v*=1.28;
+    points+=v;
+   });
+   // Trump length creates extra control; long side suits also protect honors.
+   if(suit===trump){
+    if(n>=2)points+=(n-1)*0.34;
+    if(n>=4)points+=(n-3)*0.30;
+    if(n>=6)points+=(n-5)*0.22;
+   }else{
+    if(n>=5)points+=(n-4)*0.16;
+    if(n===1 && (cards[0].r==='A'||cards[0].r==='K'))points+=0.08;
+   }
+  }
+  const trumpCount=counts[trump]||0;
+  // A void in a side suit can create ruffing chances when trump is available.
+  for(const suit of suits){
+   if(suit!==trump && counts[suit]===0 && trumpCount>=2)points+=0.38;
+   else if(suit!==trump && counts[suit]===1 && trumpCount>=3)points+=0.12;
+  }
+  // Calibrate the raw honor/length score against real trick outcomes.
+  // The previous raw sum systematically overcalled: random 13-card hands
+  // averaged about 3.7 predicted tricks, before the 2-trick minimum. That
+  // inflated the table total in almost every round. A 0.65 calibration
+  // keeps strong A/K/Q-heavy and long-trump hands higher, while ordinary
+  // hands usually land around 2-3 tricks. The chooser's first-five
+  // commitment remains governed by its existing 5-13 minimum rule.
+  const calibrated = hand.length >= 12 ? points * 0.65 : points;
+  return Math.max(0,Math.min(13,Math.round(calibrated)));
+ }
+ function chooseComputerFirstFiveSuit(p){
+  const hand=hands[p];let bestSuit=null,bestScore=0;
+  for(const suit of suits){
+   const cards=hand.filter(c=>c.s===suit);
+   const honors=cards.reduce((sum,c)=>sum+({A:1.15,K:0.72,Q:0.42,J:0.20,10:0.10}[c.r]||0),0);
+   const score=honors+Math.max(0,cards.length-1)*0.24;
+   if(score>bestScore){bestScore=score;bestSuit=suit;}
+  }
+  return bestScore>=0.75?bestSuit:'PASS';
+ }
+ function startFirstChoiceAuction(){
+  // Give the human player a Hukum/colour choice in EVERY round.
+  // If the human passes, AI players get their turns in the round's rotating order.
+  const rotatingOrder=[roundStarter];
+  for(let i=1;i<4;i++)rotatingOrder.push(nextPlayer(rotatingOrder[i-1]));
+  auctionOrder=[0,...rotatingOrder.filter(p=>p!==0)];
+  auctionIndex=0;currentAuctionPlayer=-1;firstHukumChoices=['PASS','PASS','PASS','PASS'];
+  selectedTrump=null;firstHukumPassed=false;fallbackAuction=false;
+  chooserCommitmentLocked=false;colorChooser=-1;selectedColorRun=null;
+  processFirstChoiceTurn();
+ }
+ function processFirstChoiceTurn(){
+  if(auctionIndex>=auctionOrder.length){finishFirstChoiceAuction();return;}
+  currentAuctionPlayer=auctionOrder[auctionIndex];
+  if(currentAuctionPlayer===0){selectedTrump=null;firstHukumPassed=false;openBidStage(1);return;}
+  const choice=chooseComputerFirstFiveSuit(currentAuctionPlayer);
+  firstHukumChoices[currentAuctionPlayer]=choice;
+  if(choice!=='PASS'){
+   colorChooser=currentAuctionPlayer;
+   selectedColorRun=Math.max(5,Math.min(13,estimateHandStrength(hands[currentAuctionPlayer],choice)));
+   firstHukumChoices.forEach((v,i)=>{if(i!==colorChooser&&v==='PASS')playerAuctionInfo[i]='Run declare pending';});
+   finishFirstChoiceAuction();return;
+  }
+  auctionIndex++;processFirstChoiceTurn();
+ }
+ function dealRemainingCards(){
+  hands[0].push(...fullDeck.slice(20,28));hands[1].push(...fullDeck.slice(28,36));
+  hands[2].push(...fullDeck.slice(36,44));hands[3].push(...fullDeck.slice(44,52));
+  hands.forEach(sortHand);render();
+ }
+ function finishFirstChoiceAuction(){
+  allPassedFirstStage=firstHukumChoices.every(x=>x==='PASS');
+  $('bidModal').classList.remove('show');
+  dealRemainingCards();
+  if(allPassedFirstStage){
+   // Nobody selected a suit from the first five cards: retain default Hukum (spades).
+   // The human still declares Run and chooses only the 10–13 Hukum Bol number;
+   // the Hukum suit itself is fixed and cannot be changed in this all-PASS case.
+   fallbackAuction=false;trumpSuit='♠';auctionWinningSuit='♠';auctionWinner=roundStarter;makerId=roundStarter;
+   hands.forEach(sortHand);
+   colorChooser=-1;chooserCommitmentLocked=true;
+   bids=['-','-','-','-'];bidTargets=[0,0,0,0];
+   playerAuctionInfo=['PASS — default Hukum','PASS — default Hukum','PASS — default Hukum','PASS — default Hukum'];
+   $('notice').textContent='Kisi ne pehle 5 patton se rang nahi chuna. Is round mein default Hukum ♠ rahega.';
+   runChoiceQueue=[...auctionOrder];runChoiceIndex=0;
+   processRunChoiceTurn();
+  }else{
+   fallbackAuction=false;
+   if(colorChooser<0)colorChooser=auctionOrder.find(p=>firstHukumChoices[p]!=='PASS');
+   trumpSuit=firstHukumChoices[colorChooser];
+   auctionWinner=colorChooser;auctionWinningSuit=trumpSuit;makerId=colorChooser;
+   hands.forEach(sortHand);
+   bids=['-','-','-','-'];bidTargets=[0,0,0,0];
+   $('notice').textContent=`${names[colorChooser]} ne pehle 5 patton se ${getSuitName(trumpSuit)} Hukum chuna. Ab baaki players apne 13 patton ke hisaab se Run declare karenge.`;
+   if(colorChooser===0){selectedColorRun=null;openBidStage(2);return;}
+   bidTargets[colorChooser]=selectedColorRun;
+   bids[colorChooser]=`${selectedColorRun}`;
+   chooserCommitmentLocked=true;
+   auctionCalls[colorChooser]=`${getSuitName(trumpSuit)} Hukum commitment: ${selectedColorRun}`;
+   playerAuctionInfo[colorChooser]='Hukum chooser';
+   beginOtherRunDeclarations();
+  }
+ }
+ function registerAuctionBid(player,bid,suit,type='color'){
+  if(bid>auctionWinningBid){auctionWinner=player;auctionWinningBid=bid;auctionWinningSuit=suit;}
+  if(type==='hukum'){auctionCalls[player]=`Hukum Bol: ${bid}`;playerAuctionInfo[player]='PASS (first choice)';}
+  else {auctionCalls[player]=`${getSuitName(suit)} Color Bol: ${bid}`;playerAuctionInfo[player]=`${getSuitName(firstHukumChoices[player])} chuna`; }
+  bidTargets[player]=bid;
+ }
+ function beginOtherRunDeclarations(){
+  runChoiceQueue=auctionOrder.filter(p=>p!==colorChooser);
+  // Safety guard: the Hukum chooser has already committed 5–13 in Stage 2.
+  // Never ask that player to declare a second Run in Stage 3.
+  if(colorChooser>=0)runChoiceQueue=runChoiceQueue.filter(p=>p!==colorChooser);
+  runChoiceIndex=0;
+  processRunChoiceTurn();
+ }
+ function finishAuctionAndStartGame(){
+  if(auctionWinner<0){auctionWinner=auctionOrder[0];auctionWinningBid=1;auctionWinningSuit='♠';}
+  makerId=auctionWinner;trumpSuit=auctionWinningSuit;
+  hands.forEach(sortHand);
+
+  // The number chosen in the colour/Hukum bidding stage is already that
+  // player's Run target. Do NOT open a second, duplicate Run-selection modal.
+  // Players who passed receive a card-based target after the final Hukum is known.
+  for(let p=0;p<4;p++){
+   if(firstHukumChoices[p]==='PASS' && (!bidTargets[p] || bidTargets[p]<1)){
+    playerAuctionInfo[p]='PASS';
+    bidTargets[p]=Math.max(2,Math.min(13,estimateHandStrength(hands[p],trumpSuit)));
+   }else if(!playerAuctionInfo[p]||playerAuctionInfo[p]==='-'){
+    playerAuctionInfo[p]=firstHukumChoices[p]==='PASS'?'PASS':`${getSuitName(firstHukumChoices[p])} chuna`;
+   }
+   if(!bidTargets[p] || bidTargets[p]<1){
+    bidTargets[p]=Math.max(2,Math.min(13,estimateHandStrength(hands[p],trumpSuit)));
+   }
+   bids[p]=`${bidTargets[p]}`;
+  }
+  $('bidModal').classList.remove('show');
+  phase='play';turn=(colorChooser>=0?colorChooser:roundStarter);
+  $('notice').textContent=`${getSuitName(trumpSuit)} Hukum final hai. ${colorChooser>=0?names[colorChooser]+' ne pehle rang chuna tha aur wahi pehli chaal chalega.':'Kisi ne rang nahi chuna, isliye round starter pehli chaal chalega.'} Game starts!`;
+  $('message').style.display='block';
+  $('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
+  render();if(turn!==0)botLoop();else startHumanTurnTimer();
+ }
+ function finishRunChoicesAndStartPlay(){
+  // Minimum table total is 12. Totals of 10 or less skip the card-play round
+  // but still award each player the points they declared. A total of 11 is
+  // not allowed: the last declarer must raise their Bol to make at least 12.
+  let total=bidTargets.reduce((sum,v)=>sum+(Number(v)||0),0);
+  const declarationOrder=(runChoiceQueue&&runChoiceQueue.length)?runChoiceQueue:[...auctionOrder];
+  const lastDeclarer=declarationOrder[declarationOrder.length-1];
+  if(total===11 && lastDeclarer!==undefined){
+   const others=total-(Number(bidTargets[lastDeclarer])||0);
+   const required=Math.max(2,12-others);
+   if((Number(bidTargets[lastDeclarer])||0)<required){
+    bidTargets[lastDeclarer]=required;
+    bids[lastDeclarer]=`${required} Run`;
+    total=bidTargets.reduce((sum,v)=>sum+(Number(v)||0),0);
+   }
+  }
+  if(total<=10){finishSkippedBolRound(total);return;}
+  if(total===11){
+   // Defensive guard: never start a trick round with an 11 total.
+   $('notice').textContent='Total Bol 11 hai. Aakhri player ko Bol badhakar total 12 karna hoga.';
+   return;
+  }
+  $('bidModal').classList.remove('show');
+  phase='play';turn=(colorChooser>=0?colorChooser:roundStarter);
+  $('notice').textContent=`Hukum ${getSuitName(trumpSuit)} hai. Sabhi players ke Run lock ho gaye. ${colorChooser>=0?names[colorChooser]+' ne pehle rang chuna tha aur wahi pehli chaal chalega.':'Kisi ne rang nahi chuna, isliye round starter pehli chaal chalega.'} Game starts!`;
+  $('message').style.display='block';$('message').textContent=turn===0?'Your turn to lead.':`${names[turn]} is leading.`;
+  render();if(turn!==0)botLoop();else startHumanTurnTimer();
+ }
+ function finishSkippedBolRound(totalBol){
+  stopDecisionTimer();
+  clearTimeout(botTimer);
+  $('bidModal').classList.remove('show');
+  for(let p=0;p<4;p++) totalScores[p]+=(Number(bidTargets[p])||0);
+  render();
+  const winnerIndex=totalScores.findIndex(score=>score>=targetScore);
+  const lines=names.map((n,i)=>`${n}: Bol ${bidTargets[i]}, Won 0, +${bidTargets[i]} points, Total Score ${totalScores[i]}`);
+  $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Skip — Bol Points Added';
+  if(winnerIndex>=0){
+   settleCoinGame(winnerIndex);
+   gameOver=true;phase='over';stopDecisionTimer();
+   $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne ${targetScore} points complete kar liye!</strong><br><br>${lines.join('<br>')}<br><br>Game Khatam!`;
+   $('restartAfterWin').style.display='block';celebrationSound();
+   $('message').textContent=`🏆 ${names[winnerIndex]} wins the game!`;
+   $('notice').textContent=`${names[winnerIndex]} is the Baazigar!`;
+   $('modal').classList.add('show');return;
+  }
+  $('restartAfterWin').style.display='none';
+  $('modalText').innerHTML=`<strong>Total Bol ${totalBol} hai, isliye is round mein cards nahi khelenge.</strong><br><br>Chaaron players ko unke declared Bol ke points add kar diye gaye hain.<br><br>${lines.join('<br>')}<br><br>Agla round shuru ho raha hai...`;
+  $('modal').classList.add('show');
+  setTimeout(()=>{
+   $('modal').classList.remove('show');
+   round++;roundStarter=nextPlayer(roundStarter);startRound();
+  },3500);
+ }
+ function processRunChoiceTurn(){
+  if(runChoiceIndex>=runChoiceQueue.length){finishRunChoicesAndStartPlay();return;}
+  currentAuctionPlayer=runChoiceQueue[runChoiceIndex];
+  if(currentAuctionPlayer===colorChooser){runChoiceIndex++;processRunChoiceTurn();return;}
+  if(currentAuctionPlayer===0){selectedRunTarget=null;openBidStage(3);return;}
+  // AI estimates its target from its complete 13-card hand and the final Hukum suit.
+  const estimate=estimateHandStrength(hands[currentAuctionPlayer],trumpSuit);
+  let target=Math.max(2,Math.min(13,Math.round(estimate)));
+  const isLastDeclarer=runChoiceIndex===runChoiceQueue.length-1;
+  if(isLastDeclarer){
+   const declaredBefore=bidTargets.reduce((sum,v)=>sum+(Number(v)||0),0);
+   if(declaredBefore+target===11) target=Math.min(13,Math.max(target,12-declaredBefore));
+  }
+  bidTargets[currentAuctionPlayer]=target;
+  bids[currentAuctionPlayer]=`${target} Run`;
+  if(playerAuctionInfo[currentAuctionPlayer]==='-')playerAuctionInfo[currentAuctionPlayer]=firstHukumChoices[currentAuctionPlayer]==='PASS'?'PASS (first choice)':'PASS';
+  runChoiceIndex++;processRunChoiceTurn();
+ }
+ function processColorBidTurn(){
+  if(colorBidIndex>=colorBidQueue.length){finishAuctionAndStartGame();return;}
+  currentAuctionPlayer=colorBidQueue[colorBidIndex];
+  if(minimumColorBid>13){colorBidIndex++;processColorBidTurn();return;}
+  if(currentAuctionPlayer===0){selectedColorRun=null;openBidStage(2);return;}
+  const suit=firstHukumChoices[currentAuctionPlayer];
+  const estimate=estimateHandStrength(hands[currentAuctionPlayer],suit);
+  // Once a player selected a color after the first five cards, they must
+  // now place a numeric 5–13 bid; PASS is not offered in this second step.
+  const bid=Math.max(minimumColorBid,Math.min(13,Math.round(estimate)));
+  if(minimumColorBid<=13){
+   registerAuctionBid(currentAuctionPlayer,bid,suit);
+   minimumColorBid=bid+1;
+  }
+  colorBidIndex++;processColorBidTurn();
+ }
+ function processFallbackBidTurn(){
+  if(fallbackBidIndex>=fallbackBidQueue.length){finishAuctionAndStartGame();return;}
+  currentAuctionPlayer=fallbackBidQueue[fallbackBidIndex];
+  if(currentAuctionPlayer===0){selectedBidType='color';selectedHukumRun=null;selectedColorRun=null;selectedColor='♠';openBidStage(2);return;}
+  const options=suits.map(s=>({s,b:estimateHandStrength(hands[currentAuctionPlayer],s)})).sort((a,b)=>b.b-a.b);
+  const best=options[0];
+  const hukum=Math.max(1,Math.min(13,estimateHandStrength(hands[currentAuctionPlayer],'♠')));
+  const color=Math.max(10,Math.min(13,best.b));
+  const useColor=color>=hukum+2;
+  const bid=useColor?color:hukum;const suit=useColor?best.s:'♠';
+  registerAuctionBid(currentAuctionPlayer,bid,suit,useColor?'color':'hukum');
+  fallbackBidIndex++;processFallbackBidTurn();
+ }
+
+ function finishHumanRunAndHukumChoice(){
+  // Confirm Run is the only required human action here. The right-side
+  // Final Hukum Color table is intentionally not consulted or modified.
+  // Keep the Hukum already selected in the first-five-card stage (or default ♠).
+  if(bidStage!==3||!runChoiceConfirmed)return;
+  stopDecisionTimer();
+  if(selectedRunTarget===null||selectedRunTarget<2||selectedRunTarget>13)return;
+  auctionWinningSuit=trumpSuit;
+  bidTargets[currentAuctionPlayer]=selectedRunTarget;
+  bids[currentAuctionPlayer]=`${selectedRunTarget} Run`;
+  makerId=currentAuctionPlayer;
+  hands.forEach(sortHand);
+  // Keep the original 5-card color chooser's commitment unchanged.
+  const lockedChooser=(colorChooser>=0 && colorChooser!==currentAuctionPlayer)?colorChooser:-1;
+  const otherPlayers=[0,1,2,3].filter(p=>p!==currentAuctionPlayer && p!==lockedChooser);
+  otherPlayers.forEach(p=>{
+   const estimate=estimateHandStrength(hands[p],trumpSuit);
+   const target=Math.max(2,Math.min(13,estimate));
+   bidTargets[p]=target;bids[p]=`${target} Run`;
+  });
+  // If the combined Bol is 11, the final player in the declaration order
+  // must raise their own call enough to make the total at least 12.
+  const totalNow=bidTargets.reduce((sum,v)=>sum+(Number(v)||0),0);
+  const declarationOrder=(runChoiceQueue&&runChoiceQueue.length)?runChoiceQueue:[...auctionOrder];
+  const lastDeclarer=declarationOrder[declarationOrder.length-1];
+  if(totalNow===11 && lastDeclarer===currentAuctionPlayer){
+   const others=totalNow-(Number(bidTargets[currentAuctionPlayer])||0);
+   const required=Math.max(2,12-others);
+   if(selectedRunTarget<required){
+    runChoiceConfirmed=false;
+    $('confirmRunOnlyBtn').textContent='Confirm Run';
+    preview.textContent=`Total Bol 11 ho raha hai. Aakhri player hone ke karan aapko kam-se-kam ${required} Run bolna hoga. Apna Run ${required} ya usse zyada select karein.`;
+    return;
+   }
+  }else if(totalNow===11 && lastDeclarer!==undefined){
+   const others=totalNow-(Number(bidTargets[lastDeclarer])||0);
+   const required=Math.max(2,12-others);
+   if((Number(bidTargets[lastDeclarer])||0)<required){
+    bidTargets[lastDeclarer]=required;bids[lastDeclarer]=`${required} Run`;
+   }
+  }
+  selectedRunTarget=null;selectedFinalHukumSuit=null;selectedFinalHukumBid=null;
+  runChoiceConfirmed=false;finalHukumConfirmed=false;runChoiceIndex++;
+  $('bidModal').classList.remove('show');
+  finishRunChoicesAndStartPlay();
+ }
+
+ $('confirmBidBtn').addEventListener('click',()=>{
+  stopDecisionTimer();
+  if(bidStage===1){
+   firstHukumChoices[currentAuctionPlayer]=firstHukumPassed?'PASS':selectedTrump;
+   const choseColor=!firstHukumPassed&&!!selectedTrump;
+   if(choseColor)colorChooser=currentAuctionPlayer;
+   selectedTrump=null;firstHukumPassed=false;
+   $('bidModal').classList.remove('show');
+   if(choseColor){
+    // Lock this one Hukum colour; no other player gets a separate colour choice.
+    const chooser=currentAuctionPlayer;
+    if(chooser===0){auctionIndex++;finishFirstChoiceAuction();}
+    else{selectedColorRun=Math.max(5,Math.min(13,estimateHandStrength(hands[chooser],firstHukumChoices[chooser])));auctionIndex++;finishFirstChoiceAuction();}
+   }else{auctionIndex++;processFirstChoiceTurn();}
+   return;
+  }
+  if(bidStage===2){
+   if(fallbackAuction){
+    if(selectedBidType==='pass'){
+     bids[currentAuctionPlayer]='PASS';bidTargets[currentAuctionPlayer]=0;
+    }else if(selectedBidType==='hukum'&&selectedHukumRun){
+     registerAuctionBid(currentAuctionPlayer,selectedHukumRun,'♠','hukum');
+    }else if(selectedBidType==='color'&&selectedColor&&selectedColorRun){
+     registerAuctionBid(currentAuctionPlayer,selectedColorRun,selectedColor,'color');
+    }else return;
+    fallbackBidIndex++;$('bidModal').classList.remove('show');processFallbackBidTurn();return;
+   }
+   if(chooserCommitmentLocked){$('bidModal').classList.remove('show');beginOtherRunDeclarations();return;}
+   if(selectedColorRun&&selectedColorRun>=5&&selectedColorRun<=13){
+    chooserCommitmentLocked=true;
+    bidTargets[colorChooser]=selectedColorRun;
+    bids[colorChooser]=`${selectedColorRun}`;
+    auctionCalls[colorChooser]=`${getSuitName(trumpSuit)} Hukum commitment: ${selectedColorRun}`;
+    playerAuctionInfo[colorChooser]='Hukum chooser';
+   }else return;
+   selectedColorRun=null;$('bidModal').classList.remove('show');
+   $('notice').textContent=`Aapka ${getSuitName(trumpSuit)} mein ${bidTargets[colorChooser]} Run final ho gaya. Ab baaki 3 players apne Run declare karenge.`;
+   beginOtherRunDeclarations();return;
+  }
+  if(bidStage===3){return;} // Stage 3 uses independent Confirm Run and Confirm Hukum buttons.
+
+ });
+
+ /* GAME SOUND EFFECTS: synthesized locally with Web Audio (no external files). */
+ let soundEnabled=true;
+ let audioContext=null;
+ function getAudioContext(){
+  if(!soundEnabled)return null;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return null;
+  if(!audioContext)audioContext=new AC();
+  if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+  return audioContext;
+ }
+ function cardSound(){
+  const ctx=getAudioContext();if(!ctx)return;
+  const now=ctx.currentTime;
+  // Soft paper/card flick with a short woody tap.
+  const length=Math.floor(ctx.sampleRate*.075);
+  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+  const noise=ctx.createBufferSource();noise.buffer=buffer;
+  const filter=ctx.createBiquadFilter();filter.type='highpass';filter.frequency.value=850;
+  const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.13,now+.008);gain.gain.exponentialRampToValueAtTime(.0001,now+.075);
+  noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+.08);
+  const osc=ctx.createOscillator(),og=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(185,now);osc.frequency.exponentialRampToValueAtTime(95,now+.055);og.gain.setValueAtTime(.0001,now);og.gain.exponentialRampToValueAtTime(.055,now+.006);og.gain.exponentialRampToValueAtTime(.0001,now+.065);osc.connect(og);og.connect(ctx.destination);osc.start(now);osc.stop(now+.07);
+ }
+ function celebrationSound(){
+  const ctx=getAudioContext();if(!ctx)return;
+  const start=ctx.currentTime;
+  // Loud celebratory firework booms with bass thumps and bright crackling bursts.
+  [0,0.62,1.24,1.92,2.58].forEach((delay,index)=>{
+   const t=start+delay;
+   const boom=ctx.createOscillator(),boomGain=ctx.createGain();
+   boom.type='sine';boom.frequency.setValueAtTime(105+index*9,t);boom.frequency.exponentialRampToValueAtTime(38,t+.42);
+   boomGain.gain.setValueAtTime(.0001,t);boomGain.gain.exponentialRampToValueAtTime(.72,t+.018);boomGain.gain.exponentialRampToValueAtTime(.0001,t+.52);
+   boom.connect(boomGain);boomGain.connect(ctx.destination);boom.start(t);boom.stop(t+.54);
+   const length=Math.floor(ctx.sampleRate*.48),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+   for(let j=0;j<length;j++)data[j]=(Math.random()*2-1)*Math.pow(1-j/length,1.25);
+   const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();noise.buffer=buffer;filter.type='lowpass';filter.frequency.setValueAtTime(5200,t+.08);filter.frequency.exponentialRampToValueAtTime(650,t+.48);
+   gain.gain.setValueAtTime(.0001,t+.07);gain.gain.exponentialRampToValueAtTime(.48,t+.10);gain.gain.exponentialRampToValueAtTime(.0001,t+.5);
+   noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(t+.07);noise.stop(t+.51);
+   // Sharp sparkling crackles after each boom.
+   for(let k=0;k<11;k++){
+    const ct=t+.12+Math.random()*.28,osc=ctx.createOscillator(),og=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(900+Math.random()*2600,ct);osc.frequency.exponentialRampToValueAtTime(250+Math.random()*400,ct+.055);
+    og.gain.setValueAtTime(.0001,ct);og.gain.exponentialRampToValueAtTime(.12,ct+.004);og.gain.exponentialRampToValueAtTime(.0001,ct+.065);osc.connect(og);og.connect(ctx.destination);osc.start(ct);osc.stop(ct+.07);
+   }
+  });
+  // Short applause layer underneath the fireworks.
+  for(let n=0;n<24;n++){
+   const t=start+n*.095+(Math.random()*.025),len=Math.floor(ctx.sampleRate*.085),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+   for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+   const src=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=buf;bp.type='bandpass';bp.frequency.value=1300+Math.random()*1300;bp.Q.value=.8;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+.085);src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+.09);
+  }
+ }
+
+ function celebrationMarkup(winners){
+  const namesText=winners.length?winners.map(i=>names[i]).join(' & '):'Is round mein kisi ka Bol poora nahi hua';
+  const sub=winners.length?'BAAZI JEETNE PAR BADHAI HO!':'Agli baazi mein phir koshish karein!';
+  const colors=['#e53e3e','#f5b700','#168b55','#3478d4','#a34acb','#ff7b36'];
+  const confetti=Array.from({length:34},(_,i)=>`<i style="--x:${(i*37)%100}%;--d:${(i%9)*-.22}s;--c:${colors[i%colors.length]}"></i>`).join('');
+  const balloons=Array.from({length:12},(_,i)=>`<i style="--x:${(i*23)%96}%;--d:${(i%6)*.12}s;--c:${colors[i%colors.length]}"></i>`).join('');
+  return `<div class="celebration"><div class="confetti">${confetti}</div><div class="balloons">${balloons}</div><div class="trophy">🏆</div><h3>शाबाश!</h3><div class="winner-names">${namesText}</div><div class="party-line">${sub}</div><div class="party-line">👏 तालियाँ • 🎉 पटाखे • 🎊 शाबाशी!</div></div>`;
+ }
+
+ /* PLAY CARD IMMEDIATELY ON CLICK */
+ function playCard(p,c){
+
+  if(animationBusy||phase!=='play')return;
+
+  if(!hands[p].includes(c))return;
+
+  const legal=legalCards(p);
+
+  if(!legal.includes(c)){
+
+   if(p===0)showInvalidMessage(c);
+   return;
+
+  }
+
+  // Stop the player's clock immediately when a valid card is played.
+  stopDecisionTimer();
+  // Sound for every card played by a human or computer.
+  cardSound();
+
+  // Remove card from hand
+  hands[p]=hands[p].filter(x=>x!==c);
+
+  // Add card to center
+  trick.push({p,card:c});
+
+  renderTrick();
+
+  if(trick.length<4){
+
+   turn=nextPlayer(p);
+
+   render();
+
+   if(turn!==0){
+
+    stopDecisionTimer();botLoop();
+
+   }else{
+
+    if(!autoPlayFinalHumanCard()){
+     startHumanTurnTimer();
+     $('message').textContent='Your turn — choose a card.';
+     $('notice').textContent='Click one of your raised cards to play it.';
+    }
+
+   }
+
+  }else{
+
+   $('message').textContent='All four cards played.';
+
+   setTimeout(resolveTrick,900);
+
+  }
+
+ }
+
+ /* CENTER CARDS WITHOUT NAMES */
+ function renderTrick(){
+
+  for(let p=0;p<4;p++){
+
+   let slot=$('slot'+p);
+
+   let t=trick.find(x=>x.p===p);
+
+   slot.innerHTML=t?cardHTML(t.card):'';
+
+  }
+
+ }
+
+ /* BOT CARD CHOICE — BID-AWARE, STRATEGIC CARD CONSERVATION */
+ function botChoice(p){
+  const legal=legalCards(p);
+  if(!legal.length)return null;
+
+  const target=Number(bidTargets[p]||0);
+  const won=Number(tricksWon[p]||0);
+  const stillNeeded=Math.max(0,target-won);
+  const tricksLeft=hands[p].length;
+  const byLow=[...legal].sort((a,b)=>a.v-b.v);
+  const byHigh=[...legal].sort((a,b)=>b.v-a.v);
+
+  // On a lead, choose a card in line with the remaining Bol target.
+  if(trick.length===0){
+   if(stillNeeded<=0)return byLow[0];
+   if(stillNeeded>=tricksLeft)return byHigh[0];
+   // Keep premium cards for later; use a moderate card when the target
+   // is approaching, rather than always leading the smallest card.
+   if(stillNeeded>=tricksLeft-1 && byHigh.length>1)return byHigh[1];
+   return byLow[0];
+  }
+
+  // Find the cards that would win this trick right now.
+  const winningCards=legal.filter(c=>
+   getCurrentWinner([...trick,{p,card:c}]).p===p
+  ).sort((a,b)=>a.v-b.v);
+  const losingCards=legal.filter(c=>!winningCards.includes(c)).sort((a,b)=>a.v-b.v);
+
+  // The bot has already met its Bol: avoid spending a winning card if
+  // the game rules allow a legal losing/discard card.
+  if(stillNeeded<=0){
+   if(losingCards.length)return losingCards[0];
+   return byLow[0];
+  }
+
+  if(winningCards.length){
+   // If one more trick is enough, take it with the cheapest winning card
+   // (e.g. use 7 instead of Queen/Ace when 7 already beats the table).
+   // If several tricks are still required and few turns remain, step up
+   // to a stronger winner (e.g. Queen, then Ace) instead of wasting time.
+   if(stillNeeded>=tricksLeft)return winningCards[winningCards.length-1];
+   if(stillNeeded>=tricksLeft-1 && winningCards.length>1){
+    return winningCards[Math.floor((winningCards.length-1)/2)];
+   }
+   return winningCards[0];
+  }
+
+  // No card can take the current trick. Preserve strong cards unless
+  // the remaining Bol target makes a high-card attempt urgent.
+  if(stillNeeded>=tricksLeft)return byHigh[0];
+  return byLow[0];
+ }
+
+ /* BOT TURN */
+ function botLoop(){
+
+  clearTimeout(botTimer);
+
+  if(turn===0||phase!=='play'||animationBusy)return;
+
+  botTimer=setTimeout(()=>{
+
+   if(turn===0||phase!=='play'||animationBusy)return;
+
+   let card=botChoice(turn);
+
+   if(card)playCard(turn,card);
+
+  },850);
+
+ }
+
+ /* WINNER */
+ function resolveTrick(){
+
+  if(trick.length!==4)return;
+
+  const winningPlay=getCurrentWinner(trick);
+  const winner=winningPlay.p;
+
+  tricksWon[winner]++;
+
+  animationBusy=true;
+
+  $('message').textContent=
+   `${names[winner]} wins the trick!`;
+
+  // All four cards move at the same time
+  const destination={
+   1:'collect-top',
+   3:'collect-right',
+   0:'collect-bottom',
+   2:'collect-left'
+  }[winner];
+
+  const allCards=document.querySelectorAll('.play-slot .card');
+
+  allCards.forEach(card=>{
+   card.classList.add(destination);
+  });
+
+  setTimeout(()=>{
+
+   trick=[];
+   renderTrick();
+
+   turn=winner;
+   animationBusy=false;
+
+   render();
+
+   if(hands[0].length===0){
+
+    setTimeout(finishRound,500);
+    return;
+
+   }
+
+   setTimeout(()=>{
+
+    if(turn===0){
+
+     if(!autoPlayFinalHumanCard()){
+      startHumanTurnTimer();
+      $('message').textContent=
+       'Your turn — lead the trick.';
+
+      $('notice').textContent=
+       'Click any raised card to play.';
+     }
+
+    }else{
+
+     stopDecisionTimer();
+     $('message').textContent=
+      `${names[turn]} is leading the next trick.`;
+
+     botLoop();
+
+    }
+
+   },400);
+
+  },700);
+
+ }
+
+ /* ROUND COMPLETE */
+ function finishRound(){
+
+  stopDecisionTimer();
+  clearTimeout(botTimer);
+
+  // Meeting or exceeding the Bol earns the declared Bol points.
+  // Only falling short deducts the full declared Bol. Scores may go negative.
+  for(let p=0;p<4;p++){
+   const target=Number(bidTargets[p]||0);
+   if(tricksWon[p]>=target){
+    totalScores[p]+=target;
+   }else{
+    totalScores[p]-=target;
+   }
+  }
+
+  render();
+  const winnerIndex=totalScores.findIndex(score=>score>=targetScore);
+  $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Round Complete';
+  const roundLines=names.map((n,i)=>{
+   const target=bidTargets[i]??'-';
+   const result=tricksWon[i]>=target?'Bol Sahi':'Bol Galat';
+   const delta=tricksWon[i]>=target?`+${target}`:`-${target}`;
+   return `${n}: Bol ${target}, Won ${tricksWon[i]}, ${result} (${delta}), Total Score ${totalScores[i]}`;
+  });
+  if(winnerIndex>=0){
+   settleCoinGame(winnerIndex);
+   gameOver=true;
+   phase='over';
+   $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne sabse pehle ${targetScore} points complete kar liye!</strong><br><br>${roundLines.join('<br>')}<br><br>Game Khatam!`;
+   $('restartAfterWin').style.display='block';
+   celebrationSound();
+   $('message').textContent=`🏆 ${names[winnerIndex]} wins the game!`;
+   $('notice').textContent=`${names[winnerIndex]} is the Baazigar!`;
+   $('modal').classList.add('show');
+   render();
+   return;
+  }
+
+  // A normal round is not the end of the full game: show only the score summary.
+  // Congratulations, applause and fireworks are reserved for the final game winner.
+  $('restartAfterWin').style.display='none';
+  $('modalText').innerHTML='<strong>Is round ka score:</strong><br><br>'+roundLines.join('<br>')+'<br><br>Agli baazi shuru ho rahi hai...';
+  $('modal').classList.add('show');
+
+  selectedTrump=null;
+  selectedHukumRun=null;
+  selectedHukumSuit=null;
+  selectedColor=null;
+  selectedColorRun=null;
+  bidMode=null;
+  firstHukumPassed=false;
+
+  setTimeout(()=>{
+   $('modal').classList.remove('show');
+   round++;
+   roundStarter=nextPlayer(roundStarter);
+   startRound();
+  },3500);
+
+ }
+
+ /* BUTTONS */
+ $('newBtn').addEventListener('click',()=>{
+  stopDecisionTimer();
+
+  if(confirm('Start a new game? Scores will reset.')){
+   totalScores=[0,0,0,0];
+   assignFreshPlayerNames();
+   bidTargets=[null,null,null,null];
+   gameOver=false;
+   round=1;
+   roundStarter=0;
+   targetScore=null;
+   $('gameModeModal').classList.remove('show');
+   openProfileModal();
+  }
+
+ });
+
+ function beginSelectedGame(points){
+  if(!playerProfileName){openProfileModal();return;}
+  if(selectedStake>coinBalance){if(coinBalance<50){coinBalance+=100;saveCoinBalance();}if(selectedStake>coinBalance){alert('Is baazi ke liye aapke paas kaafi Coins nahi hain.');openProfileModal();return;}}
+  coinBalance-=selectedStake;saveCoinBalance();stakeCharged=true;coinGameSettled=false;
+  targetScore=points;
+  round=1;
+  roundStarter=0;
+  totalScores=[0,0,0,0];
+  gameOver=false;
+  $('gameModeModal').classList.remove('show');
+  $('notice').textContent=`${points} points ki baazi shuru!`;
+  startRound();
+ }
+ $('choose31').addEventListener('click',()=>beginSelectedGame(31));
+ $('choose51').addEventListener('click',()=>beginSelectedGame(51));
+ $('restartAfterWin').addEventListener('click',()=>{
+  stopDecisionTimer();
+  $('modal').classList.remove('show');
+  $('restartAfterWin').style.display='none';
+  openProfileModal();
+ });
+
+ $('helpBtn').addEventListener('click',()=>{
+
+  $('modalTitle').textContent='Baazigar Rules';
+
+  $('modalText').textContent=
+   'Follow the suit led by the first player. If you have a higher card of that suit, you must play it. If you do not have a higher card, a lower card of that suit is allowed. If you have no card of that suit, play Hukum if available. If you have neither, play any card.';
+
+  $('modal').classList.add('show');
+
+ });
+
+ $('scoreBtn').addEventListener('click',()=>{
+
+  $('modalTitle').textContent='Current Round Score';
+
+  $('modalText').innerHTML=
+   names.map((n,i)=>
+    `${n}: Bid ${bidTargets[i]??'-'}, Won ${tricksWon[i]}, Total Score ${totalScores[i]}`
+   ).join('<br>');
+
+  $('modal').classList.add('show');
+
+ });
+
+ $('closeModal').addEventListener('click',()=>{
+  $('modal').classList.remove('show');
+ });
+
+ $('soundBtn').addEventListener('click',()=>{
+  soundEnabled=!soundEnabled;
+  $('soundBtn').textContent=soundEnabled?'🔔':'🔕';
+  $('notice').textContent=soundEnabled?'Card sounds and celebration sounds are ON.':'Game sounds are OFF.';
+  if(soundEnabled){const ctx=getAudioContext();if(ctx){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=660;g.gain.value=.035;o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.07);}}
+ });
+
+ assignFreshPlayerNames();
+ const savedName=$('playerNameInput');if(savedName)savedName.value=playerProfileName;updateCoinUI();
+ $('gameModeModal').classList.remove('show');
+ $('profileModal').classList.add('show');
+
+});
+</script>
+
+<style id="final-opponent-seat-label-position">
+/* Keep the three opponents' name/score plates clear of their card backs. */
+@media (min-width:701px){
+  .table .seat.left{
+    left:120px !important;
+    right:auto !important;
+    top:50% !important;
+    width:138px !important;
+    transform:translateY(-50%) !important;
+    z-index:90 !important;
+  }
+  .table .seat.right{
+    right:120px !important;
+    left:auto !important;
+    top:50% !important;
+    width:138px !important;
+    transform:translateY(-50%) !important;
+    z-index:90 !important;
+  }
+  .table .seat.top{
+    z-index:90 !important;
+  }
+  .table .seat.left .name,
+  .table .seat.left .score,
+  .table .seat.right .name,
+  .table .seat.right .score{
+    width:100% !important;
+    box-sizing:border-box !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-align:center !important;
+  }
+}
+</style>
+
+
+<style id="baazigar-coin-hud-side-fix">
+/* Keep the Coins display on the side of the game table, away from the centered Hukum/Chidi indicator. */
+#coinHud{left:auto !important;right:104px !important;top:12px !important;transform:none !important;z-index:115 !important;}
+@media(max-width:700px){
+  #coinHud{left:auto !important;right:8px !important;top:46px !important;transform:none !important;font-size:10px !important;padding:4px 7px !important;}
+}
+</style>
+</body>
+</html>
