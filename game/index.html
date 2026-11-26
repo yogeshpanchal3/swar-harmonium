@@ -2480,6 +2480,134 @@ body > .app-layout { box-sizing:border-box !important; }
 @media(max-width:700px){#coinHud{top:44px;font-size:11px}}
 </style>
 
+<style id="baazigar-ad-layout-redesign">
+/* Original BAAZIGAR layout: wide play area + independent information/ad rail.
+   This is a fresh composition, not a copy of the reference website. */
+html,body{background:#08151f}
+body{overflow-x:hidden}
+.app-layout{
+  grid-template-columns:minmax(0,1.72fr) minmax(300px,.78fr) !important;
+  gap:14px !important;
+  padding:14px !important;
+  align-items:stretch !important;
+}
+.app-layout>.table{
+  min-width:0;
+  height:calc(100vh - 28px) !important;
+  min-height:640px !important;
+  border-radius:18px !important;
+  border:7px solid #b78b42 !important;
+  background:
+    radial-gradient(ellipse at 48% 42%,#174b55 0%,#10333d 58%,#0b222d 100%) padding-box,
+    linear-gradient(135deg,#f4d98d,#8c642d,#f7e3a5) border-box !important;
+  box-shadow:0 12px 30px #0007,inset 0 0 0 2px #ffffff24 !important;
+}
+.mehfil-panel{
+  min-width:0;
+  min-height:calc(100vh - 28px) !important;
+  padding:18px !important;
+  gap:14px !important;
+  justify-content:flex-start !important;
+  border:1px solid #c49b55 !important;
+  border-radius:18px !important;
+  background:linear-gradient(155deg,#173a49 0%,#102b3b 52%,#091c2b 100%) !important;
+}
+.mehfil-panel>.scoreboard{
+  order:1;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+.baazigar-sidebar-ad{
+  order:2;
+  width:min(100%,336px);
+  min-height:250px;
+  margin:2px auto 4px;
+}
+.mehfil-kicker{order:3;margin:0 0 2px !important;letter-spacing:2px}
+.mehfil-art{
+  order:4;
+  min-height:230px !important;
+  padding:22px !important;
+  border-radius:16px !important;
+  background:linear-gradient(145deg,#1b4654,#102d43 60%,#0b2032) !important;
+}
+.mehfil-copy{max-width:100% !important}
+.mehfil-copy h1{font-size:clamp(34px,3vw,54px) !important}
+.mehfil-copy p{max-width:78%;font-size:14px !important}
+.mehfil-cards{width:30%;right:5%;opacity:.8}
+.mehfil-card{width:clamp(58px,6vw,92px);height:clamp(90px,9vw,132px)}
+.mehfil-card b{font-size:22px}
+.mehfil-card span{font-size:42px}
+.mehfil-seal{width:48px;height:48px;font-size:17px}
+.mehfil-footer{order:5;margin-top:0 !important}
+.baazigar-seo-content{order:6}
+.baazigar-ad-slot{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:9px;
+  box-sizing:border-box;
+  border:1px dashed #9aa9b5;
+  border-radius:12px;
+  background:linear-gradient(145deg,#f3f6fa,#e6edf5);
+  color:#536477;
+  overflow:hidden;
+}
+.baazigar-ad-slot .ad-label{
+  position:absolute;top:7px;right:9px;
+  color:#788797;font-size:9px;font-weight:800;letter-spacing:1.4px;
+}
+.ad-placeholder-inner{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  color:#637386;text-align:center;
+}
+.ad-placeholder-inner strong{font-size:17px;color:#42566b}
+.ad-placeholder-inner small{font-size:11px;letter-spacing:.4px}
+.baazigar-bottom-ad{
+  width:min(100% - 28px,970px);
+  min-height:110px;
+  margin:0 auto 18px;
+}
+.baazigar-bottom-ad .ad-placeholder-inner strong{font-size:15px}
+@media(max-width:900px) and (min-width:701px){
+  .app-layout{grid-template-columns:minmax(0,1.45fr) minmax(270px,.8fr) !important;padding:9px !important;gap:9px !important}
+  .mehfil-panel{padding:12px !important}
+  .mehfil-art{min-height:210px !important;padding:16px !important}
+  .mehfil-cards{opacity:.45}
+}
+@media(max-width:700px){
+  .app-layout{display:flex !important;flex-direction:column !important;padding:0 !important;gap:0 !important}
+  .app-layout>.table{
+    order:1;width:100vw !important;height:100dvh !important;
+    min-height:560px !important;border-radius:0 !important;
+  }
+  .mehfil-panel{
+    order:2;width:100% !important;min-height:0 !important;
+    padding:18px 14px 22px !important;gap:13px !important;
+    border-radius:0 !important;
+  }
+  .mehfil-panel>.scoreboard{order:1}
+  .baazigar-sidebar-ad{
+    order:2;width:min(100%,336px);min-height:250px;
+    margin:4px auto 8px;
+  }
+  .mehfil-kicker{order:3}
+  .mehfil-art{order:4;min-height:290px !important;padding:18px !important}
+  .mehfil-copy{max-width:100% !important}
+  .mehfil-copy h1{font-size:clamp(38px,11vw,58px) !important}
+  .mehfil-copy p{max-width:95%}
+  .mehfil-cards{width:55%;right:5%;bottom:12px;top:auto;opacity:.65}
+  .mehfil-footer{order:5}
+  .baazigar-seo-content{order:6}
+  .baazigar-bottom-ad{
+    width:calc(100% - 24px);min-height:100px;margin:12px auto 18px;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -2614,7 +2742,17 @@ body > .app-layout { box-sizing:border-box !important; }
    </tbody>
   </table>
  </aside>
-  <div class="mehfil-kicker">BAAZIGAR CARD TABLE • DESI TAASH EXPERIENCE</div>
+
+  <!-- Reserved advertising space: insert approved AdSense code here after approval. -->
+  <div class="baazigar-ad-slot baazigar-sidebar-ad" aria-label="Advertisement space">
+    <span class="ad-label">ADVERTISEMENT</span>
+    <div class="ad-placeholder-inner">
+      <strong>Ad Space</strong>
+      <small>300 × 250</small>
+    </div>
+  </div>
+
+  <div class="mehfil-kicker">BAAZIGAR • DESI CARD GAME EXPERIENCE</div>
   <div class="mehfil-art">
     <div class="mehfil-copy">
       <div class="mehfil-eyebrow">TAASH KHELO • MEHFIL JAMAO</div>
@@ -2655,6 +2793,15 @@ body > .app-layout { box-sizing:border-box !important; }
     <details><summary>Do I need to download an app?</summary><p>No app download is required. Open the website in your browser and start the game.</p></details>
   </section>
 </section>
+</div>
+
+<!-- Responsive banner ad space; connect an ad provider after site approval. -->
+<div class="baazigar-ad-slot baazigar-bottom-ad" aria-label="Advertisement space">
+  <span class="ad-label">ADVERTISEMENT</span>
+  <div class="ad-placeholder-inner">
+    <strong>BAAZIGAR Ad Space</strong>
+    <small>Responsive banner • 728 × 90</small>
+  </div>
 </div>
 
 <script>
