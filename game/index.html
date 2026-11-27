@@ -5581,5 +5581,99 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 }
 </style>
 
+
+<style id="baazigar-pro-layout-refinement-v2">
+@media screen and (min-width:701px){
+  /* Make the felt about 10% shorter while keeping the outside hand tray. */
+  body > .app-layout > .table{
+    height: min(66.5vh, 650px) !important;
+    min-height: 560px !important;
+    max-height: 650px !important;
+    margin-bottom: 158px !important;
+    overflow: visible !important;
+    border-radius: 32px !important;
+  }
+
+  /* Enlarge the player's cards and use the wide available tray area. */
+  body > .app-layout > .table .hand.bottom{
+    width: calc(100% - 18px) !important;
+    max-width: calc(100% - 18px) !important;
+    height: 154px !important;
+    bottom: -150px !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding: 8px 10px 10px !important;
+    gap: 0 !important;
+  }
+  body > .app-layout > .table .hand.bottom .card{
+    flex: 0 0 88px !important;
+    width: 88px !important;
+    min-width: 88px !important;
+    max-width: 88px !important;
+    height: 136px !important;
+    min-height: 136px !important;
+    margin-left: -8px !important;
+    border-radius: 9px !important;
+  }
+  body > .app-layout > .table .hand.bottom .card:first-child{
+    margin-left: 0 !important;
+  }
+
+  /* Move the three opponents' labels out of the central playing area,
+     toward their own card stacks around the table perimeter. */
+  body > .app-layout > .table .seat.top{
+    top: 58px !important;
+    left: 50% !important;
+    right: auto !important;
+    width: 126px !important;
+    transform: translateX(-50%) !important;
+    z-index: 32 !important;
+  }
+  body > .app-layout > .table .seat.left{
+    left: 10px !important;
+    right: auto !important;
+    top: 50% !important;
+    width: 116px !important;
+    transform: translateY(-50%) !important;
+    z-index: 32 !important;
+  }
+  body > .app-layout > .table .seat.right{
+    right: 10px !important;
+    left: auto !important;
+    top: 50% !important;
+    width: 116px !important;
+    transform: translateY(-50%) !important;
+    z-index: 32 !important;
+  }
+
+  /* Keep the four played cards in a centered, balanced cross. */
+  body > .app-layout > .table .center{
+    left: 50% !important;
+    top: 52% !important;
+    width: min(360px, 42%) !important;
+    height: 280px !important;
+    transform: translate(-50%,-50%) !important;
+    z-index: 28 !important;
+  }
+  body > .app-layout > .table .play-slot{
+    width: 76px !important;
+    height: 112px !important;
+  }
+  body > .app-layout > .table .play-slot .card{
+    width: 76px !important;
+    height: 112px !important;
+  }
+}
+@media screen and (max-width:700px){
+  /* Preserve the existing mobile flow; only give cards a little more room. */
+  body > .app-layout > .table .hand.bottom .card{
+    flex: 0 0 74px !important;
+    width: 74px !important;
+    min-width: 74px !important;
+    height: 112px !important;
+  }
+}
+</style>
+
 </body>
 </html>
