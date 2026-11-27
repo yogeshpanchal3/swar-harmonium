@@ -5407,5 +5407,23 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 }
 </style>
 
+
+<style id="baazigar-compact-game-table">
+/* Desktop: compact the play table so the full hand and upper controls fit
+   in a normal browser window without making the right-side content taller. */
+@media screen and (min-width:701px){
+  body > .app-layout > .table{
+    height:clamp(680px, 86vh, 780px) !important;
+    min-height:680px !important;
+    max-height:780px !important;
+  }
+  body > .app-layout > .mehfil-panel{
+    min-height:0 !important;
+    height:auto !important;
+  }
+}
+/* Keep the mobile layout and its vertical scrolling unchanged. */
+</style>
+
 </body>
 </html>
