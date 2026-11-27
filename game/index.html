@@ -2611,6 +2611,15 @@ body{overflow-x:hidden}
 </head>
 
 <body>
+<div class="baazigar-action-bar" id="baazigarActionBar" aria-label="Game actions" style="display:none">
+ <div id="surrenderPanel" class="surrender-panel" aria-live="polite" style="display:none">
+  <div class="surrender-heading">BAAZI STATUS</div>
+  <div class="surrender-stats"><span>Aapka Bol</span><strong id="surrenderBol">-</strong></div>
+  <div class="surrender-stats"><span>Ab tak Run</span><strong id="surrenderWon">0</strong></div>
+  <button type="button" id="surrenderBtn" class="surrender-button">SURRENDER</button>
+  <div class="surrender-hint">Kabhi bhi baazi chhod sakte hain</div>
+ </div>
+</div>
 <div class="app-layout">
 <div class="table">
 
@@ -2626,13 +2635,7 @@ body{overflow-x:hidden}
  </div>
  <div id="coinHud">🪙 100 Coins • Baazi: 50</div>
  <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">40</span> सेकंड</div>
- <div id="surrenderPanel" class="surrender-panel" aria-live="polite" style="display:none">
-  <div class="surrender-heading">BAAZI STATUS</div>
-  <div class="surrender-stats"><span>Aapka Bol</span><strong id="surrenderBol">-</strong></div>
-  <div class="surrender-stats"><span>Ab tak Run</span><strong id="surrenderWon">0</strong></div>
-  <button type="button" id="surrenderBtn" class="surrender-button">SURRENDER</button>
-  <div class="surrender-hint">Kabhi bhi baazi chhod sakte hain</div>
- </div>
+
 
  <div class="notice" id="notice">
   Review your first 5 cards and choose Hukum or PASS.
@@ -3336,6 +3339,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(!panel)return;
   const canSurrender=phase==='play'&&!gameOver&&Number.isFinite(Number(bidTargets[0]))&&Number(bidTargets[0])>0;
   panel.style.display=canSurrender?'flex':'none';
+  const actionBar=$('baazigarActionBar');
+  if(actionBar)actionBar.style.display=canSurrender?'flex':'none';
   if(!canSurrender)return;
   $('surrenderBol').textContent=String(Number(bidTargets[0])||0);
   $('surrenderWon').textContent=String(Number(tricksWon[0])||0);
@@ -5273,6 +5278,72 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
  .surrender-panel{top:clamp(105px,14vh,138px);right:8px;width:132px;padding:6px;gap:4px}
  .surrender-heading{font-size:8px}.surrender-stats{font-size:9px}
  .surrender-button{padding:6px 3px;font-size:10px}.surrender-hint{font-size:7px}
+}
+</style>
+
+
+<style id="baazigar-surrender-outside-table-style">
+.baazigar-action-bar{
+  width:100%;
+  box-sizing:border-box;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:9px 14px;
+  background:linear-gradient(90deg,#edf4ff,#dceaff,#edf4ff);
+  border-bottom:1px solid #c5d6eb;
+  position:relative;
+  z-index:500;
+}
+.baazigar-action-bar .surrender-panel{
+  position:static !important;
+  top:auto !important;right:auto !important;
+  width:auto !important;min-width:390px !important;
+  max-width:min(94vw,720px) !important;
+  display:flex;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  padding:8px 12px !important;
+  border:1px solid #c99b3c !important;
+  border-radius:10px !important;
+  background:linear-gradient(100deg,#fff8e5,#f5d98d) !important;
+  box-shadow:0 3px 10px #0002 !important;
+}
+.baazigar-action-bar .surrender-heading{
+  border:0 !important;padding:0 !important;
+  white-space:nowrap;font-size:10px !important;
+}
+.baazigar-action-bar .surrender-stats{
+  white-space:nowrap;gap:5px !important;
+}
+.baazigar-action-bar .surrender-button{
+  width:auto !important;min-width:112px !important;
+  padding:9px 15px !important;white-space:nowrap;
+}
+.baazigar-action-bar .surrender-hint{
+  max-width:125px;font-size:9px !important;
+}
+@media(max-width:700px){
+  .baazigar-action-bar{
+    position:relative !important;
+    width:100% !important;
+    padding:7px 8px !important;
+  }
+  .baazigar-action-bar .surrender-panel{
+    width:100% !important;min-width:0 !important;
+    max-width:100% !important;
+    flex-wrap:wrap !important;
+    gap:7px 10px !important;
+    padding:8px !important;
+  }
+  .baazigar-action-bar .surrender-heading{
+    flex:1 0 100%;text-align:left !important;
+  }
+  .baazigar-action-bar .surrender-stats{font-size:10px !important}
+  .baazigar-action-bar .surrender-button{min-width:110px !important}
+  .baazigar-action-bar .surrender-hint{max-width:none !important}
 }
 </style>
 
