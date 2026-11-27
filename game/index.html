@@ -5675,5 +5675,79 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 }
 </style>
 
+
+<style id="baazigar-mobile-bid-modal-hand-clearance">
+/* Mobile bidding / Rang / Final Run dialogs must stop above the player's hand.
+   Keep the real 5-card and 13-card hand visible below the dialog at all times. */
+@media screen and (max-width:700px) and (orientation:portrait){
+  #bidModal.modal.show{
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:clamp(174px,22vh,205px) !important;
+    height:auto !important;
+    min-height:0 !important;
+    box-sizing:border-box !important;
+    display:grid !important;
+    place-items:start center !important;
+    align-content:start !important;
+    padding:8px 8px 6px !important;
+    overflow:hidden !important;
+    z-index:100 !important;
+  }
+  #bidModal .dialog{
+    width:100% !important;
+    max-width:560px !important;
+    max-height:calc(100dvh - clamp(194px,25vh,225px)) !important;
+    height:auto !important;
+    min-height:0 !important;
+    margin:0 auto !important;
+    padding:15px 12px !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    box-sizing:border-box !important;
+  }
+  #bidModal .dialog.run-choice-compact{
+    max-height:calc(100dvh - clamp(194px,25vh,225px)) !important;
+  }
+  #bidModal #bidContent{
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  /* Make the two-panel final choice stack vertically and scroll inside its dialog. */
+  #bidModal .dialog.run-choice-compact #bidContent > div{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:9px !important;
+  }
+  #bidModal .dialog.run-choice-compact .bid-panel{
+    min-width:0 !important;
+    padding:9px !important;
+  }
+  /* The 5/13 cards remain above the modal's bottom edge, never underneath it. */
+  .hand.bottom#hand0{
+    z-index:110 !important;
+    bottom:4px !important;
+  }
+}
+@media screen and (max-width:700px) and (orientation:landscape){
+  #bidModal.modal.show{
+    top:0 !important;left:0 !important;right:0 !important;
+    bottom:clamp(108px,24vh,145px) !important;
+    height:auto !important;
+    padding:5px !important;
+    display:grid !important;
+    place-items:start center !important;
+    overflow:hidden !important;
+  }
+  #bidModal .dialog{
+    max-height:calc(100dvh - clamp(120px,27vh,160px)) !important;
+    overflow-y:auto !important;
+    margin:0 auto !important;
+  }
+  .hand.bottom#hand0{z-index:110 !important;bottom:4px !important;}
+}
+</style>
+
 </body>
 </html>
