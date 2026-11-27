@@ -5460,5 +5460,57 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 }
 </style>
 
+
+<style id="baazigar-professional-card-hand-below-table">
+/* Desktop: keep the felt/table as a separate playing surface and show
+   the player's hand in its own clear strip immediately below the table. */
+@media screen and (min-width:701px){
+  body > .app-layout > .table{
+    overflow:visible !important;
+    margin-bottom:132px !important;
+    position:relative !important;
+    isolation:isolate;
+  }
+  body > .app-layout > .table .hand.bottom{
+    position:absolute !important;
+    left:50% !important;
+    right:auto !important;
+    bottom:-124px !important;
+    width:calc(100% - 28px) !important;
+    max-width:calc(100% - 28px) !important;
+    height:132px !important;
+    transform:translateX(-50%) !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+    gap:0 !important;
+    padding:8px 4px 8px !important;
+    overflow-x:auto !important;
+    overflow-y:visible !important;
+    z-index:100 !important;
+    box-sizing:border-box !important;
+    scrollbar-width:thin;
+    border-radius:14px !important;
+    background:linear-gradient(180deg,rgba(235,243,255,.98),rgba(215,230,250,.98)) !important;
+    border:1px solid #9eb9d8 !important;
+    box-shadow:0 5px 14px rgba(10,35,65,.18) !important;
+  }
+  body > .app-layout > .table .hand.bottom .card{
+    flex:0 0 auto !important;
+    width:clamp(48px,5.4vw,66px) !important;
+    min-width:clamp(48px,5.4vw,66px) !important;
+    max-width:clamp(48px,5.4vw,66px) !important;
+    height:clamp(78px,10vh,104px) !important;
+    margin-left:clamp(-12px,-1vw,-6px) !important;
+    box-shadow:0 4px 10px rgba(0,0,0,.24) !important;
+  }
+  body > .app-layout > .table .hand.bottom .card:first-child{
+    margin-left:0 !important;
+  }
+}
+/* On phones, keep the existing in-table hand layout and natural page scroll. */
+</style>
+
 </body>
 </html>
