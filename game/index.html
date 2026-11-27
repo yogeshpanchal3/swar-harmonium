@@ -2626,6 +2626,13 @@ body{overflow-x:hidden}
  </div>
  <div id="coinHud">🪙 100 Coins • Baazi: 50</div>
  <div class="turn-countdown" id="turnCountdown" aria-live="polite" aria-label="Aapki baari ka countdown">⏳ <span id="turnCountdownValue">40</span> सेकंड</div>
+ <div id="surrenderPanel" class="surrender-panel" aria-live="polite" style="display:none">
+  <div class="surrender-heading">BAAZI STATUS</div>
+  <div class="surrender-stats"><span>Aapka Bol</span><strong id="surrenderBol">-</strong></div>
+  <div class="surrender-stats"><span>Ab tak Run</span><strong id="surrenderWon">0</strong></div>
+  <button type="button" id="surrenderBtn" class="surrender-button">SURRENDER</button>
+  <div class="surrender-hint">Kabhi bhi baazi chhod sakte hain</div>
+ </div>
 
  <div class="notice" id="notice">
   Review your first 5 cards and choose Hukum or PASS.
@@ -3324,6 +3331,16 @@ window.addEventListener('DOMContentLoaded',()=>{
  }
 
  /* RENDER */
+ function updateSurrenderPanel(){
+  const panel=$('surrenderPanel');
+  if(!panel)return;
+  const canSurrender=phase==='play'&&!gameOver&&Number.isFinite(Number(bidTargets[0]))&&Number(bidTargets[0])>0;
+  panel.style.display=canSurrender?'flex':'none';
+  if(!canSurrender)return;
+  $('surrenderBol').textContent=String(Number(bidTargets[0])||0);
+  $('surrenderWon').textContent=String(Number(tricksWon[0])||0);
+ }
+
  function render(){
 
   // Re-apply the dynamic Hukum grouping on every render so a suit chosen
@@ -3417,6 +3434,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   $('status').innerHTML=
    `ROUND ${round} <small>${phase==='bid'?'Declare Bol':`Trick ${trickNum}/13${trumpText}`}</small>`;
+  updateSurrenderPanel();
 
  }
 
@@ -4038,32 +4056,42 @@ window.addEventListener('DOMContentLoaded',()=>{
  function celebrationSound(){
   const ctx=getAudioContext();if(!ctx)return;
   const start=ctx.currentTime;
-  // Loud celebratory firework booms with bass thumps and bright crackling bursts.
-  [0,0.62,1.24,1.92,2.58].forEach((delay,index)=>{
-   const t=start+delay;
+  // Ten-second finale: repeated firework booms, sparkling crackles and applause.
+  for(let index=0;index<17;index++){
+   const delay=index*.58,t=start+delay;
    const boom=ctx.createOscillator(),boomGain=ctx.createGain();
-   boom.type='sine';boom.frequency.setValueAtTime(105+index*9,t);boom.frequency.exponentialRampToValueAtTime(38,t+.42);
-   boomGain.gain.setValueAtTime(.0001,t);boomGain.gain.exponentialRampToValueAtTime(.72,t+.018);boomGain.gain.exponentialRampToValueAtTime(.0001,t+.52);
-   boom.connect(boomGain);boomGain.connect(ctx.destination);boom.start(t);boom.stop(t+.54);
-   const length=Math.floor(ctx.sampleRate*.48),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
-   for(let j=0;j<length;j++)data[j]=(Math.random()*2-1)*Math.pow(1-j/length,1.25);
-   const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();noise.buffer=buffer;filter.type='lowpass';filter.frequency.setValueAtTime(5200,t+.08);filter.frequency.exponentialRampToValueAtTime(650,t+.48);
-   gain.gain.setValueAtTime(.0001,t+.07);gain.gain.exponentialRampToValueAtTime(.48,t+.10);gain.gain.exponentialRampToValueAtTime(.0001,t+.5);
-   noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(t+.07);noise.stop(t+.51);
-   // Sharp sparkling crackles after each boom.
-   for(let k=0;k<11;k++){
-    const ct=t+.12+Math.random()*.28,osc=ctx.createOscillator(),og=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(900+Math.random()*2600,ct);osc.frequency.exponentialRampToValueAtTime(250+Math.random()*400,ct+.055);
-    og.gain.setValueAtTime(.0001,ct);og.gain.exponentialRampToValueAtTime(.12,ct+.004);og.gain.exponentialRampToValueAtTime(.0001,ct+.065);osc.connect(og);og.connect(ctx.destination);osc.start(ct);osc.stop(ct+.07);
+   boom.type='sine';boom.frequency.setValueAtTime(112+(index%5)*13,t);
+   boom.frequency.exponentialRampToValueAtTime(34,t+.48);
+   boomGain.gain.setValueAtTime(.0001,t);
+   boomGain.gain.exponentialRampToValueAtTime(.66,t+.02);
+   boomGain.gain.exponentialRampToValueAtTime(.0001,t+.55);
+   boom.connect(boomGain);boomGain.connect(ctx.destination);boom.start(t);boom.stop(t+.56);
+
+   const length=Math.floor(ctx.sampleRate*.5),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+   for(let j=0;j<length;j++)data[j]=(Math.random()*2-1)*Math.pow(1-j/length,1.15);
+   const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+   noise.buffer=buffer;filter.type='lowpass';filter.frequency.setValueAtTime(5600,t+.07);filter.frequency.exponentialRampToValueAtTime(600,t+.49);
+   gain.gain.setValueAtTime(.0001,t+.06);gain.gain.exponentialRampToValueAtTime(.40,t+.10);gain.gain.exponentialRampToValueAtTime(.0001,t+.52);
+   noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(t+.06);noise.stop(t+.53);
+
+   for(let k=0;k<9;k++){
+    const ct=t+.10+Math.random()*.34,osc=ctx.createOscillator(),og=ctx.createGain();
+    osc.type='triangle';osc.frequency.setValueAtTime(1000+Math.random()*2600,ct);osc.frequency.exponentialRampToValueAtTime(220+Math.random()*500,ct+.06);
+    og.gain.setValueAtTime(.0001,ct);og.gain.exponentialRampToValueAtTime(.095,ct+.004);og.gain.exponentialRampToValueAtTime(.0001,ct+.07);
+    osc.connect(og);og.connect(ctx.destination);osc.start(ct);osc.stop(ct+.075);
    }
-  });
-  // Short applause layer underneath the fireworks.
-  for(let n=0;n<24;n++){
-   const t=start+n*.095+(Math.random()*.025),len=Math.floor(ctx.sampleRate*.085),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  }
+  // Continuous crowd applause for the full ten-second celebration.
+  for(let n=0;n<112;n++){
+   const t=start+n*.088+(Math.random()*.025),len=Math.floor(ctx.sampleRate*.075);
+   const buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
-   const src=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=buf;bp.type='bandpass';bp.frequency.value=1300+Math.random()*1300;bp.Q.value=.8;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+.085);src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+.09);
+   const src=ctx.createBufferSource(),bp=ctx.createBiquadFilter(),g=ctx.createGain();
+   src.buffer=buf;bp.type='bandpass';bp.frequency.value=1200+Math.random()*1500;bp.Q.value=.85;
+   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.13,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+.078);
+   src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start(t);src.stop(t+.08);
   }
  }
-
  function celebrationMarkup(winners){
   const namesText=winners.length?winners.map(i=>names[i]).join(' & '):'Is round mein kisi ka Bol poora nahi hua';
   const sub=winners.length?'BAAZI JEETNE PAR BADHAI HO!':'Agli baazi mein phir koshish karein!';
@@ -4250,6 +4278,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   setTimeout(()=>{
 
+   if(phase!=='play')return;
    trick=[];
    renderTrick();
 
@@ -4292,6 +4321,58 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   },700);
 
+ }
+
+ /* HUMAN SURRENDER: player 0 loses their full declared Bol;
+    the other three players receive their declared Bol points immediately. */
+ function surrenderCurrentRound(){
+  if(phase!=='play'||gameOver||!Number.isFinite(Number(bidTargets[0]))||Number(bidTargets[0])<=0)return;
+  const humanBol=Number(bidTargets[0]);
+  const confirmed=window.confirm(`Aapne ${humanBol} Run bole the. Surrender karne par aapke ${humanBol} points minus honge aur baaki teen players ko unke poore Bol points milenge. Kya aap surrender karna chahte hain?`);
+  if(!confirmed)return;
+
+  stopDecisionTimer();
+  clearTimeout(botTimer);
+  animationBusy=false;
+  phase='over';
+
+  totalScores[0]-=humanBol;
+  for(let p=1;p<4;p++)totalScores[p]+=(Number(bidTargets[p])||0);
+  render();
+
+  const winnerIndex=totalScores.findIndex(score=>score>=targetScore);
+  const surrenderLines=names.map((n,p)=>{
+   const bol=Number(bidTargets[p]||0);
+   const delta=p===0?-bol:bol;
+   const sign=delta>0?'+':'';
+   return `${n}: Bol ${bol}, Won ${tricksWon[p]}, ${p===0?'Surrender':'Bol Points'} (${sign}${delta}), Total Score ${totalScores[p]}`;
+  });
+
+  $('modalTitle').textContent=winnerIndex>=0?'🏆 Game Winner!':'Baazi Surrendered';
+  if(winnerIndex>=0){
+   settleCoinGame(winnerIndex);
+   gameOver=true;
+   $('modalText').innerHTML=celebrationMarkup([winnerIndex])+`<strong>${names[winnerIndex]} ne sabse pehle ${targetScore} points complete kar liye!</strong><br><br>${surrenderLines.join('<br>')}<br><br>Game Khatam!`;
+   $('restartAfterWin').style.display='block';
+   celebrationSound();
+   $('message').textContent=`🏆 ${names[winnerIndex]} wins the game!`;
+   $('notice').textContent=`${names[winnerIndex]} is the Baazigar!`;
+   $('modal').classList.add('show');
+   render();
+   return;
+  }
+
+  $('restartAfterWin').style.display='none';
+  $('modalText').innerHTML=`<strong>Aapne ${humanBol} Run par surrender kiya. Aapke ${humanBol} points minus hue; baaki teen players ko unke declared Bol ke poore points mil gaye.</strong><br><br>${surrenderLines.join('<br>')}<br><br>Agli baazi shuru ho rahi hai...`;
+  $('notice').textContent=`Aapne ${humanBol} Run par surrender kiya. Agla round shuru hoga.`;
+  $('modal').classList.add('show');
+
+  setTimeout(()=>{
+   $('modal').classList.remove('show');
+   round++;
+   roundStarter=nextPlayer(roundStarter);
+   startRound();
+  },3500);
  }
 
  /* ROUND COMPLETE */
@@ -4412,6 +4493,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('modal').classList.add('show');
 
  });
+
+ $('surrenderBtn').addEventListener('click',surrenderCurrentRound);
 
  $('scoreBtn').addEventListener('click',()=>{
 
@@ -5168,6 +5251,28 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
     margin:12px auto 24px !important;
     overflow:visible !important;
   }
+}
+</style>
+
+
+<style id="baazigar-surrender-widget-style">
+.surrender-panel{
+  position:absolute;top:clamp(112px,13vh,145px);right:12px;z-index:112;
+  width:154px;box-sizing:border-box;display:none;flex-direction:column;gap:5px;
+  padding:8px;border:1px solid #d4a84d;border-radius:11px;
+  background:linear-gradient(145deg,#fff9e8,#f5d98d);color:#183b5c;
+  box-shadow:0 4px 14px #0005;font-size:11px;
+}
+.surrender-heading{text-align:center;font-size:9px;font-weight:900;letter-spacing:1.1px;color:#80520b;padding-bottom:3px;border-bottom:1px solid #d9bd78}
+.surrender-stats{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:10px}
+.surrender-stats strong{font-size:12px;color:#173d65}
+.surrender-button{width:100%;padding:7px 4px;border:1px solid #9c1721;border-radius:7px;background:linear-gradient(180deg,#f36a63,#b91f2b);color:#fff;font-weight:900;font-size:11px;letter-spacing:.4px;cursor:pointer;box-shadow:0 2px 5px #0003}
+.surrender-button:active{transform:translateY(1px)}
+.surrender-hint{text-align:center;font-size:8px;color:#765b2a;line-height:1.2}
+@media(max-width:700px){
+ .surrender-panel{top:clamp(105px,14vh,138px);right:8px;width:132px;padding:6px;gap:4px}
+ .surrender-heading{font-size:8px}.surrender-stats{font-size:9px}
+ .surrender-button{padding:6px 3px;font-size:10px}.surrender-hint{font-size:7px}
 }
 </style>
 
