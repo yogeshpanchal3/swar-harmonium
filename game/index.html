@@ -5347,5 +5347,65 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 }
 </style>
 
+
+<style id="baazigar-full-page-scroll-fix">
+/* Desktop: let the whole game page scroll instead of clipping the bottom hand. */
+@media screen and (min-width:701px){
+  html, body{
+    display:block !important;
+    position:static !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:100% !important;
+    max-height:none !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior-y:auto !important;
+  }
+  body{
+    margin:0 !important;
+    padding:0 0 24px !important;
+  }
+  .baazigar-action-bar{
+    position:relative !important;
+    top:auto !important;
+    flex:0 0 auto !important;
+  }
+  body > .app-layout{
+    display:grid !important;
+    position:relative !important;
+    grid-template-columns:minmax(0,1.42fr) minmax(300px,.86fr) !important;
+    align-items:start !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    transform:none !important;
+  }
+  body > .app-layout > .table{
+    position:relative !important;
+    inset:auto !important;
+    width:100% !important;
+    height:max(100vh, 980px) !important;
+    min-height:980px !important;
+    max-height:none !important;
+    margin:0 !important;
+    overflow:hidden !important;
+    align-self:start !important;
+  }
+  body > .app-layout > .mehfil-panel{
+    position:relative !important;
+    inset:auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:980px !important;
+    max-height:none !important;
+    overflow:visible !important;
+    align-self:start !important;
+  }
+}
+</style>
+
 </body>
 </html>
