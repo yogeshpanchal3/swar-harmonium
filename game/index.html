@@ -2810,6 +2810,7 @@ window.addEventListener('DOMContentLoaded',()=>{
  let playerProfileName=localStorage.getItem('baazigarPlayerName')||'';
  let coinBalance=Math.max(0,Number(localStorage.getItem('baazigarCoinBalance')||0));
  let selectedStake=50;
+ let activeStake=0; // Immutable stake charged for the current game
  let stakeCharged=false;
  let coinGameSettled=false;
  if(coinBalance<50){coinBalance+=100;localStorage.setItem('baazigarCoinBalance',String(coinBalance));}
@@ -2923,18 +2924,48 @@ window.addEventListener('DOMContentLoaded',()=>{
  function saveCoinBalance(){localStorage.setItem('baazigarCoinBalance',String(coinBalance));updateCoinUI();}
  function updateCoinUI(){
   const balanceEl=$('profileCoinBalance');if(balanceEl)balanceEl.textContent=coinBalance+' 🪙';
-  const hud=$('coinHud');if(hud)hud.textContent=`🪙 ${coinBalance} Coins • Baazi: ${selectedStake}`;
-  const select=$('stakeSelect');if(select){const current=Number(select.value)||selectedStake;select.innerHTML='';for(let n=50;n<=500;n+=50){if(n<=coinBalance){const o=document.createElement('option');o.value=String(n);o.textContent=n+' Coins';select.appendChild(o);}}if(!select.options.length){const o=document.createElement('option');o.value='50';o.textContent='50 Coins';select.appendChild(o);}select.value=String(Math.min(current,Math.floor(coinBalance/50)*50)||50);selectedStake=Number(select.value);}
+  const hud=$('coinHud');if(hud)hud.textContent=`🪙 ${coinBalance} Coins • Baazi: ${stakeCharged&&!coinGameSettled?activeStake:selectedStake}`;
+  const select=$('stakeSelect');
+  if(select){
+   const current=Number(select.value)||selectedStake;
+   select.innerHTML='';
+   for(let n=50;n<=500;n+=50){
+    if(n<=coinBalance){
+     const o=document.createElement('option');o.value=String(n);o.textContent=n+' Coins';select.appendChild(o);
+    }
+   }
+   if(!select.options.length){
+    const o=document.createElement('option');o.value='50';o.textContent='50 Coins';select.appendChild(o);
+   }
+   const affordable=Math.floor(coinBalance/50)*50;
+   const nextStake=Math.min(current,affordable||50);
+   select.value=String(nextStake);
+   // Never overwrite the stake in the middle of a game. The current game's
+   // charged amount is kept separately in activeStake.
+   if(!stakeCharged||coinGameSettled)selectedStake=Number(select.value)||50;
+  }
  }
  function settleCoinGame(winnerIndex){
-  if(coinGameSettled||!stakeCharged)return;coinGameSettled=true;
-  if(winnerIndex===0){coinBalance+=selectedStake*2;$('notice').textContent+=` Aap jeete! ${selectedStake*2} Coins wapas mile.`;}
-  else{$('notice').textContent+=` Aapki ${selectedStake} Coins ki baazi haar gayi.`;}
+  if(coinGameSettled||!stakeCharged)return;
+  coinGameSettled=true;
+  const playedStake=activeStake||selectedStake;
+  if(winnerIndex===0){
+   coinBalance+=playedStake*2;
+   $('notice').textContent+=` Aap jeete! ${playedStake*2} Coins wapas mile.`;
+  }else{
+   $('notice').textContent+=` Aapki ${playedStake} Coins ki baazi haar gayi.`;
+   // Give one 100-Coin refill after a completed game only when the balance
+   // is too low to enter another baazi. Opening/closing the profile cannot farm Coins.
+   if(coinBalance<50)coinBalance+=100;
+  }
+  stakeCharged=false;
+  activeStake=0;
   saveCoinBalance();
  }
  function openProfileModal(){
-  if(coinBalance<50){coinBalance+=100;saveCoinBalance();}
-  $('playerNameInput').value=playerProfileName;updateCoinUI();$('profileModal').classList.add('show');
+  $('playerNameInput').value=playerProfileName;
+  updateCoinUI();
+  $('profileModal').classList.add('show');
  }
  $('profileContinue').addEventListener('click',()=>{
   const val=$('playerNameInput').value.trim();if(!val){alert('Apna naam likhein.');$('playerNameInput').focus();return;}
@@ -4346,8 +4377,13 @@ window.addEventListener('DOMContentLoaded',()=>{
 
  function beginSelectedGame(points){
   if(!playerProfileName){openProfileModal();return;}
-  if(selectedStake>coinBalance){if(coinBalance<50){coinBalance+=100;saveCoinBalance();}if(selectedStake>coinBalance){alert('Is baazi ke liye aapke paas kaafi Coins nahi hain.');openProfileModal();return;}}
-  coinBalance-=selectedStake;saveCoinBalance();stakeCharged=true;coinGameSettled=false;
+  if(coinBalance<50){coinBalance+=100;saveCoinBalance();}
+  if(selectedStake>coinBalance){alert('Is baazi ke liye aapke paas kaafi Coins nahi hain.');openProfileModal();return;}
+  activeStake=selectedStake;
+  coinBalance-=activeStake;
+  stakeCharged=true;
+  coinGameSettled=false;
+  saveCoinBalance();
   targetScore=points;
   round=1;
   roundStarter=0;
@@ -4925,6 +4961,86 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
   }
   .sindoor-promo-image{
     object-fit:contain !important;
+  }
+}
+</style>
+
+
+<style id="baazigar-mobile-scroll-fix">
+@media(max-width:700px){
+  html,body{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+  body{position:relative !important}
+  .app-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+  .app-layout>.table{
+    order:1 !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:560px !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+  .app-layout>.mehfil-panel,
+  .mehfil-panel{
+    order:2 !important;
+    display:flex !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:16px 12px 22px !important;
+    gap:13px !important;
+    border-radius:0 !important;
+  }
+  .mehfil-panel>.scoreboard{
+    order:1 !important;
+    display:block !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    max-width:none !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+  .mehfil-panel>.baazigar-sidebar-ad,
+  .mehfil-panel>.sindoor-promo-slot{
+    order:2 !important;
+    display:flex !important;
+    flex:0 0 auto !important;
+    width:min(100%,300px) !important;
+    height:250px !important;
+    min-height:250px !important;
+    margin:4px auto 8px !important;
+  }
+  .mehfil-panel>.mehfil-kicker{order:3 !important}
+  .mehfil-panel>.mehfil-art{order:4 !important}
+  .mehfil-panel>.mehfil-footer{order:5 !important}
+  .mehfil-panel>.baazigar-seo-content{order:6 !important}
+  .baazigar-bottom-ad{
+    display:flex !important;
+    width:calc(100% - 24px) !important;
+    min-height:90px !important;
+    margin:12px auto 18px !important;
   }
 }
 </style>
