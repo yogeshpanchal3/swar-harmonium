@@ -5425,5 +5425,40 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 /* Keep the mobile layout and its vertical scrolling unchanged. */
 </style>
 
+
+<style id="baazigar-rounded-rectangular-table">
+/* Give the playing surface a clearly horizontal, rounded-rectangle shape. */
+@media screen and (min-width:701px){
+  body > .app-layout > .table{
+    width:100% !important;
+    height: min(74vh, 720px) !important;
+    min-height:620px !important;
+    max-height:720px !important;
+    aspect-ratio: 1.42 / 1 !important;
+    border-radius:34px !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+  body > .app-layout > .table:before{
+    border-radius:26px !important;
+  }
+  body > .app-layout > .table:after{
+    border-radius:22px !important;
+  }
+  body > .app-layout{
+    align-items:start !important;
+  }
+}
+/* On narrow screens retain a tall, scrollable table so cards remain usable. */
+@media screen and (max-width:700px){
+  body > .app-layout > .table{
+    height: min(82vh, 760px) !important;
+    min-height:620px !important;
+    max-height:none !important;
+    border-radius:24px !important;
+  }
+}
+</style>
+
 </body>
 </html>
