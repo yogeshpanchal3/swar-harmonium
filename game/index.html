@@ -2710,6 +2710,10 @@ body{overflow-x:hidden}
    <div style="font-size:38px;margin-bottom:5px">🏆 🃏 🎉</div>
    <h2 id="gameModeTitle">Aap kaunsi Baazi khelna chahte hain?</h2>
    <p class="mode-subtitle">Game shuru karne se pehle apna target score chunein.</p>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    <button type="button" class="tool active" id="chooseComputerMode">🤖 Computer Mode</button>
+    <button type="button" class="tool" id="chooseOnlineMode">🌐 Online Friends</button>
+   </div>
    <div class="mode-options">
     <button type="button" class="mode-option" id="choose31"><strong>31</strong><span>31 POINTS KI BAAZI</span><span>Chhoti aur tez baazi ⚡</span></button>
     <button type="button" class="mode-option" id="choose51"><strong>51</strong><span>51 POINTS KI BAAZI</span><span>Lambi aur mazedaar baazi 👑</span></button>
@@ -2718,6 +2722,16 @@ body{overflow-x:hidden}
   </div>
  </div>
 
+ <!-- ONLINE ROOM LOBBY -->
+ <div class="modal" id="onlineLobbyModal" role="dialog" aria-modal="true">
+  <div class="dialog" style="max-width:460px">
+   <h2>🌐 Online Friends Room</h2><p style="font-size:13px;color:#536579">Room banayein ya dost ka 6-digit code daalein.</p>
+   <button class="tool" id="createOnlineRoom" style="width:100%">➕ Naya Room Banayein</button>
+   <div style="display:flex;gap:6px;margin-top:10px"><input id="joinRoomCode" maxlength="6" inputmode="numeric" placeholder="6-digit code" style="flex:1;min-width:0;padding:10px;text-align:center;letter-spacing:3px"><button class="tool" id="joinOnlineRoom">Join</button></div>
+   <div id="onlineRoomInfo" style="display:none;background:#edf6ff;color:#173b59;padding:12px;border-radius:10px;margin-top:12px"><b>ROOM CODE</b><div id="onlineRoomCode" style="font-size:30px;letter-spacing:5px;font-weight:900"></div><button class="tool" id="copyRoomCode">Copy Code</button><div id="onlinePlayers" style="text-align:left;margin-top:8px"></div><p id="onlineRoomStatus" style="font-size:12px"></p></div>
+   <p id="onlineError" style="color:#b42332;font-size:12px"></p><button class="tool" id="closeOnlineLobby" style="width:100%">Back</button>
+  </div>
+ </div>
  <!-- INFO MODAL -->
  <div class="modal" id="modal">
   <div class="dialog">
@@ -2812,11 +2826,23 @@ body{overflow-x:hidden}
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 window.addEventListener('DOMContentLoaded',()=>{
 
  const suits=['♠','♥','♣','♦']; // Display order: Hukum, Paan, Chidi, Eent
  const ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+ // Firebase room lobby connection
+ const firebaseConfig={apiKey:"AIzaSyCZysVXuHm5ywIJCOVDrwxbKiM30sMRsfw",authDomain:"baazigar-e77bc.firebaseapp.com",databaseURL:"https://baazigar-e77bc-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"baazigar-e77bc",storageBucket:"baazigar-e77bc.firebasestorage.app",messagingSenderId:"971444192218",appId:"1:971444192218:web:47fb39f9672f213ed0f6e3"};
+ let fbAuth=null,fbDb=null,activeRoomCode=null,roomCallback=null,selectedPlayMode='computer',onlineUser=null;
+ try{if(window.firebase&&!firebase.apps.length)firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.database();}catch(e){console.error(e);}
+ async function onlineLogin(){if(!fbAuth||!fbDb)throw Error('Firebase SDK load nahi hua. Internet check karein.');if(!fbAuth.currentUser)await fbAuth.signInAnonymously();onlineUser=fbAuth.currentUser;return onlineUser;}
+ function roomError(t){$('onlineError').textContent=t||'';}
+ function listenRoom(code){if(roomCallback&&activeRoomCode)fbDb.ref('rooms/'+activeRoomCode).off('value',roomCallback);activeRoomCode=code;roomCallback=s=>{let d=s.val();if(!d)return;let ps=Object.values(d.players||{});$('onlinePlayers').innerHTML=ps.map((p,i)=>(i+1)+'. '+p.name+(p.uid===onlineUser.uid?' (You)':'')).join('<br>');$('onlineRoomStatus').textContent=ps.length+'/4 players joined. Online game gameplay sync abhi configure hona baaki hai.';$('onlineRoomInfo').style.display='block';};fbDb.ref('rooms/'+code).on('value',roomCallback);fbDb.ref('rooms/'+code+'/players/'+onlineUser.uid).onDisconnect().remove().catch(()=>{});}
+ async function createRoom(){try{roomError('Connecting...');let u=await onlineLogin(),code,ref,snap;do{code=String(Math.floor(100000+Math.random()*900000));ref=fbDb.ref('rooms/'+code);snap=await ref.get();}while(snap.exists());await ref.set({code,status:'waiting',hostUid:u.uid,createdAt:firebase.database.ServerValue.TIMESTAMP,players:{[u.uid]:{uid:u.uid,name:playerProfileName||'Player'}}});listenRoom(code);$('onlineRoomCode').textContent=code;roomError('');}catch(e){roomError(e.message+' — Realtime Database Rules check karein.');}}
+ async function joinRoom(){try{let code=$('joinRoomCode').value.replace(/\D/g,'');if(!/^\d{6}$/.test(code)){roomError('6-digit code daalein.');return;}let u=await onlineLogin(),ref=fbDb.ref('rooms/'+code),tx=await ref.transaction(d=>{if(!d)return;d.players=d.players||{};if(d.players[u.uid])return d;if(Object.keys(d.players).length>=4)return;d.players[u.uid]={uid:u.uid,name:playerProfileName||'Player'};return d;});if(!tx.committed){roomError('Room nahi mila ya 4 players poore hain.');return;}listenRoom(code);$('onlineRoomCode').textContent=code;roomError('');}catch(e){roomError(e.message+' — Database Rules check karein.');}}
  let playerProfileName=localStorage.getItem('baazigarPlayerName')||'';
  let coinBalance=Math.max(0,Number(localStorage.getItem('baazigarCoinBalance')||0));
  let selectedStake=50;
@@ -4479,6 +4505,11 @@ window.addEventListener('DOMContentLoaded',()=>{
   $('notice').textContent=`${points} points ki baazi shuru!`;
   startRound();
  }
+ $('chooseComputerMode').addEventListener('click',()=>{selectedPlayMode='computer';$('chooseComputerMode').classList.add('active');$('chooseOnlineMode').classList.remove('active');});
+ $('chooseOnlineMode').addEventListener('click',()=>{selectedPlayMode='online';$('gameModeModal').classList.remove('show');$('onlineLobbyModal').classList.add('show');});
+ $('createOnlineRoom').addEventListener('click',createRoom);$('joinOnlineRoom').addEventListener('click',joinRoom);
+ $('copyRoomCode').addEventListener('click',async()=>{if(activeRoomCode){try{await navigator.clipboard.writeText(activeRoomCode);$('onlineRoomStatus').textContent='Code copied!';}catch(e){$('onlineRoomStatus').textContent='Room code: '+activeRoomCode;}}});
+ $('closeOnlineLobby').addEventListener('click',()=>{$('onlineLobbyModal').classList.remove('show');$('gameModeModal').classList.add('show');});
  $('choose31').addEventListener('click',()=>beginSelectedGame(31));
  $('choose51').addEventListener('click',()=>beginSelectedGame(51));
  $('restartAfterWin').addEventListener('click',()=>{
@@ -5749,5 +5780,6 @@ body{background:linear-gradient(135deg,#edf4ff 0%,#dfeaff 55%,#f6f8ff 100%) !imp
 }
 </style>
 
+<style>#onlineLobbyModal .dialog{max-height:90dvh;overflow-y:auto}#onlineLobbyModal input{font:inherit;box-sizing:border-box}#playModeChoices .tool.active{background:#ffd45b;color:#153c5d}</style>
 </body>
 </html>
